@@ -1,0 +1,18 @@
+{
+    "packageName": "CircadianDaylight",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "189f3224-bbbc-387d-a9a7-a81ff16d0ed1",
+            "name": "Circadian Daylight",
+            "namespace": "circadianDaylight",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/CircadianDaylight.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ]
+}

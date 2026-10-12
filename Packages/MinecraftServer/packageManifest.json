@@ -1,0 +1,16 @@
+{
+    "packageName": "MinecraftServer",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "9e119b7f-b8f2-34f9-9b43-67c900bf7c4c",
+            "name": "Minecraft Server",
+            "namespace": "adamkempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MinecraftServer/MinecraftServer.groovy",
+            "required": true
+        }
+    ]
+}

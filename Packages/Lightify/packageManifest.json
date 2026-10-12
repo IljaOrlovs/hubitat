@@ -1,0 +1,76 @@
+{
+    "packageName": "Lightify",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "225fefbf-3725-3cd3-837d-7c2f4b960938",
+            "name": "Lightify Bridge Integration",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/Lightify/LightifyBridgeIntegration.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ],
+    "drivers": [
+        {
+            "id": "3c1ddab1-2e62-3609-99a0-715e2e9b9d84",
+            "name": "Lightify Bridge - Gateway",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyBridgeGateway.groovy",
+            "required": true
+        },
+        {
+            "id": "7144965e-aad9-3403-ae90-57e2f25768dd",
+            "name": "Lightify Child - CCT",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildCct.groovy",
+            "required": true
+        },
+        {
+            "id": "3425fc45-7702-358a-a5a8-d3662b73a840",
+            "name": "Lightify Child - Dimmable",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildDimmable.groovy",
+            "required": true
+        },
+        {
+            "id": "ea3f2a46-363f-3f7b-962b-13bad25517da",
+            "name": "Lightify Child - Generic",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildGeneric.groovy",
+            "required": true
+        },
+        {
+            "id": "d9acd06b-7af3-3c97-b32a-659a1bf5d7d9",
+            "name": "Lightify Child - Group",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildGroup.groovy",
+            "required": true
+        },
+        {
+            "id": "ac0179e7-7060-3db6-a1b5-b8baba0e5433",
+            "name": "Lightify Child - RGB",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildRgb.groovy",
+            "required": true
+        },
+        {
+            "id": "bc295270-d974-37bd-8d73-4b0af2f9a58b",
+            "name": "Lightify Child - RGBW",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildRgbw.groovy",
+            "required": true
+        },
+        {
+            "id": "d0227cdd-e26d-365e-a641-023643cd01de",
+            "name": "Lightify Child - Switch",
+            "namespace": "Lightify",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Lightify/LightifyChildSwitch.groovy",
+            "required": true
+        }
+    ]
+}

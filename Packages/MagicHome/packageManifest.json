@@ -1,0 +1,86 @@
+{
+    "packageName": "MagicHome",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "0402a215-18be-380f-881f-d4407daaec42",
+            "name": "MagicHome Manager",
+            "namespace": "MagicHome",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeManager.groovy",
+            "required": true
+        },
+        {
+            "id": "ae76a2fe-41bc-3257-9e16-029e91f4cd77",
+            "name": "MagicHomeBulbControllerDimmable",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeBulbControllerDimmable.groovy",
+            "required": true
+        },
+        {
+            "id": "7d2de758-69ed-37b8-9fa9-ef53172c3042",
+            "name": "MagicHomeBulbRgbWwCwCct",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeBulbRgbWwCwCct.groovy",
+            "required": true
+        },
+        {
+            "id": "818e6232-c2de-39e4-a183-aa7eaa7dea94",
+            "name": "MagicHomeBulbRgbw",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeBulbRgbw.groovy",
+            "required": true
+        },
+        {
+            "id": "5fc74c7f-4571-3312-b329-60aca247e4b5",
+            "name": "MagicHomeBulbRgbwLegacyFirmware",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeBulbRgbwLegacyFirmware.groovy",
+            "required": true
+        },
+        {
+            "id": "91a96eb2-12ec-3ec2-b66b-59a3f077778d",
+            "name": "MagicHomeBulbWwCwCct",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeBulbWwCwCct.groovy",
+            "required": true
+        },
+        {
+            "id": "445e5ec2-1e42-3819-8dc9-de863aa9a898",
+            "name": "MagicHomeControllerRgb",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeControllerRgb.groovy",
+            "required": true
+        },
+        {
+            "id": "82910f12-d691-369b-9fbd-7902ed8a0dd3",
+            "name": "MagicHomeControllerRgbw",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeControllerRgbw.groovy",
+            "required": true
+        },
+        {
+            "id": "f94ac052-2c28-36bf-85a8-99add2154c12",
+            "name": "MagicHomeControllerRgbww",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeControllerRgbww.groovy",
+            "required": true
+        },
+        {
+            "id": "ef34afd5-96ed-3971-b114-24f0309ee761",
+            "name": "MagicHomeSmartPlug",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeSmartPlug.groovy",
+            "required": true
+        },
+        {
+            "id": "8acd2fe3-dce4-3585-a969-2d224d4a0534",
+            "name": "MagicHomeWs28xx",
+            "namespace": "unknown",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeWs28xx.groovy",
+            "required": true
+        }
+    ]
+}

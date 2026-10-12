@@ -57,7 +57,7 @@ definition(
         name: "Circadian Daylight",
         namespace: "circadianDaylight",
         author: "Adam Kempenich",
-        importURL: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Apps/CircadianDaylight.groovy",
+        importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Apps/CircadianDaylight.groovy",
         description: "Sync your color temperature, color changing, and dimmable lights to natural daylight hues to improve your cognitive functions and restfulness.",
         category: "Green Living",
         iconUrl: "",

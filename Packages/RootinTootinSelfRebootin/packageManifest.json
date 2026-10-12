@@ -1,0 +1,18 @@
+{
+    "packageName": "RootinTootinSelfRebootin",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "6e15ec50-5b5b-3a89-b822-c19c4d4208a5",
+            "name": "Rootin",
+            "namespace": "adamkempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/Utilities/RootinTootinSelfRebootin.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ]
+}

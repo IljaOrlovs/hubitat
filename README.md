@@ -3,7 +3,9 @@
 Drivers and apps for [Hubitat Elevation](https://hubitat.com): MagicHome, Lightify, Russound, Dream Screen, Heatit, Zipato, Unifi Access, Slack, Circadian Daylight and more.
 
 ## Install
-Import a file via the hub's *Drivers Code* / *Apps Code* → *Import* using its raw GitHub URL (the `importUrl` in each file's metadata), or paste it in.
+With [Hubitat Package Manager](https://hubitatpackagemanager.hubitatcommunity.com/): *Install* → *From a URL* → `https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/<Name>/packageManifest.json` (or add `repository.json` as a custom repository).
+
+Manually: *Drivers Code* / *Apps Code* → *Import* with the file's `importUrl`, or paste it in.
 
 ## Develop
 Requires Docker only.
@@ -16,5 +18,5 @@ make format  # auto-format with npm-groovy-lint
 
 See [AGENTS.md](AGENTS.md) for layout, conventions, docs links and known issues.
 
-## Licence
-Apache 2.0 (see file headers).
+## License
+Apache-2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Changes: [CHANGELOG](CHANGELOG.md). Contributing: [CONTRIBUTING](CONTRIBUTING.md).

@@ -1,0 +1,27 @@
+{
+    "packageName": "SuperFan",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "8a78521e-f187-34bc-ab07-bc8cf4e9ea65",
+            "name": "Super Fan",
+            "namespace": "Super Fan",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SuperFan/SuperFan.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        },
+        {
+            "id": "984e8c05-01fa-3b0e-bef8-db18a18c0aa8",
+            "name": "Super Fan - Child",
+            "namespace": "Super Fan",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SuperFan/SuperFanChild.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": false
+        }
+    ]
+}

@@ -3,7 +3,7 @@
 Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/imported into the hub; there is no build.
 
 ## Layout
-- `Apps/`, `Drivers/` — one dir per integration; parent/child apps are separate files. File names are historical (spaces, an em dash in `MagicHome Wifi — …`); don't rename without updating `importUrl`s.
+- `Apps/`, `Drivers/` — one dir per integration; parent/child apps are separate files. Files and dirs are PascalCase with no spaces or punctuation (`MagicHomeBulbRgbw.groovy`); each `importUrl` points at this repo's raw URL for the file, so update it on any rename.
 - `Methods/` — standalone helpers, deprecated in favour of Hubitat's built-in `ColorUtils`. Only place with unit tests.
 - `Examples/` — primers. `tests/` — `check.groovy` (syntax + unit tests), `lint.groovy` (CodeNarc).
 
@@ -11,6 +11,8 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 - `make check` — syntax-parses every `.groovy` (CONVERSION phase; `hubitat.*` won't resolve off-hub) and runs the color tests.
 - `make lint` — CodeNarc with `codenarc.groovy`. Fails on any P1 or P2 violation (baseline is clean).
 - `make format` — npm-groovy-lint auto-format (config: `.groovylintrc.json`), then re-runs `make check`. Brace-adding, quote and unused-code fixers are deliberately off: they changed structure (dropped a `}` in Simple Sprinklers) or churned quotes.
+- `make manifests` — regenerates HPM `repository.json` and `Packages/*/packageManifest.json` from the files' `definition()` blocks (keeps existing version/date).
+- `make setup` — enables `.githooks/pre-commit`. See CONTRIBUTING.md.
 - CI (`.github/workflows/ci.yml`) runs both.
 
 ## Conventions
@@ -25,7 +27,6 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 - Add new sources here as you use them.
 
 ## Known open issues (not yet fixed)
-- `Drivers/Unifi/Access Doorbell.groovy`: `poll()` calls undefined `refresh()`; `command` declared inside `preferences`; `webSocketStatus` reschedules itself forever; `pingInterval` pref ignored (hardcoded 0); `release()` always sends 1; no `numberOfButtons`; `updated()` doesn't close the old socket; empty `importUrl`.
-- `Drivers/Slack/slackNotifier.groovy`: `updated()`/`initialize()` empty; webhook default `https://...` is not validated.
+- `Drivers/Slack/SlackNotifier.groovy`: `updated()`/`initialize()` empty; webhook default `https://...` is not validated.
 - `Apps/Utilities/RootinTootinSelfRebootin.groovy`: credentials are `@Field` constants edited in source; move to preferences.
 - Unguarded `.toInteger()` on external input (~170 sites), mostly Lightify/MagicHome.

@@ -1,0 +1,16 @@
+{
+    "packageName": "GoogleHome",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "a63b6a6b-0745-33e6-95d0-0827217a0711",
+            "name": "Google Home Smoke Detector",
+            "namespace": "adamkempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/GoogleHome/SmokeDetector.groovy",
+            "required": true
+        }
+    ]
+}

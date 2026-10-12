@@ -115,7 +115,6 @@ def initialize() {
 }
 
 def getCookie(doReboot = false) {
-
     def params = [
     uri: "http://${hubIP}:8080",
     path: '/login',

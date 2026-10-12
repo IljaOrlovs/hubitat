@@ -1,0 +1,16 @@
+{
+    "packageName": "WiOnWoodsEcoPlugs",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "91fff26b-394a-3110-8b6b-41c0fb735359",
+            "name": "Wion/Woods/EcoPlugs Smart Plugs",
+            "namespace": "ecoplugs",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/WiOnWoodsEcoPlugs/SmartOutlet.groovy",
+            "required": true
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "packageName": "Russound",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "609a473c-e0bf-3355-8227-dff7dcf62afd",
+            "name": "Russound RNET",
+            "namespace": "redloro-smartthings",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/Russound/RussoundApp.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ],
+    "drivers": [
+        {
+            "id": "837e20d1-fe5f-3e58-915e-114bc40b5fc2",
+            "name": "Russound Zone",
+            "namespace": "redloro-smartthings",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Russound/RussoundDriver.groovy",
+            "required": true
+        }
+    ]
+}

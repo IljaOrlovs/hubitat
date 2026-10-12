@@ -1,0 +1,23 @@
+{
+    "packageName": "Zipato",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "81d41f92-01ce-3f2e-b082-ae9b065883bb",
+            "name": "Zipato Z-Wave Contact Multi Sensor",
+            "namespace": "zipato",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Zipato/ZipatoContactMultisensor.groovy",
+            "required": true
+        },
+        {
+            "id": "d4565c41-28e6-3a12-a326-75de853006af",
+            "name": "Zipato Z-Wave Contact Multi Sensor Child",
+            "namespace": "zipato",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Zipato/ZipatoContactMultisensorChild.groovy",
+            "required": true
+        }
+    ]
+}

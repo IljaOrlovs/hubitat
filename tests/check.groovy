@@ -37,7 +37,7 @@ def doorbell = { Map settings = [:] ->
         interfaces: [webSocket: [connect: { Object... a -> ws << a }, close: { ws << 'close' }]],
         device: [currentValue: { String n -> 'online' }], host: 'h', port: 1, token: 't', pingInterval: settings.pingInterval,
         doorbellPressed: 'doorbellPressed', requestNotifications: 'requestNotifications', webSocketStatus: 'webSocketStatus'])
-    def s = new GroovyShell(b).parse(new File(root, 'Drivers/Unifi/Access Doorbell.groovy'))
+    def s = new GroovyShell(b).parse(new File(root, 'Drivers/Unifi/AccessDoorbell.groovy'))
     s.run()
     [s: s, events: events, ws: ws]
 }

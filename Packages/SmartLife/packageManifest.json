@@ -1,0 +1,16 @@
+{
+    "packageName": "SmartLife",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "40c067b9-b39b-38a9-bb67-0ccb154bef33",
+            "name": "SmartLife/Tuya Wifi Plug",
+            "namespace": "Tuya",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/SmartLife/SmartLifeTuyaWifiPlug.groovy",
+            "required": true
+        }
+    ]
+}

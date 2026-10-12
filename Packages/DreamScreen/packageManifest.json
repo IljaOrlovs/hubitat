@@ -1,0 +1,16 @@
+{
+    "packageName": "DreamScreen",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "4d07b9ad-bfc1-36e5-97fd-8146ab5a5653",
+            "name": "DreamScreen",
+            "namespace": "DreamScreen",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/DreamScreen/DreamScreen.groovy",
+            "required": true
+        }
+    ]
+}
