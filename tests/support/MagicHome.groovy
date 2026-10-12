@@ -17,6 +17,4 @@ class MagicHome {
 
     /** Drivers that talk over interfaces.rawSocket instead of hubitat.helper.InterfaceUtils. */
     static final List<String> RAW = ['Ws28xx']
-    /** Drivers whose connectDevice calls the misspelt logdebug() and so throw MissingMethodException (see MagicHomeLogTypoSpec). */
-    static final List<String> LOG_TYPO = ['BulbRgbWwCwCct', 'BulbWwCwCct']
 }

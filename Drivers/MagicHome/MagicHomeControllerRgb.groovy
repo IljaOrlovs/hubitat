@@ -199,7 +199,7 @@ def setHue(hue) {
     hue = hue.toInteger()
 
     settings.enableHueInDegrees ? hue /= 3.6 : null
-    limit(hue)
+    hue = limit(hue)
     sendEvent(name: "hue", value: hue )
     logDescriptionText "Hue set to ${hue}"
 
@@ -211,7 +211,7 @@ def setSaturation(saturation) {
 
     saturation = saturation.toInteger()
 
-    limit(saturation)
+    saturation = limit(saturation)
     sendEvent(name: "saturation", value: saturation)
     logDescriptionText "Saturation set to ${saturation}"
 
@@ -222,7 +222,7 @@ def setLevel(level, duration = 0) {
     level = level.toInteger()
 
     // Set the brightness of a device (0-100)
-    limit(level)
+    level = limit(level)
     sendEvent(name: "level", value: level)
     logDescriptionText "Level set to ${level}"
 
@@ -248,7 +248,7 @@ def setColorTemperature( setTemp, level = device.currentValue('level'), duration
 
     setTemp = setTemp.toInteger()
 
-    limit(setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature)
+    setTemp = limit(setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature)
 
     logDescriptionText "ColorTemperature set to ${setTemp}"
 
@@ -278,8 +278,8 @@ def sendPreset(preset = 1, speed = 100) {
 
     powerOnWithChanges()
 
-    limit(preset, 0, 20)
-    limit(speed, 0, 99)
+    preset = limit(preset, 0, 20)
+    speed = limit(speed, 0, 99)
 
     logDescriptionText "Preset changed to ${preset} with speed ${speed}"
 

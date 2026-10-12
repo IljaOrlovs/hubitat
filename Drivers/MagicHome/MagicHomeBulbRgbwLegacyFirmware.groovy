@@ -230,8 +230,8 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ) {
     // 17 Cyan Strobe, 18 Purple Strobe, 19 White Strobe, 20 Seven Color Jump
 
     if (turnOn) {
-        normalizePercent( preset, 1, 20 )
-        normalizePercent( speed )
+        preset = normalizePercent( preset, 1, 20 )
+        speed = normalizePercent( speed )
 
         // Hex range of presets is (int) 37 - (int) 57. Add the preset number to get that range.
         preset += 36

@@ -100,7 +100,6 @@ class MagicHomeLegacySpec extends DriverSpec {
         sent('currentPreset') != null
     }
 
-    @PendingFeature(reason = 'sendPreset discards the result of normalizePercent(preset, 1, 20), so out-of-range presets are not clamped')
     def "sendPreset clamps the preset to 1-20"() {
         given:
         def d = driver()

@@ -371,13 +371,13 @@ def connectDevice( data ) {
             schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
             state.noResponse = 0
         }
-        logdebug "Proper time has passed, or it is the device's first run." //jshimota changed log.debug to logdebug 10/12/21
-        logdebug "${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}" //jshimota changed log.debug to logdebug 10/12/21
+        logDebug "Proper time has passed, or it is the device's first run." //jshimota changed log.debug to logdebug 10/12/21
+        logDebug "${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}" //jshimota changed log.debug to logdebug 10/12/21
         state.lastConnectionAttempt = now()
     }
     else {
-        logdebug "Tried to connect too soon. Skipping this round." //jshimota changed log.debug to logdebug 10/12/21
-        logdebug "X ${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}" //jshimota changed log.debug to logdebug 10/12/21
+        logDebug "Tried to connect too soon. Skipping this round." //jshimota changed log.debug to logdebug 10/12/21
+        logDebug "X ${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}" //jshimota changed log.debug to logdebug 10/12/21
         state.lastConnectionAttempt = now()
     }
 }

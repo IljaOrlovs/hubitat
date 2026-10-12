@@ -91,7 +91,7 @@ class MagicHomeCommonSpec extends DriverSpec {
         '10.0.0.5' in ifaceCalls('socketConnect')[0]
 
         where:
-        path << MagicHome.having('connectDevice', MagicHome.RAW + MagicHome.LOG_TYPO + ['SmartPlug'])
+        path << MagicHome.having('connectDevice', MagicHome.RAW + ['SmartPlug'])
     }
 
     @Unroll
@@ -108,7 +108,7 @@ class MagicHomeCommonSpec extends DriverSpec {
         state.lastConnectionAttempt == clock
 
         where:
-        path << MagicHome.having('connectDevice', MagicHome.RAW + MagicHome.LOG_TYPO)
+        path << MagicHome.having('connectDevice', MagicHome.RAW)
     }
 
     @Unroll
@@ -125,7 +125,7 @@ class MagicHomeCommonSpec extends DriverSpec {
         state.noResponse == 0
 
         where:
-        path << MagicHome.having('connectDevice', MagicHome.RAW + MagicHome.LOG_TYPO)
+        path << MagicHome.having('connectDevice', MagicHome.RAW)
     }
 
     @Unroll
@@ -146,7 +146,7 @@ class MagicHomeCommonSpec extends DriverSpec {
         InterfaceUtilsFail.disarm()
 
         where:
-        path << MagicHome.having('connectDevice', MagicHome.RAW + MagicHome.LOG_TYPO)
+        path << MagicHome.having('connectDevice', MagicHome.RAW)
     }
 
     @Unroll
@@ -165,7 +165,7 @@ class MagicHomeCommonSpec extends DriverSpec {
         (ifaceCalls('socketConnect').size() == 1) == reconnects
 
         where:
-        [path, misses] << [MagicHome.having('refresh', MagicHome.RAW + MagicHome.LOG_TYPO + ['BulbRgbwLegacyFirmware']), [0, 5]].combinations()
+        [path, misses] << [MagicHome.having('refresh', MagicHome.RAW + ['BulbRgbwLegacyFirmware']), [0, 5]].combinations()
         reconnects = misses >= 3
     }
 
@@ -186,6 +186,6 @@ class MagicHomeCommonSpec extends DriverSpec {
         ifaceCalls('socketConnect').size() >= 1
 
         where:
-        path << MagicHome.having('poll', MagicHome.RAW + MagicHome.LOG_TYPO + ['BulbRgbwLegacyFirmware'])
+        path << MagicHome.having('poll', MagicHome.RAW + ['BulbRgbwLegacyFirmware'])
     }
 }
