@@ -9,7 +9,7 @@
 import groovy.transform.Field
 
 @Field static final int STEP_SECONDS = 30
-@Field static final int FADE_SECONDS = STEP_SECONDS / 2   // bulbs fade into each step and settle before the next
+@Field static final int FADE_SECONDS = 15   // half of STEP_SECONDS (a @Field can't reference another): bulbs fade into each step and settle before the next
 @Field static final List DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 definition(
