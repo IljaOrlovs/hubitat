@@ -17,6 +17,7 @@ class Scripts {
         'Apps/SaltAndPepper/SaltAndPepper.groovy',
         'Apps/SaltAndPepper/SaltAndPepperChild.groovy',
         'Apps/CircadianDaylight.groovy',
+        'Apps/SunriseAlarm/SunriseAlarm.groovy',   // 'button' input type
         'Apps/Utilities/PercentToColorTemperature/PercentToColorTemperatureChild.groovy',
         'Apps/Utilities/PercentToColorTemperature/PercentToColorTemperature.groovy',
         'Apps/SuperFan/SuperFanChild.groovy',

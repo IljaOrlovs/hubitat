@@ -138,6 +138,15 @@
             ]
         },
         {
+            "name": "SunriseAlarm",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SunriseAlarm/packageManifest.json",
+            "description": "SunriseAlarm for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
             "name": "SuperFan",
             "category": "Control",
             "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SuperFan/packageManifest.json",

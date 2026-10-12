@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/imported into the hub; there is no build.
+Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Distributed through [Hubitat Package Manager](https://hubitatpackagemanager.hubitatcommunity.com/) (`repository.json` + `Packages/*/packageManifest.json`, read from `master`); there is no build. Manual install is *Apps/Drivers Code → Import* via each file's `importUrl`. No Hubitat bundle: it has no update path.
 
 ## Layout
 - `Apps/`, `Drivers/` — one dir per integration; parent/child apps are separate files. Files and dirs are PascalCase with no spaces or punctuation (`MagicHomeBulbRgbw.groovy`); each `importUrl` points at this repo's raw URL for the file, so update it on any rename.

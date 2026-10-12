@@ -1,0 +1,18 @@
+{
+    "packageName": "SunriseAlarm",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "2c2db893-72ae-3c50-af29-b8bcfdcf7d32",
+            "name": "Sunrise Alarm",
+            "namespace": "IljaOrlovs",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SunriseAlarm/SunriseAlarm.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ]
+}

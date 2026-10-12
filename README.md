@@ -3,7 +3,7 @@
 Drivers and apps for [Hubitat Elevation](https://hubitat.com): MagicHome, Lightify, Russound, Dream Screen, Heatit, Zipato, Unifi Access, Slack, Circadian Daylight and more.
 
 ## Install
-With [Hubitat Package Manager](https://hubitatpackagemanager.hubitatcommunity.com/): *Install* → *From a URL* → `https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/<Name>/packageManifest.json` (or add `repository.json` as a custom repository).
+With [Hubitat Package Manager](https://hubitatpackagemanager.hubitatcommunity.com/): *Install* → *From a URL* → `https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/<Name>/packageManifest.json` (or add `repository.json` as a custom repository: *Install* → *Search by Repository*). HPM reads from `master`, so changes are installable only once merged.
 
 Manually: *Drivers Code* / *Apps Code* → *Import* with the file's `importUrl`, or paste it in.
 
