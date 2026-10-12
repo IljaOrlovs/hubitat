@@ -1,0 +1,9 @@
+# Needs only Docker. Hubitat runs Groovy 2.4; syntax checked here with same Groovy line.
+GROOVY = docker run --rm -v "$(CURDIR)":/w -w /w groovy:2.4-jre8
+GROOVY3 = docker run --rm -v "$(CURDIR)":/w -w /w groovy:3.0.9-jdk11
+
+.PHONY: check lint
+check:
+	$(GROOVY) groovy -Dfile.encoding=UTF-8 tests/check.groovy .
+lint:
+	$(GROOVY3) groovy -Dfile.encoding=UTF-8 tests/lint.groovy
