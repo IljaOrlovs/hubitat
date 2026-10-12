@@ -7,16 +7,19 @@ import spock.lang.Specification
 interface Bulb {
     void setLevel(Object level, Object seconds)
     void setColor(Map color)
+    void off()
     void setColorTemperature(Object ct, Object level, Object seconds)
 }
 
 class SunriseAlarmSpec extends Specification {
     AppExecutor api = Mock()
     Map state = [:]
+    long clock = 1_000_000L
 
     def app(Map settings = [:]) {
         api.getLog() >> Stub(Log)
         api.getState() >> state
+        api.now() >> { clock }
         new HubitatAppSandbox(new File('Apps/SunriseAlarm/SunriseAlarm.groovy')).run(
             api: api, userSettingValues: settings,
             validationFlags: [Flags.DontRunScript, Flags.AllowReadingNonInputSettings, Flags.DontValidateSubscriptions])
@@ -167,5 +170,84 @@ class SunriseAlarmSpec extends Specification {
         then:
         state.running
         1 * bulb.setLevel(1, 15)
+    }
+
+    def "external changes are told apart from the finished ramp's own values"() {
+        given:
+        def s = app()
+
+        expect:
+        s.isExternalChange(name, value, 4000) == external
+
+        where:
+        name               | value  | external
+        'switch'           | 'off'  | true
+        'switch'           | 'on'   | false
+        'level'            | '100'  | false
+        'level'            | '60'   | true
+        'colorTemperature' | '4000' | false
+        'colorTemperature' | '3900' | false
+        'colorTemperature' | '3000' | true
+    }
+
+    def "finishing the ramp arms auto-off and a new ramp disarms it"() {
+        given:
+        def s = app([bulbs: [Mock(Bulb)], rampMinutes: 1])
+
+        when:
+        s.startRamp()
+
+        then:
+        !state.untouched
+
+        when:
+        state.step = 2
+        s.step()
+
+        then:
+        state.untouched
+        state.doneAt == clock
+    }
+
+    def "auto-off switches the bulb off only if untouched"() {
+        given:
+        def bulb = Mock(Bulb)
+        state.untouched = untouched
+
+        when:
+        app([bulbs: [bulb]]).autoOff()
+
+        then:
+        offs * bulb.off()
+
+        where:
+        untouched | offs
+        true      | 1
+        false     | 0
+    }
+
+    def "an external change after the grace period disarms auto-off, one inside it does not"() {
+        given:
+        state.untouched = true
+        state.doneAt = doneAt
+
+        when:
+        app().changeHandler([name: 'level', value: '50', device: 'bulb'])
+
+        then:
+        state.untouched == stillArmed
+
+        where:
+        doneAt       | stillArmed
+        1_000_000L   | true
+        880_000L     | false
+    }
+
+    def "auto-off is scheduled daily when a time is set"() {
+        when:
+        app([enabled: true, autoOffTime: '2026-10-12T08:30:00.000-0400']).initialize()
+
+        then:
+        1 * api.schedule('0 30 8 ? * *', 'autoOff')
     }
 }

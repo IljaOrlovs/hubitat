@@ -31,6 +31,7 @@ preferences {
         input "rampMinutes", "number", title: "Ramp length (minutes)", defaultValue: 20, range: "1..120"
         input "maxCt", "number", title: "Final color temperature (K)", defaultValue: 4000, range: "2000..6500"
         input "logEnable", "bool", title: "Debug logging", defaultValue: false
+        input "autoOffTime", "time", title: "Auto power-off time (optional): switch the bulb off then, but only if nothing touched it since the ramp finished", required: false
         input "testNow", "button", title: "Test ramp now (uses the ramp length above)"
     }
     section("<b>Wake time per day</b> (the light reaches 100% at this time)") {
@@ -69,14 +70,28 @@ def initialize() {
     state.running = false
     if (!enabled) return
     subscribe(bulbs, "switch.off", offHandler)
+    subscribe(bulbs, "switch", changeHandler)
+    subscribe(bulbs, "level", changeHandler)
+    subscribe(bulbs, "colorTemperature", changeHandler)
+    if (autoOffTime) schedule("0 ${minuteOfDay(autoOffTime) % 60} ${minuteOfDay(autoOffTime).intdiv(60)} ? * *", "autoOff")
     int ramp = (rampMinutes ?: 20) as int
     DAYS.eachWithIndex { n, i ->
         if (settings."on${i}" && settings."time${i}") {
-            // time input is ISO "…T07:00:00.000±hhmm" in hub-local wall time
-            String t = settings."time${i}"
-            schedule(cronFor(i, Integer.parseInt(t[11..12]) * 60 + Integer.parseInt(t[14..15]), ramp), "startRamp${i}")
+            schedule(cronFor(i, minuteOfDay(settings."time${i}"), ramp), "startRamp${i}")
         }
     }
+}
+
+/** Minutes since midnight from a time input: ISO "…T07:00:00.000±hhmm", already hub-local wall time. */
+static int minuteOfDay(String t) {
+    Integer.parseInt(t[11..12]) * 60 + Integer.parseInt(t[14..15])
+}
+
+/** True if an event after the ramp finished (100%, maxCt) shows someone changed the bulb. */
+static boolean isExternalChange(String name, value, int maxCt) {
+    if (name == "switch") return value == "off"
+    def v = new BigDecimal(value.toString())
+    name == "level" ? v != 100 : (v - maxCt).abs() > 150   // 150K: bulbs report colour temperature rounded
 }
 
 /** Quartz cron for the ramp start: wake time minus ramp, rolling back a day if it crosses midnight. dayIdx 0 = Monday. */
@@ -109,6 +124,7 @@ def startRamp5() { startRamp() }
 def startRamp6() { startRamp() }
 
 def startRamp() {
+    state.untouched = false
     state.step = 0
     state.running = true
     step()
@@ -127,6 +143,8 @@ def step() {
     }
     if (state.step >= steps) {
         state.running = false
+        state.untouched = true
+        state.doneAt = now()
     } else {
         state.step = state.step + 1
         runIn(STEP_SECONDS, "step")
@@ -138,4 +156,18 @@ def offHandler(evt) {
     state.running = false
     unschedule("step")
     log.info "Sunrise ramp cancelled: ${evt.device} switched off"
+}
+
+def changeHandler(evt) {
+    if (!state.untouched || now() < state.doneAt + 60000) return   // 60s: late reports from our own final fade
+    if (isExternalChange(evt.name, evt.value, (maxCt ?: 4000) as int)) {
+        state.untouched = false
+        if (logEnable) log.debug "auto-off disarmed: ${evt.device} ${evt.name} -> ${evt.value}"
+    }
+}
+
+def autoOff() {
+    if (!state.untouched) return
+    state.untouched = false
+    bulbs*.off()
 }
