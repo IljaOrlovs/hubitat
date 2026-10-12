@@ -1,0 +1,41 @@
+plugins {
+    id 'groovy'
+    id 'jacoco'
+}
+
+repositories {
+    mavenCentral()
+    // hubitat_ci is only published to this feed
+    maven { url 'https://biocomp.pkgs.visualstudio.com/HubitatCiRelease/_packaging/hubitat_ci_feed@Release/maven/v1' }
+}
+
+dependencies {
+    testImplementation 'org.codehaus.groovy:groovy-all:2.5.23'
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testImplementation 'me.biocomp.hubitat_ci:hubitat_ci:0.17'
+}
+
+// Specs live in tests/spec; the Hubitat scripts are loaded by path from the project root.
+sourceSets.test.groovy.srcDirs = ['tests/spec', 'tests/support']
+sourceSets.test.resources.srcDirs = []
+
+jacoco { toolVersion = '0.8.11' }
+
+def scriptNames = ['Apps', 'Drivers', 'Methods'].collectMany { d ->
+    fileTree(d) { include '**/*.groovy' }.files.collect { it.name - '.groovy' }
+}
+
+test {
+    testLogging { events 'failed'; exceptionFormat 'short'; showStandardStreams = false }
+    jacoco {
+        // Hubitat scripts are compiled at runtime, so dump the classes the agent sees for the report
+        classDumpDir = file("$buildDir/jacoco-classes")
+        // only our scripts (default package, class name = file stem) and their closures
+        includes = scriptNames.collectMany { [it, it + '$*'] }
+    }
+}
+
+jacocoTestReport {
+    classDirectories.setFrom(files("$buildDir/jacoco-classes"))
+    reports { csv.required = true; xml.required = false; html.required = true }
+}

@@ -4,14 +4,18 @@
     "version": "0.1.0",
     "minimumHEVersion": "2.3.0",
     "dateReleased": "2026-10-12",
-    "drivers": [
+    "apps": [
         {
-            "id": "0402a215-18be-380f-881f-d4407daaec42",
+            "id": "aba916b9-3eaa-360d-88c7-50adfd93e511",
             "name": "MagicHome Manager",
             "namespace": "MagicHome",
-            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/MagicHome/MagicHomeManager.groovy",
-            "required": true
-        },
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/MagicHome/MagicHomeManager.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ],
+    "drivers": [
         {
             "id": "ae76a2fe-41bc-3257-9e16-029e91f4cd77",
             "name": "MagicHomeBulbControllerDimmable",

@@ -5,10 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions are p
 ## Unreleased
 
 ### Added
-- Tooling: `make check|lint|format|manifests`, CI, editorconfig, CodeNarc and npm-groovy-lint config.
+- Tests: Spock + hubitat_ci specs validating all 45 scripts, behaviour specs for Access Doorbell and the color helpers, JaCoCo coverage ratchet.
+- Tooling: `make test|coverage|lint|format|manifests`, CI, editorconfig, CodeNarc and npm-groovy-lint config.
 - Hubitat Package Manager manifests (`repository.json`, `Packages/`), Apache-2.0 `LICENSE`.
 
 ### Changed
+- `MagicHomeManager` is an app and moved from `Drivers/MagicHome` to `Apps/MagicHome`.
 - All files and directories renamed to PascalCase without spaces; `importUrl`s now point at this repo.
 - Whole-repo whitespace normalization (tabs to 4 spaces, trailing whitespace, final newline).
 - Access Doorbell: uses the ping-interval setting, cancels stale reconnects, sets `numberOfButtons`, hides the API token.

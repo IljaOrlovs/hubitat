@@ -58,7 +58,7 @@
         },
         {
             "name": "MagicHome",
-            "category": "Integrations",
+            "category": "Control",
             "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/MagicHome/packageManifest.json",
             "description": "MagicHome for Hubitat Elevation",
             "tags": [

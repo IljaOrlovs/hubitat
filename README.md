@@ -11,7 +11,8 @@ Manually: *Drivers Code* / *Apps Code* → *Import* with the file's `importUrl`,
 Requires Docker only.
 
 ```bash
-make check   # syntax-parse all files + unit tests for Methods/
+make test    # Spock + hubitat_ci specs
+make coverage # tests + coverage ratchet
 make lint    # CodeNarc (fails on priority 1-2)
 make format  # auto-format with npm-groovy-lint
 ```
