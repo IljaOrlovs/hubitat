@@ -25,5 +25,30 @@ def tests = [
     'rgb->hsv blue'         : { rgb.rgbToHSV(0, 0, 255, 'high').with { near(hue, 240) && near(saturation, 100) } },
     'round trip'            : { def c = rgb.rgbToHSV(10, 200, 90, 'high'); hsv.hsvToRGB(c.hue, c.saturation, c.value, 'high').with { near(red, 10) && near(green, 200) && near(blue, 90) } },
 ]
+
+// --- Unifi Access Doorbell: load the driver with stubbed Hubitat APIs and feed it messages ---
+def doorbell = { Map settings = [:] ->
+    def events = [], sched = [], ws = []
+    def b = new Binding([
+        metadata: { Closure c -> }, sendEvent: { Map m -> events << m },
+        runIn: { Object... a -> sched << "runIn" }, runInMillis: { Object... a -> sched << "runInMillis" },
+        unschedule: { Object... a -> sched.clear() }, parseJson: { String s -> new groovy.json.JsonSlurper().parseText(s) },
+        log: [trace: {}, debug: {}, warn: {}, error: {}] as Expando,
+        interfaces: [webSocket: [connect: { Object... a -> ws << a }, close: { ws << 'close' }]],
+        device: [currentValue: { String n -> 'online' }], host: 'h', port: 1, token: 't', pingInterval: settings.pingInterval,
+        doorbellPressed: 'doorbellPressed', requestNotifications: 'requestNotifications', webSocketStatus: 'webSocketStatus'])
+    def s = new GroovyShell(b).parse(new File(root, 'Drivers/Unifi/Access Doorbell.groovy'))
+    s.run()
+    [s: s, events: events, ws: ws]
+}
+def has = { evts, n, v -> evts.any { it.name == n && it.value == v } }
+tests += [
+    'doorbell: ring holds + presents' : { def d = doorbell(); d.s.parse('{"event":"access.remote_view"}'); has(d.events, 'held', 1) && has(d.events, 'presence', 'present') },
+    'doorbell: cancel releases #1'    : { def d = doorbell(); d.s.parse('{"event":"access.remote_view.change"}'); has(d.events, 'released', 1) && has(d.events, 'presence', 'not present') },
+    'doorbell: garbage JSON ignored'  : { def d = doorbell(); d.s.parse('not json at all'); d.events.isEmpty() },
+    'doorbell: initialize sets buttons': { def d = doorbell(); d.s.initialize(); has(d.events, 'numberOfButtons', 1) && d.ws.size() == 1 },
+    'doorbell: ping pref is used'     : { def d = doorbell(pingInterval: 30); d.s.requestNotifications(); d.ws[0].find { it instanceof Map }.pingInterval == 30 },
+    'doorbell: open clears retries'   : { def d = doorbell(); d.s.webSocketStatus('status: open'); has(d.events, 'healthStatus', 'online') },
+]
 tests.each { name, t -> boolean ok; try { ok = t() } catch (e) { ok = false; println e }; if (!ok) failed++; println "${ok ? 'PASS' : 'FAIL'} ${name}" }
 System.exit(failed ? 1 : 0)

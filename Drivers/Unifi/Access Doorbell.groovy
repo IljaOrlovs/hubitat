@@ -21,7 +21,7 @@ metadata {
         name: "Unifi Access Doorbell",
         namespace: "adamkempenich",
         author: "Adam Kempenich",
-        importUrl: ""
+        importUrl: "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Unifi/Access%20Doorbell.groovy"
     ) {
         capability "Polling"
         capability "PushableButton"
@@ -32,6 +32,8 @@ metadata {
         capability "Initialize"
 
         attribute "healthStatus", "string"
+
+        command "requestNotifications"
     }
 
     preferences {
@@ -46,7 +48,7 @@ metadata {
             required: true,
             defaultValue: "12445"
         input name: "token",
-            type: "string",
+            type: "password",
             title: "The API token for the Unifi Access Controller",
             required: true,
             defaultValue: ""
@@ -55,17 +57,13 @@ metadata {
             title: "Ping every __ seconds",
             required: true,
             defaultValue: "60"
-
-        command "requestNotifications"
     }
 }
 
 def updated() {
+    unschedule()
+    interfaces.webSocket.close()
     initialize()
-}
-
-def lock() {
-    log.debug "Unifi API does not support locking"
 }
 
 def push(buttonNumber) {
@@ -80,16 +78,17 @@ def hold(buttonNumber) {
 
 def release(buttonNumber) {
     log.trace "release(${buttonNumber})"
-    sendEvent(name: "released", value: 1, isStateChange: true)
+    sendEvent(name: "released", value: buttonNumber, isStateChange: true)
 }
 
 def initialize() {
+    sendEvent(name: "numberOfButtons", value: 1)
     requestNotifications()
 }
 
 def requestNotifications() {
     try {
-        interfaces.webSocket.connect("wss://${host}:${port}/api/v1/developer/devices/notifications", pingInterval: 0, ignoreSSLIssues: true, headers: ["Authorization": "Bearer ${token}", "Upgrade": "websocket", "Connection": "Upgrade"])
+        interfaces.webSocket.connect("wss://${host}:${port}/api/v1/developer/devices/notifications", pingInterval: (pingInterval ?: 60) as int, ignoreSSLIssues: true, headers: ["Authorization": "Bearer ${token}", "Upgrade": "websocket", "Connection": "Upgrade"])
     } catch (e) {
         log.error "Error retrieving door info: $e"
     }
@@ -112,7 +111,13 @@ def parse(response) {
         sendEvent(name: "healthStatus", value: "online")
         log.trace "online"
     } else {
-        Map doorbellResponse = parseJson(response)
+        Map doorbellResponse
+        try {
+            doorbellResponse = parseJson(response)
+        } catch (e) {
+            log.warn "Ignoring unparseable message: ${e.message}"
+            doorbellResponse = [:]
+        }
         log.trace doorbellResponse.event
 
         if (doorbellResponse.event == "access.remote_view") {
@@ -146,6 +151,8 @@ def webSocketStatus(status = "closed") {
         // connection alive and open
         log.trace "connection is open. Cancelling scheduled event"
         unschedule(webSocketStatus)
+        unschedule(requestNotifications)
+        sendEvent(name: "healthStatus", value: "online")
     }
     else if (status == "closed" || status == "status: closed" || status == "status: closing" ) {
         // re-open connection
@@ -160,5 +167,6 @@ def presence(presenceValue) {
     sendEvent(name: "presence", value: presenceValue, isStateChange: true)
 }
 def poll() {
-    refresh()
+    // reconnect only if the socket is down
+    if (device.currentValue("healthStatus") != "online") { requestNotifications() }
 }
