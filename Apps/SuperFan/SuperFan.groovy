@@ -35,7 +35,7 @@ def updated() {
 
 def initialize() {
     childApps.each { child ->
-        logInformationText "Child app: ${child.label}"
+        log.info "Child app: ${child.label}"
     }
 }
 

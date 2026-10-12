@@ -7,7 +7,6 @@ import spock.lang.Unroll
  * delete the annotation (and move the driver into the shared specs it is currently excluded from).
  */
 class MagicHomeKnownBugsSpec extends DriverSpec {
-    @PendingFeature(reason = 'powerOnWithChanges reads the nonexistent "status" attribute, so it re-sends on() even when the light is already on')
     def "WW/CW bulb does not re-send on when already on"() {
         given:
         def d = load('Drivers/MagicHome/MagicHomeBulbWwCwCct.groovy', MagicHome.DEFAULTS)

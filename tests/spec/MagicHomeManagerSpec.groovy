@@ -2,7 +2,6 @@ import me.biocomp.hubitat_ci.api.app_api.AppExecutor
 import me.biocomp.hubitat_ci.api.common_api.Log
 import me.biocomp.hubitat_ci.app.HubitatAppSandbox
 import me.biocomp.hubitat_ci.validation.Flags
-import spock.lang.PendingFeature
 import spock.lang.Specification
 
 class MagicHomeManagerSpec extends Specification {
@@ -41,7 +40,6 @@ class MagicHomeManagerSpec extends Specification {
         noExceptionThrown()
     }
 
-    @PendingFeature(reason = 'initialize calls logInformationText(), which is not defined anywhere, for every child app')
     def "initialize logs each child app"() {
         given:
         childApps << [label: 'Kitchen strip']

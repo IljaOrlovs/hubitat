@@ -321,7 +321,7 @@ def powerOnWithChanges( append=false ) {
         return settings.powerOnBrightnessChange ? ( [0x71, 0x23, 0x0F, 0xA3] ) : ([])
     }
     else {
-        settings.powerOnBrightnessChange ? ( device.currentValue("status") != "on" ? on() : null ) : null
+        settings.powerOnBrightnessChange ? ( device.currentValue("switch") != "on" ? on() : null ) : null
     }
 }
 

@@ -214,7 +214,7 @@ def calculateCTSaturation( coldWhite = true, offset ) {
 def powerOnWithChanges( ) {
     // If the device is off and light settings change, turn it on (if user settings apply)
 
-    settings.enablePreStaging ? null : ( device.currentValue("status") != "on" ? on() : null )
+    settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
 }
 
 def limit( value, lowerBound = 0, upperBound = 100 ) {
