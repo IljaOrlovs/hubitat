@@ -57,6 +57,11 @@ def testParse(data) {
     parse(data)
 }
 
+// Garbage from the server must not throw out of parse(); treat it as 0.
+private int asInt(String text) {
+    text?.trim()?.isInteger() ? text.trim().toInteger() : 0
+}
+
 void parse( data ) {
     if (data != "") {
         log.debug "Parse: ${data}"
@@ -124,7 +129,7 @@ void parse( data ) {
             currentPlayersData << cleanOutput[i]
         }
         def currentPlayersDataToBytes = HexUtils.intArrayToHexString(*currentPlayersData)
-        currentPlayers = new String(HexUtils.hexStringToByteArray(currentPlayersDataToBytes), "UTF-8").toInteger()
+        currentPlayers = asInt(new String(HexUtils.hexStringToByteArray(currentPlayersDataToBytes), "UTF-8"))
         log.trace "current Players - ${currentPlayers}"
 
         // Max Players Buffer
@@ -134,7 +139,7 @@ void parse( data ) {
             maxPlayersData << cleanOutput[i]
         }
         def maxPlayersDataToBytes = HexUtils.intArrayToHexString(*maxPlayersData)
-        maxPlayers = new String(HexUtils.hexStringToByteArray(maxPlayersDataToBytes), "UTF-8").toInteger()
+        maxPlayers = asInt(new String(HexUtils.hexStringToByteArray(maxPlayersDataToBytes), "UTF-8"))
 
         log.trace "max players ${maxPlayers}"
 

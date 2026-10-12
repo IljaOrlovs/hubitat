@@ -113,7 +113,7 @@ def colorTemperatureHandler( evt ) {
 def levelHandler( evt ) {
     def childDevice = getChildDevice(settings.deviceName)
 
-    setDevices(evt.value.toInteger(), childDevice.currentValue("colorTemperature").toInteger())
+    setDevices(evt.value.toInteger(), (childDevice.currentValue("colorTemperature") ?: 0).toInteger())
 }
 
 def setDevices( level, colorTemperature ) {

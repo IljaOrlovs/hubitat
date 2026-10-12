@@ -36,7 +36,7 @@
     "Drivers/MagicHome/MagicHomeControllerRgbww.groovy": 95,
     "Drivers/MagicHome/MagicHomeSmartPlug.groovy": 85,
     "Drivers/MagicHome/MagicHomeWs28xx.groovy": 75,
-    "Drivers/MinecraftServer/MinecraftServer.groovy": 0,
+    "Drivers/MinecraftServer/MinecraftServer.groovy": 1,
     "Drivers/Russound/RussoundDriver.groovy": 1,
     "Drivers/SaltAndPepper/SaltAndPepperVirtualDevice.groovy": 10,
     "Drivers/Slack/SlackNotifier.groovy": 0,

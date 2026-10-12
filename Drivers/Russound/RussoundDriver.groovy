@@ -200,11 +200,11 @@ private sendCommand(evt, broadcast) {
 }
 
 private getTrebelLevel() {
-    return device.currentState("trebleLevel").getValue().toInteger()
+    return (device.currentState("trebleLevel")?.getValue() ?: 0).toInteger()
 }
 
 private getBassLevel() {
-    return device.currentState("bassLevel").getValue().toInteger()
+    return (device.currentState("bassLevel")?.getValue() ?: 0).toInteger()
 }
 
 private getPartyMode() {
@@ -212,7 +212,7 @@ private getPartyMode() {
 }
 
 private getVolume() {
-    return (device.currentState("volume").getValue().toInteger()) / 2
+    return ((device.currentState("volume")?.getValue() ?: 0).toInteger()) / 2
 }
 
 private getSource() {
