@@ -1,0 +1,27 @@
+{
+    "packageName": "PercentToColorTemperature",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "877b915d-10ba-3927-8712-b78fc4951c75",
+            "name": "Percent to Color Temperature",
+            "namespace": "AdamKempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/Utilities/PercentToColorTemperature/PercentToColorTemperature.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        },
+        {
+            "id": "ff0a6b11-1700-3261-804d-3c72eeb8492f",
+            "name": "Percent to Color Temperature - Child",
+            "namespace": "AdamKempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/Utilities/PercentToColorTemperature/PercentToColorTemperatureChild.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ]
+}

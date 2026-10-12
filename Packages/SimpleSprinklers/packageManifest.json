@@ -1,0 +1,27 @@
+{
+    "packageName": "SimpleSprinklers",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "6a2b8968-7901-3901-b78f-845d033c3d0c",
+            "name": "Simple Sprinklers",
+            "namespace": "Zooz",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SimpleSprinklers/SimpleSprinklers.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        },
+        {
+            "id": "f644f6bd-e80f-3a25-9b26-361edc17ada3",
+            "name": "Simple Sprinklers Setup",
+            "namespace": "Zooz",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SimpleSprinklers/SimpleSprinklersChild.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": false
+        }
+    ]
+}

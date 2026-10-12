@@ -1,0 +1,16 @@
+{
+    "packageName": "Heatit",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "ea9fc0ac-2293-31eb-9665-8623b26d4c74",
+            "name": "heatit Z-Trm2",
+            "namespace": "heatit",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Heatit/HeatitZTrm2fx.groovy",
+            "required": true
+        }
+    ]
+}

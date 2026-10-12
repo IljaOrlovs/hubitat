@@ -1,0 +1,16 @@
+{
+    "packageName": "Slack",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "d65f3ce5-3405-31ea-a88b-95da88db18df",
+            "name": "Slack Notifier",
+            "namespace": "slacknotifier",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Slack/SlackNotifier.groovy",
+            "required": true
+        }
+    ]
+}

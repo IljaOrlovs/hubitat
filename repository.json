@@ -1,0 +1,186 @@
+{
+    "author": "Ilja Orlovs",
+    "githubUrl": "https://github.com/IljaOrlovs/hubitat",
+    "packages": [
+        {
+            "name": "CircadianDaylight",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/CircadianDaylight/packageManifest.json",
+            "description": "CircadianDaylight for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "DreamScreen",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/DreamScreen/packageManifest.json",
+            "description": "DreamScreen for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Enerwave",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Enerwave/packageManifest.json",
+            "description": "Enerwave for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "GoogleHome",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/GoogleHome/packageManifest.json",
+            "description": "GoogleHome for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Heatit",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Heatit/packageManifest.json",
+            "description": "Heatit for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Lightify",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Lightify/packageManifest.json",
+            "description": "Lightify for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "MagicHome",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/MagicHome/packageManifest.json",
+            "description": "MagicHome for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "MinecraftServer",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/MinecraftServer/packageManifest.json",
+            "description": "MinecraftServer for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "PercentToColorTemperature",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/PercentToColorTemperature/packageManifest.json",
+            "description": "PercentToColorTemperature for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "RootinTootinSelfRebootin",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/RootinTootinSelfRebootin/packageManifest.json",
+            "description": "RootinTootinSelfRebootin for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Russound",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Russound/packageManifest.json",
+            "description": "Russound for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "SaltAndPepper",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SaltAndPepper/packageManifest.json",
+            "description": "SaltAndPepper for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "SimpleSprinklers",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SimpleSprinklers/packageManifest.json",
+            "description": "SimpleSprinklers for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Slack",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Slack/packageManifest.json",
+            "description": "Slack for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "SmartLife",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SmartLife/packageManifest.json",
+            "description": "SmartLife for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "SuperFan",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/SuperFan/packageManifest.json",
+            "description": "SuperFan for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "ThermostatSynchronizer",
+            "category": "Control",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/ThermostatSynchronizer/packageManifest.json",
+            "description": "ThermostatSynchronizer for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Unifi",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Unifi/packageManifest.json",
+            "description": "Unifi for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "WiOnWoodsEcoPlugs",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/WiOnWoodsEcoPlugs/packageManifest.json",
+            "description": "WiOnWoodsEcoPlugs for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        },
+        {
+            "name": "Zipato",
+            "category": "Integrations",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Packages/Zipato/packageManifest.json",
+            "description": "Zipato for Hubitat Elevation",
+            "tags": [
+                
+            ]
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "packageName": "SaltAndPepper",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "8d4172c2-34f2-313c-ac60-fbd141b9f4a2",
+            "name": "Salt and Pepper",
+            "namespace": "Salt and Pepper",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SaltAndPepper/SaltAndPepper.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        },
+        {
+            "id": "152a9a42-5a03-3975-ae4a-7bc5bd43a3ff",
+            "name": "Salt and Pepper - Child",
+            "namespace": "Salt and Pepper",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/SaltAndPepper/SaltAndPepperChild.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": false
+        }
+    ],
+    "drivers": [
+        {
+            "id": "43b027aa-60e2-3371-9a31-c706aa91d420",
+            "name": "Salt and Pepper - Virtual Device",
+            "namespace": "Salt and Pepper",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/SaltAndPepper/SaltAndPepperVirtualDevice.groovy",
+            "required": true
+        }
+    ]
+}

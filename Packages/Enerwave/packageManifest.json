@@ -1,0 +1,16 @@
+{
+    "packageName": "Enerwave",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "3fb39a27-5edd-3b75-a15d-a871a8073327",
+            "name": "ZWN-SC7 Enerwave 7 Button Scene Controller",
+            "namespace": "enerwave",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Enerwave/ZwnSc7SceneController.groovy",
+            "required": true
+        }
+    ]
+}

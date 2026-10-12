@@ -1,0 +1,16 @@
+{
+    "packageName": "Unifi",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "drivers": [
+        {
+            "id": "edc3ef84-b733-35cf-ae33-9b7d959c772b",
+            "name": "Unifi Access Doorbell",
+            "namespace": "adamkempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Drivers/Unifi/AccessDoorbell.groovy",
+            "required": true
+        }
+    ]
+}

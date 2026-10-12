@@ -1,0 +1,18 @@
+{
+    "packageName": "ThermostatSynchronizer",
+    "author": "Ilja Orlovs",
+    "version": "0.1.0",
+    "minimumHEVersion": "2.3.0",
+    "dateReleased": "2026-10-12",
+    "apps": [
+        {
+            "id": "0fc23f06-5573-339a-9cef-8a4de95c8e1d",
+            "name": "Thermostat Synchronizer",
+            "namespace": "AdamKempenich",
+            "location": "https://raw.githubusercontent.com/IljaOrlovs/hubitat/master/Apps/ThermostatSynchronizer.groovy",
+            "required": true,
+            "oauth": false,
+            "primary": true
+        }
+    ]
+}
