@@ -7,8 +7,8 @@
  *  Documentation:  https://community.hubitat.com/t/release-beta-0-7-magic-home-wifi-devices-initial-public-release/5197
  *
  *  Changelog:
- *  	0.82 (Feb 25 2019)
- *	  - Commented out parse() contents, since I think they are causing slowdown...
+ *      0.82 (Feb 25 2019)
+ *      - Commented out parse() contents, since I think they are causing slowdown...
  *
  *    0.8 (Feb 11 2019)
  *      - Initial Release
@@ -34,11 +34,10 @@ import hubitat.helper.InterfaceUtils
 import hubitat.device.Protocol
 
 metadata {
-    definition (
+    definition(
         name: "MagicHome Wifi — Bulb (RGBW - Legacy Firmware)",
         namespace: "MagicHome",
         author: "Adam Kempenich") {
-
         capability "Switch Level"
         capability "Actuator"
         capability "Switch"
@@ -73,7 +72,7 @@ metadata {
 
         attribute "currentPreset", "number" // 0 (off), 1-20 (other presets)
         attribute "presetSpeed", "number" // 0 - 100
-    }
+        }
 
     preferences {
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
@@ -125,36 +124,34 @@ def off() {
     sendCommand(data)
 }
 
-
-def setHue(hue, transmit=true){
+def setHue(hue, transmit=true) {
     // Set the hue of a device ( 0-100)
 
     hue = normalizePercent( hue, 0, 100 )
     sendEvent(name: "hue", value: hue )
     logDebug( "Hue set to " + device.currentValue('hue'))
 
-    if( !transmit ) return hue
+    if ( !transmit ) return hue
     setColor( hue: hue )
-
 }
 
-def getHue(){
+def getHue() {
     // Get the brightness of a device (0 - 100)
 
     return device.currentValue( "hue" ) == null ? ( setHue( 100, false ) ) : ( device.currentValue( "hue" ) )
 }
 
-def setSaturation(saturation, transmit=true){
+def setSaturation(saturation, transmit=true) {
     // Set the saturation of a device (0-100)
 
     saturation = normalizePercent( saturation )
     sendEvent(name: "saturation", value: saturation)
     logDebug( "Saturation set to ${saturation}")
 
-    if( !transmit ) return saturation
+    if ( !transmit ) return saturation
     setColor( saturation: saturation )
 }
-def getSaturation(){
+def getSaturation() {
     // Get the brightness of a device (0 - 100)
 
     return device.currentValue( "saturation" ) == null ? ( setSaturation( 100, false ) ) : ( device.currentValue( "saturation" ) )
@@ -167,17 +164,17 @@ def setLevel(level, transmit=true) {
     sendEvent(name: "level", value: level)
     logDebug( "Level set to ${level}")
 
-    if( !transmit ) return level
+    if ( !transmit ) return level
     setColor( level: level )
 }
 
-def getLevel(){
+def getLevel() {
     // Get the brightness of a device (0 - 100)
 
     return device.currentValue( "level" ) == null ? ( setLevel( 100, false ) ) : ( device.currentValue( "level" ) )
 }
 
-def setColor( parameters ){
+def setColor( parameters ) {
     // Set the color of a device. Hue (0 - 100), Saturation (0 - 100), Level (0 - 100). If Hue is 100, use the white LEDs.
     def newParameters = [ hue: checkIfInMap( parameters?.hue, "hue"),
                           saturation: checkIfInMap( parameters?.saturation, "saturation"),
@@ -189,18 +186,17 @@ def setColor( parameters ){
 
     powerOnWithChanges()
 
-    if( newParameters.hue == 100 ) {
+    if ( newParameters.hue == 100 ) {
         data = [ 0x56, 0x00, 0x00, 0x00, newParameters.level * 2.55, 0x0f, 0xaa ]
     }
-    else{
+    else {
         rgbColors = hsvToRGB( newParameters.hue, newParameters.saturation, newParameters.level )
         data = [ 0x56, rgbColors.red, rgbColors.green, rgbColors.blue, 0, 0xf0, 0xaa ]
     }
     sendCommand( data )
-
 }
 
-def setColorTemperature( setTemp = getColorTemperature(), transmit=true ){
+def setColorTemperature( setTemp = getColorTemperature(), transmit=true ) {
     // Using RGB, adjust the color temperature of a device
 
     // Set the colorTemperature's value between the device's maximum range, if it's out of bounds
@@ -208,11 +204,11 @@ def setColorTemperature( setTemp = getColorTemperature(), transmit=true ){
     def newSaturation
     def newHue
 
-    if(setTemp >= neutralWhite){
+    if (setTemp >= neutralWhite) {
         newSaturation = setSaturation( calculateCTSaturation( true, setTemp - settings.neutralWhite ), false ).toFloat()
         newHue = setHue( settings.cwHue.toFloat(), false )
     }
-    else{
+    else {
         newSaturation = setSaturation( calculateCTSaturation( false, settings.neutralWhite - setTemp ), false ).toFloat()
         newHue = setHue( settings.wwHue.toFloat(), false )
     }
@@ -221,13 +217,13 @@ def setColorTemperature( setTemp = getColorTemperature(), transmit=true ){
     setColor( [ hue:newHue, saturation:newSaturation ]  )
 }
 
-def getColorTemperature(){
+def getColorTemperature() {
     // Get the color temperature of a device ( ~2000-7000 )
 
     return device.currentValue( "colorTemperature" ) == null ? ( sendEvent( name: "colorTemperature", value: 2700 ) ) : ( device.currentValue( "colorTemperature" ) )
 }
 
-def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
+def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ) {
     // Turn on preset mode (true), turn off preset mode (false). Preset (1 - 20), Speed (1 (slow) - 100 (fast)).
 
     // Presets:
@@ -235,7 +231,7 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
     // 10 Red Blue Dissolve, 11 Green Blue Dissolve, 12 Seven Color Strobe, 13 Red Strobe, 14 Green Strobe, 15 Blue Strobe, 16 Yellow Strobe
     // 17 Cyan Strobe, 18 Purple Strobe, 19 White Strobe, 20 Seven Color Jump
 
-    if(turnOn){
+    if (turnOn) {
         normalizePercent( preset, 1, 20 )
         normalizePercent( speed )
 
@@ -250,7 +246,7 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
 
         sendCommand( appendChecksum(  [ 0x61, preset, speed, 0x0F ] ) )
     }
-    else{
+    else {
         // Return the color back to its normal state
 
         sendEvent( name: "currentPreset", value: 0 )
@@ -258,91 +254,90 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
     }
 }
 
-def presetSevenColorDissolve( speed = 100 ){
+def presetSevenColorDissolve( speed = 100 ) {
     sendPreset( true, 1, speed )
 }
-def presetRedFade( speed = 100 ){
+def presetRedFade( speed = 100 ) {
     sendPreset( true, 2, speed )
 }
-def presetGreenFade( speed = 100 ){
+def presetGreenFade( speed = 100 ) {
     sendPreset( true, 3, speed )
 }
-def presetBlueFade( speed = 100 ){
+def presetBlueFade( speed = 100 ) {
     sendPreset( true, 4, speed )
 }
-def presetYellowFade( speed = 100 ){
+def presetYellowFade( speed = 100 ) {
     sendPreset( true, 5, speed )
 }
-def presetCyanFade( speed = 100 ){
+def presetCyanFade( speed = 100 ) {
     sendPreset( true, 6, speed )
 }
-def presetPurpleFade( speed = 100 ){
+def presetPurpleFade( speed = 100 ) {
     sendPreset( true, 7, speed )
 }
-def presetWhiteFade( speed = 100 ){
+def presetWhiteFade( speed = 100 ) {
     sendPreset( true, 8, speed )
 }
-def presetRedGreenDissolve( speed = 100 ){
+def presetRedGreenDissolve( speed = 100 ) {
     sendPreset( true, 9, speed )
 }
-def presetRedBlueDissolve( speed = 100 ){
+def presetRedBlueDissolve( speed = 100 ) {
     sendPreset( true, 10, speed )
 }
-def presetGreenBlueDissolve( speed = 100 ){
+def presetGreenBlueDissolve( speed = 100 ) {
     sendPreset( true, 11, speed )
 }
-def presetSevenColorStrobe( speed = 100 ){
+def presetSevenColorStrobe( speed = 100 ) {
     sendPreset( true, 12, speed )
 }
-def presetRedStrobe( speed = 100 ){
+def presetRedStrobe( speed = 100 ) {
     sendPreset( true, 19, speed )
 }
-def presetGreenStrobe( speed = 100 ){
+def presetGreenStrobe( speed = 100 ) {
     sendPreset( true, 14, speed )
 }
-def presetBlueStrobe( speed = 100 ){
+def presetBlueStrobe( speed = 100 ) {
     sendPreset( true, 15, speed )
 }
-def presetYellowStrobe( speed = 100 ){
+def presetYellowStrobe( speed = 100 ) {
     sendPreset( true, 16, speed )
 }
-def presetCyanStrobe( speed = 100 ){
+def presetCyanStrobe( speed = 100 ) {
     sendPreset( true, 17, speed )
 }
-def presetPurpleStrobe( speed = 100 ){
+def presetPurpleStrobe( speed = 100 ) {
     sendPreset( true, 18, speed )
 }
-def presetWhiteStrobe( speed = 100 ){
+def presetWhiteStrobe( speed = 100 ) {
     sendPreset( true, 19, speed )
 }
-def presetSevenColorJump( speed = 100 ){
+def presetSevenColorJump( speed = 100 ) {
     sendPreset( true, 20, speed )
 }
 
 // ------------------- Helper Functions ------------------------- //
 
-def powerOnWithChanges( append=false ){
+def powerOnWithChanges( append=false ) {
     // If the device is off and light settings change, turn it on (if user settings apply)
-    if(append){
+    if (append) {
         return settings.powerOnBrightnessChange ? ( [0x71, 0x23, 0x0F, 0xA3] ) : ([])
     }
-    else{
+    else {
         settings.powerOnBrightnessChange ? ( device.currentValue("status") != "on" ? on() : null ) : null
     }
 }
 
 def calculateCTSaturation( coldWhite = true, offset ) {
-
     def CURVE
     def lowPoint
     def highPoint
 
-    if( coldWhite ) {
+    if ( coldWhite ) {
         lowPoint = settings.cwSaturationLowPoint < settings.cwSaturationHighPoint ? settings.cwSaturationLowPoint : settings.cwSaturationHighPoint
         highPoint = settings.cwSaturationHighPoint > settings.cwSaturationLowPoint ? settings.cwSaturationHighPoint : settings.cwSaturationLowPoint
         CURVE = 1.8
     }
-    else{
+    else {
         lowPoint = settings.wwSaturationLowPoint < settings.wwSaturationHighPoint ? settings.wwSaturationLowPoint : settings.wwSaturationHighPoint
         highPoint = settings.wwSaturationHighPoint > settings.wwSaturationLowPoint ? settings.wwSaturationHighPoint : settings.wwSaturationLowPoint
         CURVE = 2.16666
@@ -351,23 +346,22 @@ def calculateCTSaturation( coldWhite = true, offset ) {
     return (((( 100 - lowPoint  ) / 100 ) * ( CURVE * Math.sqrt( offset ))) + lowPoint  ) * highPoint / 100
 }
 
-def hslToCT(){
-
+def hslToCT() {
 }
 
-def normalizePercent(value, lowerBound=0, upperBound=100 ){
+def normalizePercent(value, lowerBound=0, upperBound=100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     // If the value doesn't exist, create it
     value = value == null ? upperBound : value
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound}
-        if(value > upperBound){ value = upperBound}
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound}
-        if(value > lowerBound ){ value = lowerBound}
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
@@ -376,12 +370,12 @@ def normalizePercent(value, lowerBound=0, upperBound=100 ){
 def checkIfInMap( parameterValue, valueName) {
     // Check if a value is in a map, and return (or set and return) a value
 
-    if( parameterValue == null ){
-        if( device.currentValue( valueName ) == null ){
+    if ( parameterValue == null ) {
+        if ( device.currentValue( valueName ) == null ) {
             sendEvent( name: valueName, value: maxValue )
             return device.currentValue( "${valueName}" )
         }
-        else{
+        else {
             return device.currentValue( "${valueName}" )
         }
     }
@@ -391,7 +385,7 @@ def checkIfInMap( parameterValue, valueName) {
     }
 }
 
-def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float conversionValue = 100, resolution = "low"){
+def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float conversionValue = 100, resolution = "low") {
     // Accepts conversionHue (0-100 or 0-360), conversionSaturation (0-100), and converstionValue (0-100), resolution ("low", "high")
     // If resolution is low, conversionHue accepts 0-100. If resolution is high, conversionHue accepts 0-360
     // Returns RGB map ([ red: 0-255, green: 0-255, blue: 0-255 ])
@@ -415,12 +409,12 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
     q *= 255
     t *= 255
 
-    if      (h==0) { rgbMap = [red: conversionValue, green: t, blue: p] }
-    else if (h==1) { rgbMap = [red: q, green: conversionValue, blue: p] }
-    else if (h==2) { rgbMap = [red: p, green: conversionValue, blue: t] }
-    else if (h==3) { rgbMap = [red: p, green: q, blue: conversionValue] }
-    else if (h==4) { rgbMap = [red: t, green: p, blue: conversionValue] }
-    else if (h==5) { rgbMap = [red: conversionValue, green: p,blue: q]  }
+    if (h == 0) { rgbMap = [red: conversionValue, green: t, blue: p] }
+    else if (h == 1) { rgbMap = [red: q, green: conversionValue, blue: p] }
+    else if (h == 2) { rgbMap = [red: p, green: conversionValue, blue: t] }
+    else if (h == 3) { rgbMap = [red: p, green: q, blue: conversionValue] }
+    else if (h == 4) { rgbMap = [red: t, green: p, blue: conversionValue] }
+    else if (h == 5) { rgbMap = [red: conversionValue, green: p, blue: q]  }
     else           { rgbMap = [red: 0, green: 0, blue: 0] }
 
     return rgbMap
@@ -447,35 +441,35 @@ def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
     if (s == 0.0) {
         h = 0.0
     }
-    else{
-        if (r == max){
-                h = ((g - b) / delta)
+    else {
+        if (r == max) {
+            h = ((g - b) / delta)
         }
-        else if(g == max) {
-                h = (2 + (b - r) / delta)
+        else if (g == max) {
+            h = (2 + (b - r) / delta)
         }
         else if (b == max) {
-                h = (4 + (r - g) / delta)
+            h = (4 + (r - g) / delta)
         }
     }
 
     h *= 60.0
-        h < 0 ? ( h += 360 ) : null
+    h < 0 ? ( h += 360 ) : null
 
     resolution == "low" ? h /= 3.6 : null
     return [ hue: h, saturation: s, value: v ]
 }
 
-def calculateChecksum( data ){
+def calculateChecksum( data ) {
     // Totals an array of bytes
 
     int sum = 0;
-    for(int d : data)
+    for (int d : data)
         sum += d;
     return sum & 255
 }
 
-def appendChecksum( data ){
+def appendChecksum( data ) {
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
@@ -525,10 +519,10 @@ def parse( response ) {
 //    }
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
@@ -541,7 +535,6 @@ def sendCommand( data ) {
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 def refresh( ) {
-
     byte[] data =  [ 0x81, 0x8A, 0x8B, 0x96 ]
     sendCommand( data )
 }
@@ -549,7 +542,7 @@ def refresh( ) {
 def telnetStatus( status ) { logDebug "telnetStatus: ${status}" }
 def socketStatus( status ) {
     logDebug "socketStatus: ${status}"
-    if(status == "send error: Broken pipe (Write failed)") {
+    if (status == "send error: Broken pipe (Write failed)") {
         // Cannot reach device
         logDebug "Cannot reach device. Attempting to reconnect."
         runIn(10, initialize)
@@ -560,20 +553,20 @@ def poll() {
     refresh()
 }
 
-def updated(){
+def updated() {
     initialize()
 }
 def initialize() {
     // Establish a connection to the device
 
-  logDebug "Initializing device."
+    logDebug "Initializing device."
     InterfaceUtils.socketConnect(device, settings.deviceIP, settings.devicePort.toInteger(), byteInterface: true)
     unschedule()
 
     runIn(20, keepAlive)
 }
 
-def keepAlive(){
+def keepAlive() {
     // Poll the device every 250 seconds, or it will lose connection.
 
     refresh()

@@ -8,14 +8,14 @@
  *
  *
  *  Changelog:
- *	  0.91 (Mar 17 2019)
- * 		- Added child devices for external and magnetic contact
+ *      0.91 (Mar 17 2019)
+ *         - Added child devices for external and magnetic contact
  *
  *    0.9 (Jan 24 2019)
  *      - Initial Release
  *      - Does not report temperature, yet
  *      - Does not report battery, yet
- *		- Does not report fingerprint, yet
+ *        - Does not report fingerprint, yet
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -28,7 +28,7 @@
  *
  */
 metadata {
-    definition (
+    definition(
         name: "Zipato Z-Wave Contact Multi Sensor",
         namespace: "zipato",
         author: "Adam Kempenich",
@@ -54,19 +54,18 @@ metadata {
 }
 
 def installed() {
-        createChildDevices()
-        //response(refresh() + configure())
+    createChildDevices()
+//response(refresh() + configure())
 }
 
-def uninstalled(){
+def uninstalled() {
     deleteChildDevice("${device.deviceNetworkId}-external")
     deleteChildDevice("${device.deviceNetworkId}-magnetic")
 }
 
-def configure(){
+def configure() {
     log.debug "Configuring..."
     createChildDevices()
-
 }
 
 private void createChildDevices() {
@@ -78,7 +77,7 @@ private void createChildDevices() {
 
 def parse(String description) {
     //log.debug description
-    def cmd = zwave.parse(description,[0x85:1,0x86:1])
+    def cmd = zwave.parse(description, [0x85:1, 0x86:1])
     log.debug "Received ${cmd}"
     if (cmd) {
         zwaveEvent(cmd)
@@ -93,17 +92,17 @@ def zwaveEvent(hubitat.zwave.commands.basicv1.BasicSet cmd) {
         logDebug("Magnetic contact closed")
         closeMagnetic()
     }
-    else if( cmd.value == 255 ) {
+    else if ( cmd.value == 255 ) {
         logDebug("Magnetic contact opened")
         openMagnetic()
     }
-    else{
+    else {
         logDebug("Unexpected result of ${cmd.value} returned")
     }
 }
 
-def zwaveEvent(hubitat.zwave.commands.notificationv3.NotificationReport cmd){
-    if( cmd.v1AlarmType == 3 ) {
+def zwaveEvent(hubitat.zwave.commands.notificationv3.NotificationReport cmd) {
+    if ( cmd.v1AlarmType == 3 ) {
         // Tamper Switch Report
 
         logDebug("Alarm Type is 3")
@@ -111,7 +110,7 @@ def zwaveEvent(hubitat.zwave.commands.notificationv3.NotificationReport cmd){
             logDebug("Alarm tamper is clear")
             sendEvent(name: "tamper", value: "clear")
         }
-        else if( cmd.v1AlarmLevel == 255 ) {
+        else if ( cmd.v1AlarmLevel == 255 ) {
             logDebug("Alarm tamper is detected")
             sendEvent(name: "tamper", value: "detected")
         }
@@ -128,7 +127,7 @@ def zwaveEvent(hubitat.zwave.commands.notificationv3.NotificationReport cmd){
             logDebug("External contact closed")
             closeExternal()
         }
-        else if( cmd.v1AlarmLevel == 255 ) {
+        else if ( cmd.v1AlarmLevel == 255 ) {
             logDebug("External ontact opened")
             openExternal()
         }
@@ -139,60 +138,56 @@ def zwaveEvent(hubitat.zwave.commands.notificationv3.NotificationReport cmd){
     else {
         logDebug("Unexpected result of ${cmd.v1AlarmLevel} returned")
     }
-
-
-
 }
 
-def openExternal(){
+def openExternal() {
     def children = childDevices
-    def childDevice = children.find{it.deviceNetworkId.endsWith("-external")}
+    def childDevice = children.find { it.deviceNetworkId.endsWith("-external") }
     childDevice.sendEvent(name: "contact", value: "open")
 }
 
-def closeExternal(){
+def closeExternal() {
     def children = childDevices
-    def childDevice = children.find{it.deviceNetworkId.endsWith("-external")}
+    def childDevice = children.find { it.deviceNetworkId.endsWith("-external") }
     childDevice.sendEvent(name: "contact", value: "closed")
 }
 
-def openMagnetic(){
+def openMagnetic() {
     def children = childDevices
-    def childDevice = children.find{it.deviceNetworkId.endsWith("-magnetic")}
+    def childDevice = children.find { it.deviceNetworkId.endsWith("-magnetic") }
     childDevice.sendEvent(name: "contact", value: "open")
 }
 
-def closeMagnetic(){
+def closeMagnetic() {
     def children = childDevices
-    def childDevice = children.find{it.deviceNetworkId.endsWith("-magnetic")}
+    def childDevice = children.find { it.deviceNetworkId.endsWith("-magnetic") }
     childDevice.sendEvent(name: "contact", value: "closed")
 }
 
 def zwaveEvent(hubitat.zwave.Command cmd) {
     log.debug "skip: ${cmd}"
 
-    // Values ... (v1AlarmType:3, v1AlarmLevel:0, reserved:0, notificationStatus:0, notificationType:0, event:0, sequence:false, eventParametersLength:0, eventParameter:[])
-
+// Values ... (v1AlarmType:3, v1AlarmLevel:0, reserved:0, notificationStatus:0, notificationType:0, event:0, sequence:false, eventParametersLength:0, eventParameter:[])
 }
 
 //cmds
-def getVersionReport(){
+def getVersionReport() {
     return secureCmd(zwave.versionV1.versionGet())
 }
 
-def setParameter(parameterNumber = null, size = null, value = null){
+def setParameter(parameterNumber = null, size = null, value = null) {
     if (parameterNumber == null || size == null || value == null) {
         log.warn "incomplete parameter list supplied..."
         log.info "syntax: setParameter(parameterNumber,size,value)"
     } else {
         return delayBetween([
-        	secureCmd(zwave.configurationV1.configurationSet(scaledConfigurationValue: value, parameterNumber: parameterNumber, size: size)),
-        	secureCmd(zwave.configurationV1.configurationGet(parameterNumber: parameterNumber))
+            secureCmd(zwave.configurationV1.configurationSet(scaledConfigurationValue: value, parameterNumber: parameterNumber, size: size)),
+            secureCmd(zwave.configurationV1.configurationGet(parameterNumber: parameterNumber))
         ],500)
     }
 }
 
-def getAssociationReport(){
+def getAssociationReport() {
     def cmds = []
     1.upto(5, {
         cmds.add(secureCmd(zwave.associationV1.associationGet(groupingIdentifier: it)))
@@ -200,25 +195,25 @@ def getAssociationReport(){
     return cmds
 }
 
-def getParameterReport(param = null){
+def getParameterReport(param = null) {
     def cmds = []
     if (param) {
         cmds = [secureCmd(zwave.configurationV1.configurationGet(parameterNumber: param))]
     } else {
         0.upto(255, {
-        	cmds.add(secureCmd(zwave.configurationV1.configurationGet(parameterNumber: it)))
+            cmds.add(secureCmd(zwave.configurationV1.configurationGet(parameterNumber: it)))
         })
     }
     return cmds
 }
 
-def getCommandClassReport(){
+def getCommandClassReport() {
     def cmds = []
-    def ic = getDataValue("inClusters").split(",").collect{ hexStrToUnsignedInt(it) }
+    def ic = getDataValue("inClusters").split(",").collect { hexStrToUnsignedInt(it) }
     ic.each {
         if (it) cmds.add(secureCmd(zwave.versionV1.versionCommandClassGet(requestedCommandClass:it)))
     }
-    return delayBetween(cmds,500)
+    return delayBetween(cmds, 500)
 }
 
 private handleTemperatureEvent(cmd) {
@@ -249,7 +244,7 @@ def zwaveEvent(hubitat.zwave.commands.sensormultilevelv5.SensorMultilevelReport 
     return result
 }
 
-def updated() {}
+def updated() { }
 
 private secureCmd(cmd) {
     if (getDataValue("zwaveSecurePairingComplete") == "true") {

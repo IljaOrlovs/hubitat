@@ -56,53 +56,46 @@ metadata {
             required: true,
             defaultValue: "60"
 
-
         command "requestNotifications"
     }
 }
-
 
 def updated() {
     initialize()
 }
 
-
 def lock() {
     log.debug "Unifi API does not support locking"
 }
 
-def push(buttonNumber){
+def push(buttonNumber) {
     log.trace "push(${buttonNumber})"
     sendEvent(name: "pushed", value: buttonNumber, isStateChange: true)
-
 }
 
-def hold(buttonNumber){
+def hold(buttonNumber) {
     log.trace "hold(${buttonNumber})"
     sendEvent(name: "held", value: buttonNumber, isStateChange: true)
-
 }
 
-def release(buttonNumber){
+def release(buttonNumber) {
     log.trace "release(${buttonNumber})"
     sendEvent(name: "released", value: 1, isStateChange: true)
 }
 
-def initialize(){
+def initialize() {
     requestNotifications()
 }
 
-def requestNotifications(){
+def requestNotifications() {
     try {
         interfaces.webSocket.connect("wss://${host}:${port}/api/v1/developer/devices/notifications", pingInterval: 0, ignoreSSLIssues: true, headers: ["Authorization": "Bearer ${token}", "Upgrade": "websocket", "Connection": "Upgrade"])
-
     } catch (e) {
         log.error "Error retrieving door info: $e"
     }
 }
 
-
-def parse(response){
+def parse(response) {
     //log.trace "parse(${response})"
 
     // log.trace response.size()
@@ -112,8 +105,7 @@ def parse(response){
     //    log.trace "could not convert to base64"
     //}
 
-
-    if(response.size() == 8){
+    if (response.size() == 8) {
         // connection alive and open
         // I'm not sure why checking this against its literal string doesn't work and I don't have energy to see what characters are really being sent
         // ""Hello" " << This is the string. Notice the trailing space
@@ -123,42 +115,39 @@ def parse(response){
         Map doorbellResponse = parseJson(response)
         log.trace doorbellResponse.event
 
-        if(doorbellResponse.event == "access.remote_view"){
+        if (doorbellResponse.event == "access.remote_view") {
             //doorbell is ringing
             log.debug "doorbell is ringing"
             hold(1)
             presence("present")
-        } else if( doorbellResponse.event == "access.remote_view.change"){
+        } else if ( doorbellResponse.event == "access.remote_view.change") {
             log.debug "ringing cancelled"
             release(1)
             presence("not present")
-        } else if(doorbellResponse.event == "access.hw.door_bell"){
+        } else if (doorbellResponse.event == "access.hw.door_bell") {
             // doorbell button pressed
             log.debug "doorbell button pressed"
             hold(1)
             presence("present")
             runInMillis(11000, doorbellPressed, [overwrite: true])
         }
-
     }
-
 }
 
-def doorbellPressed(){
+def doorbellPressed() {
     release(1)
     presence("not present")
 }
 
-def webSocketStatus(status = "closed"){
+def webSocketStatus(status = "closed") {
     log.trace "webSocketStatus(${status})"
 
-    if(status == "open" || status == "status: open"){
+    if (status == "open" || status == "status: open") {
         // connection alive and open
         log.trace "connection is open. Cancelling scheduled event"
         unschedule(webSocketStatus)
-
     }
-    else if(status == "closed" || status == "status: closed" || status == "status: closing" ){
+    else if (status == "closed" || status == "status: closed" || status == "status: closing" ) {
         // re-open connection
         sendEvent(name: "healthStatus", value: "offline")
 
@@ -167,12 +156,8 @@ def webSocketStatus(status = "closed"){
     }
 }
 
-
-def presence(presenceValue){
-
+def presence(presenceValue) {
     sendEvent(name: "presence", value: presenceValue, isStateChange: true)
-
-
 }
 def poll() {
     refresh()

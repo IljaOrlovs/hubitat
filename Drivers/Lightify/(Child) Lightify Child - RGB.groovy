@@ -8,7 +8,7 @@
 *
 *  Changelog:
 *    0.22 (Feb 25, 2020)
-*	       - Updated naming schema
+*           - Updated naming schema
 *
 *    0.21 (Feb 10, 2020)
 *        - Initial Commit
@@ -25,12 +25,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Lightify Child - RGB",
     namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child)%20Lightify%20Bulb%20-%20RGB.groovy") {
-
         capability "Actuator"
         capability "Color Control"
         capability "Color Mode"
@@ -42,7 +41,7 @@ definition (
         capability "Switch Level"
     }
     preferences {
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
@@ -51,32 +50,31 @@ definition (
     }
 }
 
-def on(){
+def on() {
     // Turn the device on
 
     sendEvent(name: "switch", value: "on")
     parent.on(device.deviceNetworkId)
 }
-def off(){
+def off() {
     // Turn the device off
 
     sendEvent(name: "switch", value: "on")
     parent.off(device.deviceNetworkId)
 }
-def setLevel(brightness, duration=0){
+def setLevel(brightness, duration=0) {
     // Update the brightness of  adevice
 
     sendEvent(name: "level", value: brightness.toInteger())
     parent.setLevel(device.deviceNetworkId, brightness.toInteger())
 }
 
-def setHue(hueValue){
+def setHue(hueValue) {
     // Update only the hue of a device
 
     clamp(hueValue)
 
     logDescriptionText("Hue set to ${hueValue}")
-
 
     sendEvent(name: "saturation", value: hueValue.toFloat())
     def parameters = [hue: device.currentValue('hue'), saturation: hueValue, level: device.currentValue('level')]
@@ -84,32 +82,31 @@ def setHue(hueValue){
     preStage()
 }
 
-def setSaturation(saturationValue){
+def setSaturation(saturationValue) {
     // Update only the saturation of a device
 
     clamp(saturationValue)
 
     logDescriptionText("Saturation set to ${saturationValue}")
 
-
     sendEvent(name: "saturation", value: saturationValue.toFloat())
     def parameters = [hue: device.currentValue('hue'), saturation: saturationValue, level: device.currentValue('level')]
     parent.setColor(device.deviceNetworkId, parameters)
     preStage()
 }
-def setColor(parameters){
+def setColor(parameters) {
     // Update the color of a device
 
     setParameters = [:]
 
-    if(parameters.hue){setParameters.hue = clamp(parameters.hue)
-    } else{ setParameters.hue = device.currentValue("hue")}
+    if (parameters.hue) { setParameters.hue = clamp(parameters.hue)
+    } else { setParameters.hue = device.currentValue("hue") }
 
-    if(parameters.saturation){setParameters.saturation = clamp(parameters.saturation)
-    } else{ setParameters.saturation = device.currentValue("saturation") }
+    if (parameters.saturation) { setParameters.saturation = clamp(parameters.saturation)
+    } else { setParameters.saturation = device.currentValue("saturation") }
 
-    if(parameters.level){setParameters.level = clamp(parameters.level)
-    } else{ setParameters.level = device.currentValue("level") }
+    if (parameters.level) { setParameters.level = clamp(parameters.level)
+    } else { setParameters.level = device.currentValue("level") }
 
     sendEvent(name: "hue", value: setParameters.hue.toFloat())
     sendEvent(name: "saturation", value: setParameters.saturation.toFloat())
@@ -118,52 +115,51 @@ def setColor(parameters){
     parent.setColor(device.deviceNetworkId, setParameters)
     preStage()
 }
-def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')){
-    // Add in my RGB <> CCT method from beta magichome drivers
+def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')) {
+// Add in my RGB <> CCT method from beta magichome drivers
 }
 
-def initialize(){
-    // Do nothing
-
+def initialize() {
+// Do nothing
 }
 
-def updated(){
+def updated() {
     // Do nothing
 
     logDescriptionText("Device Updated")
 }
 
-def refresh(){
+def refresh() {
     // Request an info packet from the gateway
 
     logDescriptionText("Requesting Refresh")
     parent.refresh()
 }
 
-def preStage(){
+def preStage() {
     // Turn on a light when values change if this setting is false
 
     settings.enableColorPrestaging ? null : ( device.currentValue("switch") == "off" ? on() : null )
 }
 
-def logDescriptionText(text){
+def logDescriptionText(text) {
     // Log device changes if set to
 
     settings.logDescriptionText == true ? log.info("${device.deviceNetworkId}: ${text}") : null
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value

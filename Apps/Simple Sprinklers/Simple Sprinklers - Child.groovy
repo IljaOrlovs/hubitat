@@ -25,8 +25,7 @@ preferences {
 
 def childSetup() {
     dynamicPage(name: "childSetup", title: "Simple Sprinklers Setup", nextPage: null, install: true, uninstall: true, refreshInterval:0) {
-
-        section(){
+        section() {
             paragraph("<h2>Tap to select schedule or trigger:</h2>")
         }
 
@@ -57,98 +56,96 @@ def childSetup() {
             paragraph "<h2>Then, wait for this many minutes...</h2>"
             input "sprinklerPause", "number", title: "Duration (minutes)", required: true, defaultValue: 5
 
-
             paragraph "<h2>After waiting, repeat for these sprinkler(s)</h2>"
             input "sprinkler2", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
             input "sprinkler2valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
             input "sprinkler2humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
             input "sprinkler2moisureLevel", "number", title: "Maximum moisture"
 
-            if(settings.sprinkler2 || settings.sprinkler2valve){
+            if (settings.sprinkler2 || settings.sprinkler2valve) {
                 input "sprinkler3", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler3valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler3humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler3moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler3 || settings.sprinkler3valve){
+            if (settings.sprinkler3 || settings.sprinkler3valve) {
                 input "sprinkler4", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler4valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler4humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler4moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler4 || settings.sprinkler4valve){
+            if (settings.sprinkler4 || settings.sprinkler4valve) {
                 input "sprinkler5", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler5valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler5humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler5moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler5 || settings.sprinkler5valve){
+            if (settings.sprinkler5 || settings.sprinkler5valve) {
                 input "sprinkler6", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler6valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler6humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler6moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler6 || settings.sprinkler6valve){
+            if (settings.sprinkler6 || settings.sprinkler6valve) {
                 input "sprinkler7", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler7valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler7humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler7moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler7 || settings.sprinkler7valve){
+            if (settings.sprinkler7 || settings.sprinkler7valve) {
                 input "sprinkler8", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler8valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler8humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler8moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler8 || settings.sprinkler8valve){
+            if (settings.sprinkler8 || settings.sprinkler8valve) {
                 input "sprinkler9", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler9valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler9humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler9moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler9 || settings.sprinkler9valve){
+            if (settings.sprinkler9 || settings.sprinkler9valve) {
                 input "sprinkler10", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler10valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler10humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler10moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler10 || settings.sprinkler10valve){
+            if (settings.sprinkler10 || settings.sprinkler10valve) {
                 input "sprinkler11", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler11valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler11humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler11moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler11 || settings.sprinkler11valve){
+            if (settings.sprinkler11 || settings.sprinkler11valve) {
                 input "sprinkler12", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler12valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler12humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler12moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler12 || settings.sprinkler12valve){
+            if (settings.sprinkler12 || settings.sprinkler12valve) {
                 input "sprinkler13", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler13valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler13humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler13moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler13 || settings.sprinkler13valve){
+            if (settings.sprinkler13 || settings.sprinkler13valve) {
                 input "sprinkler14", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler14valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler14humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler14moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler14 || settings.sprinkler14valve){
+            if (settings.sprinkler14 || settings.sprinkler14valve) {
                 input "sprinkler15", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler15valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler15humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler15moisureLevel", "number", title: "Maximum moisture"
             }
-             if(settings.sprinkler15 || settings.sprinkler15valve){
+            if (settings.sprinkler15 || settings.sprinkler15valve) {
                 input "sprinkler16", "capability.switch", title: "Turn on these switches...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler16valve", "capability.valve", title: "Open these valves...", multiple:true, required: false, submitOnChange: true
                 input "sprinkler16humidity", "capability.relativeHumidityMeasurement", title: "Disable when ALL moisture sensors are above threshold", multiple: true
                 input "sprinkler16moisureLevel", "number", title: "Maximum moisture"
             }
-
 
             paragraph "<hr><h2>Emergency shutoff</h2>"
             input "stopSwitch", "capability.switch", title: "Disable a running automation when this switch turns on", multiple:false, required: false
@@ -157,15 +154,11 @@ def childSetup() {
                     required: true, displayDuringSetup: true)
 
             label title: "<h2>Enter a name for this setup (optional)</h2>", required: false
-
         }
-
-
     }
-
 }
 
-def initialize(){
+def initialize() {
     log.info("Initializing with settings: ${settings}")
     state.currentSprinkler = 0
     state.finishedRunning = false
@@ -174,12 +167,12 @@ def initialize(){
     unschedule()
     allOff()
 
-    if(settings.startTime != null && settings.startTime != "" && settings.days != null && settings.days != ""){
+    if (settings.startTime != null && settings.startTime != "" && settings.days != null && settings.days != "") {
         // Schedule-based automation
         def formattedTime = startTime.split(":")
         def hours = formattedTime[0].substring(formattedTime[0].length() - 2)
         def minutes = formattedTime[1].substring(0, 2)
-        def days = "${days.toString().replaceAll("(\\s+)|(\\[)|(\\])","")}"
+        def days = "${days.toString().replaceAll("(\\s+)|(\\[)|(\\])", "")}"
 
         schedule("0 ${minutes} ${hours} ? * ${days} *", beginSprinklerProcess)
         logDebug "scheduling schedule(0 ${minutes} ${hours} ? * ${days} *, startSprinkler)"
@@ -192,7 +185,7 @@ def initialize(){
     subscribe(stopSwitch, "switch.on", stopHandler)
 }
 
-def beginSprinklerProcess(){
+def beginSprinklerProcess() {
     // Starts the sprinkler process from the beginning
 
     if (cancelSwitch == null || cancelSwitch.currentValue("switch") == "off") {
@@ -219,32 +212,31 @@ def updated() {
     initialize()
 }
 
-
-def startHandler(evt){
+def startHandler(evt) {
     // The switch to turn on the sprinklers was enabled
     if (evt.value == "on")
         beginSprinklerProcess()
 }
 
-def stopHandler(evt){
-    if(evt.value == "on"){
+def stopHandler(evt) {
+    if (evt.value == "on") {
         state.finishedRunning = true
         endSprinkler()
     }
 }
 
-def allOff(){
+def allOff() {
     // Turns off all sprinklers
     logDebug "Turning off all sprinklers."
 
-    for(int i = 1; i<=16; i++){
+    for (int i = 1; i <= 16; i++) {
         if (settings."sprinkler${i}" != null || settings."sprinkler${i}valve" != null) {
             this.setSprinkler(i, 'off')
         } else { break }
     }
 }
 
-def startSprinkler(){
+def startSprinkler() {
     // Start sprinkler
     def moistureSensors = this.getProperty("sprinkler${state.currentSprinkler}humidity")
     if (moistureSensors != null) {
@@ -252,7 +244,7 @@ def startSprinkler(){
         if (!moistureSensors.find { it.currentValue("humidity") <= moistureLevel }) {
             logDebug "Skipping watering because of moisture level above ${moistureLevel}"
             checkIfDone( state.currentSprinkler + 1 )
-            if( state.currentSprinkler <= 16 && state.finishedRunning == false){
+            if ( state.currentSprinkler <= 16 && state.finishedRunning == false) {
                 state.currentSprinkler++
                 startSprinkler()
             }
@@ -265,7 +257,7 @@ def startSprinkler(){
     runIn(60 * sprinklerDuration, endSprinkler)
 }
 
-def endSprinkler(){
+def endSprinkler() {
     // Stops a sprinkler, and schedules the next set
 
     logDebug "Ending sprinkler set ${state.currentSprinkler}. Finished running? ${state.finishedRunning}"
@@ -273,7 +265,7 @@ def endSprinkler(){
     this.setSprinkler(state.currentSprinkler, 'off')
     checkIfDone( state.currentSprinkler + 1 )
 
-    if( state.currentSprinkler <= 16 && state.finishedRunning == false){
+    if ( state.currentSprinkler <= 16 && state.finishedRunning == false) {
         logDebug "Starting ${state.currentSprinkler + 1} in ${sprinklerPause} minutes."
         state.currentSprinkler++
 
@@ -283,7 +275,7 @@ def endSprinkler(){
     }
 }
 
-def checkIfDone( sprinklerSet ){
+def checkIfDone( sprinklerSet ) {
     // Checks if the sprinklerSet has any devices attached to it
 
     logDebug "Checking if next sprinkler set has any devices set to run..."
@@ -292,10 +284,10 @@ def checkIfDone( sprinklerSet ){
         state.finishedRunning = true
 }
 
-private logDebug( text ){
+private logDebug( text ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "Simple Sprinklers: (${app.name}): ${text}"
     }
 }

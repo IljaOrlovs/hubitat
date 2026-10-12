@@ -21,12 +21,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Salt and Pepper - Virtual Device",
     namespace: "Salt and Pepper",
     author: "Adam Kempenich",
     importUrl: "N/A") {
-
         capability "Actuator"
         capability "Color Temperature"
         capability "Initialize"
@@ -36,33 +35,30 @@ definition (
     }
 }
 
-def on(){
+def on() {
     sendEvent(name: "switch", value: "on")
 }
-def off(){
+def off() {
     sendEvent(name: "switch", value: "off")
 }
-def setLevel(brightness, duration=0){
+def setLevel(brightness, duration=0) {
     sendEvent(name: "level", value: brightness.toInteger())
 }
 
-def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')){
+def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')) {
     sendEvent(name: "colorTemperature", value: colorTemperature.toInteger())
 }
 
-def installed(){
+def installed() {
     sendEvent(name: "switch", value: "off")
     sendEvent(name: "level", value: 100)
     sendEvent(name: "colorTemperature", value: 4000)
-
 }
 
-def initialize(){
-    // Do nothing
-
+def initialize() {
+// Do nothing
 }
 
-def updated(){
-    // Do nothing
-
+def updated() {
+// Do nothing
 }

@@ -1,53 +1,50 @@
 / ** Primer Device **/
 
-metadata{
+metadata {
     definition(
         name: "Primer device type",
         namespace: "development",
         author: "Adam Kempenich",
         importURL: "") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Refresh"
         capability "Switch"
 
         command "toggle"
-    }
+        }
 }
 
-def initialize(){
+def initialize() {
     log.debug "Device initialized."
 
-    // Do nothing, since nothing needs to be intialized
+// Do nothing, since nothing needs to be intialized
 }
 
-def updated(){
+def updated() {
     log.debug "Device update"
 
     initialize()
 }
 
-def on(){
+def on() {
     log.debug "Device was turned on"
 
     sendEvent(name: "switch", value: "on")
 }
 
-def off(){
+def off() {
     log.debug "Device was turned off"
 
     sendEvent(name: "switch", value: "off")
-
 }
 
-def toggle(){
+def toggle() {
     log.debug "Toggle Called"
 
-    if(device.currentValue("switch") == "on") {
+    if (device.currentValue("switch") == "on") {
         off()
     } else {
         on()
     }
-
 }

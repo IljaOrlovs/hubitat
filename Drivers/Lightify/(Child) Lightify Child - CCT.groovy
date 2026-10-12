@@ -8,7 +8,7 @@
 *
 *  Changelog:
 *    0.22 (Feb 25, 2020)
-*	- Updated naming schema
+*    - Updated naming schema
 *
 *    0.21 - No changes
 *
@@ -35,12 +35,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Lightify Child - CCT",
     namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child)%20Lightify%20Child%20-%20CCT.groovy") {
-
         capability "Actuator"
         capability "Color Temperature"
         capability "Initialize"
@@ -52,28 +51,28 @@ definition (
     }
 }
 
-def on(){
+def on() {
     sendEvent(name: "switch", value: "on")
     parent.on(device.deviceNetworkId)
 }
-def off(){
+def off() {
     sendEvent(name: "switch", value: "on")
     parent.off(device.deviceNetworkId)
 }
-def setLevel(brightness, duration=0){
+def setLevel(brightness, duration=0) {
     sendEvent(name: "level", value: brightness.toFloat())
     parent.setLevel(device.deviceNetworkId, brightness.toFloat())
 }
 
-def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')){
+def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')) {
     sendEvent(name: "colorTemperature", value: colorTemperature.toFloat())
     parent.setColorTemperature(device.deviceNetworkId, colorTemperature.toInteger(), level)
 }
 
-def initialize(){
-    // Do nothing
+def initialize() {
+// Do nothing
 }
 
-def updated(){
-    // Do nothing
+def updated() {
+// Do nothing
 }

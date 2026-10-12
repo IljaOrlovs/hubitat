@@ -2,7 +2,7 @@
 // Instead, use https://docs.hubitat.com/index.php?title=ColorUtils_Object
 // Feel free to message me on the Hubitat forums if you need any help
 
-def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float conversionValue = 100, resolution = "low"){
+def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float conversionValue = 100, resolution = "low") {
     // Accepts conversionHue (0-100 or 0-360), conversionSaturation (0-100), and converstionValue (0-100), resolution ("low", "high")
     // If resolution is low, conversionHue accepts 0-100. If resolution is high, conversionHue accepts 0-360
     // Returns RGB map ([ red: 0-255, green: 0-255, blue: 0-255 ])
@@ -25,12 +25,12 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
     q *= 255
     t *= 255
 
-    if      (h==0) { rgbMap = [red: conversionValue, green: t, blue: p] }
-    else if (h==1) { rgbMap = [red: q, green: conversionValue, blue: p] }
-    else if (h==2) { rgbMap = [red: p, green: conversionValue, blue: t] }
-    else if (h==3) { rgbMap = [red: p, green: q, blue: conversionValue] }
-    else if (h==4) { rgbMap = [red: t, green: p, blue: conversionValue] }
-    else if (h==5) { rgbMap = [red: conversionValue, green: p,blue: q]  }
+    if (h == 0) { rgbMap = [red: conversionValue, green: t, blue: p] }
+    else if (h == 1) { rgbMap = [red: q, green: conversionValue, blue: p] }
+    else if (h == 2) { rgbMap = [red: p, green: conversionValue, blue: t] }
+    else if (h == 3) { rgbMap = [red: p, green: q, blue: conversionValue] }
+    else if (h == 4) { rgbMap = [red: t, green: p, blue: conversionValue] }
+    else if (h == 5) { rgbMap = [red: conversionValue, green: p, blue: q]  }
     else           { rgbMap = [red: 0, green: 0, blue: 0] }
 
     return rgbMap

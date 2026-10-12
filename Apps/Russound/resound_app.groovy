@@ -27,25 +27,25 @@ definition(
 )
 
 preferences {
-  section("SmartThings Hub") {
-    input "hostHub", "hub", title: "Select Hub", multiple: false, required: true
-  }
-  section("SmartThings Node Proxy") {
-    input "proxyAddress", "text", title: "Proxy Address", description: "(ie. 192.168.1.10)", required: true
-    input "proxyPort", "text", title: "Proxy Port", description: "(ie. 8080)", required: true, defaultValue: "8080"
-    input "authCode", "password", title: "Auth Code", description: "", required: true, defaultValue: "secret-key"
-  }
-  section("Russound Controller") {
-    input "enableDiscovery", "bool", title: "Discover Zones (WARNING: all existing zones will be removed)", required: false, defaultValue: false
-  }
+    section("SmartThings Hub") {
+        input "hostHub", "hub", title: "Select Hub", multiple: false, required: true
+    }
+    section("SmartThings Node Proxy") {
+        input "proxyAddress", "text", title: "Proxy Address", description: "(ie. 192.168.1.10)", required: true
+        input "proxyPort", "text", title: "Proxy Port", description: "(ie. 8080)", required: true, defaultValue: "8080"
+        input "authCode", "password", title: "Auth Code", description: "", required: true, defaultValue: "secret-key"
+    }
+    section("Russound Controller") {
+        input "enableDiscovery", "bool", title: "Discover Zones (WARNING: all existing zones will be removed)", required: false, defaultValue: false
+    }
 }
 
 def installed() {
-  subscribeToEvents()
+    subscribeToEvents()
 }
 
 def subscribeToEvents() {
-  subscribe(location, null, lanResponseHandler, [filterEvents:false])
+    subscribe(location, null, lanResponseHandler, [filterEvents:false])
 }
 
 def uninstalled() {
@@ -53,149 +53,149 @@ def uninstalled() {
 }
 
 def updated() {
-  if (settings.enableDiscovery) {
-    //remove child devices as we will reload
-    removeChildDevices()
-  }
+    if (settings.enableDiscovery) {
+        //remove child devices as we will reload
+        removeChildDevices()
+    }
 
-  //subscribe to callback/notifications from STNP
-  sendCommand('/subscribe/'+getNotifyAddress())
+    //subscribe to callback/notifications from STNP
+    sendCommand('/subscribe/' + getNotifyAddress())
 
-  if (settings.enableDiscovery) {
-    //delay discovery for 5 seconds
-    runIn(5, discoverChildDevices)
-    settings.enableDiscovery = false
-  }
+    if (settings.enableDiscovery) {
+        //delay discovery for 5 seconds
+        runIn(5, discoverChildDevices)
+        settings.enableDiscovery = false
+    }
 }
 
 def lanResponseHandler(evt) {
-  def map = stringToMap(evt.stringValue)
+    def map = stringToMap(evt.stringValue)
 
-  //verify that this message is from STNP IP:Port
-  //IP and Port are only set on HTTP GET response and we need the MAC
-  if (map.ip == convertIPtoHex(settings.proxyAddress) &&
+    //verify that this message is from STNP IP:Port
+    //IP and Port are only set on HTTP GET response and we need the MAC
+    if (map.ip == convertIPtoHex(settings.proxyAddress) &&
     map.port == convertPortToHex(settings.proxyPort)) {
-      if (map.mac) {
-        state.proxyMac = map.mac
-      }
-  }
+        if (map.mac) {
+            state.proxyMac = map.mac
+        }
+    }
 
-  //verify that this message is from STNP MAC
-  //MAC is set on both HTTP GET response and NOTIFY
-  if (map.mac != state.proxyMac) {
-    return
-  }
+    //verify that this message is from STNP MAC
+    //MAC is set on both HTTP GET response and NOTIFY
+    if (map.mac != state.proxyMac) {
+        return
+    }
 
-  def headers = getHttpHeaders(map.headers);
-  def body = getHttpBody(map.body);
-  log.trace "SmartThings Node Proxy: ${evt.stringValue}"
-  log.trace "Headers: ${headers}"
-  log.trace "Body: ${body}"
+    def headers = getHttpHeaders(map.headers);
+    def body = getHttpBody(map.body);
+    log.trace "SmartThings Node Proxy: ${evt.stringValue}"
+    log.trace "Headers: ${headers}"
+    log.trace "Body: ${body}"
 
-  //verify that this message is for this plugin
-  if (headers.'stnp-plugin' != 'rnet') {
-    return
-  }
+    //verify that this message is for this plugin
+    if (headers.'stnp-plugin' != 'rnet') {
+        return
+    }
 
-  log.trace "Russound RNET event: ${evt.stringValue}"
-  processEvent(body)
+    log.trace "Russound RNET event: ${evt.stringValue}"
+    processEvent(body)
 }
 
 private sendCommand(path) {
   //log.trace "Russound RNET send command: ${path}"
 
-  if (settings.proxyAddress.length() == 0 ||
+    if (settings.proxyAddress.length() == 0 ||
     settings.proxyPort.length() == 0) {
-    log.error "SmartThings Node Proxy configuration not set!"
-    return
-  }
+        log.error "SmartThings Node Proxy configuration not set!"
+        return
+    }
 
-  def host = getProxyAddress()
-  def headers = [:]
-  headers.put("HOST", host)
-  headers.put("Content-Type", "application/json")
-  headers.put("stnp-auth", settings.authCode)
+    def host = getProxyAddress()
+    def headers = [:]
+    headers.put("HOST", host)
+    headers.put("Content-Type", "application/json")
+    headers.put("stnp-auth", settings.authCode)
 
-  def hubAction = new hubitat.device.HubAction(
+    def hubAction = new hubitat.device.HubAction(
       method: "GET",
       path: path,
       headers: headers
   )
-  sendHubCommand(hubAction)
+    sendHubCommand(hubAction)
 }
 
 private processEvent(evt) {
-  if (evt.type == "discover") {
-    //for each controller
-    evt.controllers.each {
-      addChildDevices(it.controller, it.zones)
+    if (evt.type == "discover") {
+        //for each controller
+        evt.controllers.each {
+            addChildDevices(it.controller, it.zones)
+        }
     }
-  }
-  if (evt.type == "zone") {
-    updateZoneDevices(evt)
-  }
+    if (evt.type == "zone") {
+        updateZoneDevices(evt)
+    }
 }
 
 private addChildDevices(controller, zones) {
-  zones.each {
-    def deviceId = getDeviceId(controller, it.zone)
-    if (!getChildDevice(deviceId)) {
-      addChildDevice("redloro-smartthings", "Russound Zone", deviceId, hostHub.id, ["name": it.name, label: "RNET: "+it.name, completedSetup: true])
-      log.debug "Added zone device: ${deviceId}"
+    zones.each {
+        def deviceId = getDeviceId(controller, it.zone)
+        if (!getChildDevice(deviceId)) {
+            addChildDevice("redloro-smartthings", "Russound Zone", deviceId, hostHub.id, ["name": it.name, label: "RNET: " + it.name, completedSetup: true])
+            log.debug "Added zone device: ${deviceId}"
+        }
     }
-  }
 
-  childDevices*.refresh()
+    childDevices*.refresh()
 }
 
 private removeChildDevices() {
-  getAllChildDevices().each { deleteChildDevice(it.deviceNetworkId) }
+    getAllChildDevices().each { deleteChildDevice(it.deviceNetworkId) }
 }
 
 def discoverChildDevices() {
-  sendCommand('/plugins/rnet/discover')
+    sendCommand('/plugins/rnet/discover')
 }
 
 private updateZoneDevices(evt) {
   //log.debug "updateZoneDevices: ${evt}"
 
-  //setState for all zones in case All On/Off was called
-  if (evt.zone == -1) {
-    //log.debug "Update all zones"
-    childDevices*.zone(evt)
-    return
-  }
+    //setState for all zones in case All On/Off was called
+    if (evt.zone == -1) {
+        //log.debug "Update all zones"
+        childDevices*.zone(evt)
+        return
+    }
 
-  def zonedevice = getChildDevice(getDeviceId(evt.controller, evt.zone))
-  if (zonedevice) {
-    zonedevice.zone(evt)
-  }
+    def zonedevice = getChildDevice(getDeviceId(evt.controller, evt.zone))
+    if (zonedevice) {
+        zonedevice.zone(evt)
+    }
 }
 
 private partyMode(evt) {
-  childDevices*.partyMode(evt)
+    childDevices*.partyMode(evt)
 }
 
 private getDeviceId(controller, zone) {
-  return "rnet|${controller}|${zone}"
+    return "rnet|${controller}|${zone}"
 }
 
 private getHttpHeaders(headers) {
     def obj = [:]
-    new String(headers.decodeBase64()).split("\r\n").each {param ->
-    def nameAndValue = param.split(":")
-    obj[nameAndValue[0]] = (nameAndValue.length == 1) ? "" : nameAndValue[1].trim()
+    new String(headers.decodeBase64()).split("\r\n").each { param ->
+        def nameAndValue = param.split(":")
+        obj[nameAndValue[0]] = (nameAndValue.length == 1) ? "" : nameAndValue[1].trim()
     }
-  return obj
+    return obj
 }
 
 private getHttpBody(body) {
-  def obj = null;
-  if (body) {
-    def slurper = new JsonSlurper()
-    obj = slurper.parseText(new String(body.decodeBase64()))
-  }
-  return obj
+    def obj = null;
+    if (body) {
+        def slurper = new JsonSlurper()
+        obj = slurper.parseText(new String(body.decodeBase64()))
+    }
+    return obj
 }
 
 private getProxyAddress() {
@@ -203,13 +203,13 @@ private getProxyAddress() {
 }
 
 private getNotifyAddress() {
-  return settings.hostHub.localIP + ":" + settings.hostHub.localSrvPortTCP
+    return settings.hostHub.localIP + ":" + settings.hostHub.localSrvPortTCP
 }
 
 private String convertIPtoHex(ipAddress) {
-  return ipAddress.tokenize( '.' ).collect {  String.format( '%02x', it.toInteger() ) }.join().toUpperCase()
+    return ipAddress.tokenize( '.' ).collect {  String.format( '%02x', it.toInteger() ) }.join().toUpperCase()
 }
 
 private String convertPortToHex(port) {
-  return port.toString().format( '%04x', port.toInteger() ).toUpperCase()
+    return port.toString().format( '%04x', port.toInteger() ).toUpperCase()
 }

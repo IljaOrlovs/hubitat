@@ -49,12 +49,11 @@ import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 metadata {
-    definition (
+    definition(
         name: "Lightify Bridge - Gateway",
         namespace: "Lightify",
         author: "Adam Kempenich",
         importUrl: "https://github.com/adamkempenich/hubitat/raw/master/Drivers/Lightify/(Child)%20Lightify%20Bridge%20-%20Gateway.groovy") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Polling"
@@ -62,9 +61,8 @@ metadata {
         capability "Sensor"
         capability "Switch"
         command "getGroups"
-    }
+        }
     preferences {
-
         //state.deviceIP
         //state.devicePort
         //state.deviceMAC
@@ -75,42 +73,41 @@ metadata {
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
-
     }
 }
 
-def getGroups(){
+def getGroups() {
     // Manually get a list of groups from the parent
     parent.getGroups()
 }
 
-def on(childID){
+def on(childID) {
     parent.allOn()
     sendEvent(name: "switch", value: "on")
 }
 
-def off(childID){
+def off(childID) {
     parent.allOff()
     sendEvent(name: "switch", value: "off")
 }
 
-def setIPState( value ){
+def setIPState( value ) {
     state.deviceIP = value
 }
-def setPortState( value ){
-        state.devicePort = value
+def setPortState( value ) {
+    state.devicePort = value
 }
-def setMACState( value ){
-        state.deviceMac = value
+def setMACState( value ) {
+    state.deviceMac = value
 }
- def setRefreshTimeState( value ){
-        state.refreshTime = value
- }
-def setReconnectPingsState( value ){
-        state.reconnectPings = value
+def setRefreshTimeState( value ) {
+    state.refreshTime = value
+}
+def setReconnectPingsState( value ) {
+    state.reconnectPings = value
 }
 
 def parse( response ) {
@@ -120,16 +117,16 @@ def parse( response ) {
     parent.parse( response )
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "Lightify (${state.deviceIP}): ${debugText}"
     }
 }
 
-private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) {
+private logDescriptionText( descriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "Lightify (${state.deviceIP}): ${descriptionText}"
     }
 }
@@ -143,7 +140,6 @@ def sendCommand( data ) {
 }
 
 def refresh( ) {
-
     logDebug "Number of failed responses: ${state.noResponse}"
     state.noResponse++
     state.noResponse >= state.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
@@ -160,38 +156,37 @@ def poll() {
     refresh()
 }
 
-def updated(){
+def updated() {
     initialize()
 }
 
-def uninstalled(){
+def uninstalled() {
     removeChildDevices(getChildDevices())
 }
 
 private removeChildDevices(delete) {
-    delete.each {deleteChildDevice(it.deviceNetworkId)}
+    delete.each { deleteChildDevice(it.deviceNetworkId) }
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
 }
 
-def connectDevice( data ){
-
-    if(data.firstRun){
+def connectDevice( data ) {
+    if (data.firstRun) {
         logDebug "Stopping refresh loop. Starting connectDevice loop"
         unschedule() // remove the refresh loop
         schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
@@ -201,7 +196,7 @@ def connectDevice( data ){
 
     pauseExecution(1000)
     //    if it's the first run
-    if( data.firstRun || ( now() - state.lastConnectionAttempt) > clamp(state.refreshTime, 1, 60) * 500 /* Stops the app from initializing too fast */ ) {
+    if ( data.firstRun || ( now() - state.lastConnectionAttempt) > clamp(state.refreshTime, 1, 60) * 500 /* Stops the app from initializing too fast */ ) {
         def tryWasGood = false
         try {
             logDebug "Opening Socket Connection."
@@ -209,25 +204,24 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-
-        } catch(e) {
+        } catch (e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${state.refreshTime} seconds.")
             state.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
 
-        if(tryWasGood){
-        	unschedule()
-        	logDebug "Stopping connectDevice loop. Starting refresh loop"
-        	schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", refresh)
-        	state.noResponse = 0
+        if (tryWasGood) {
+            unschedule()
+            logDebug "Stopping connectDevice loop. Starting refresh loop"
+            schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", refresh)
+            state.noResponse = 0
         }
         logDebug "Proper time has passed, or it is the device's first run."
         logDebug "${(now() - state.lastConnectionAttempt)} >= ${clamp(state.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}"
         state.lastConnectionAttempt = now()
     }
-    else{
+    else {
         logDebug "Tried to connect too soon. Skipping this round."
         logDebug "Too little time has passed: ${(now() - state.lastConnectionAttempt)} >= ${clamp(state.refreshTime, 1, 60) * 500}"
         state.lastConnectionAttempt = now()
@@ -242,7 +236,7 @@ def initialize() {
     connectDevice([firstRun: true])
 }
 
-def installed(){
+def installed() {
     state.noResponse = 0
     initialize()
 }

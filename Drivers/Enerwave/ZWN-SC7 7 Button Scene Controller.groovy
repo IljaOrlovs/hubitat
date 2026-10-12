@@ -30,14 +30,13 @@
 *
 */
 
- metadata {
-  // Automatically generated. Make future change here.
-    definition (
+metadata {
+    // Automatically generated. Make future change here.
+    definition(
         name: "ZWN-SC7 Enerwave 7 Button Scene Controller",
         namespace: "enerwave",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Enerwave/ZWN-SC7%207%20Button%20Scene%20Controller.groovy") {
-
         capability "Actuator"
         capability "PushableButton"
         capability "Configuration"
@@ -50,26 +49,25 @@
 
         fingerprint deviceId: "0x0202", inClusters:"0x21, 0x2D, 0x85, 0x86, 0x72"
         fingerprint deviceId: "0x0202", inClusters:"0x2D, 0x85, 0x86, 0x72"
-    }
+        }
 }
 
 // parse events into attributes
 def parse(description) {
-  log.debug "Parsing '${description}'"
+    log.debug "Parsing '${description}'"
 
     def result = null
-  def cmd = zwave.parse(description)
-  if (cmd) {
-    result = zwaveEvent(cmd)
-  }
-  return result
-
+    def cmd = zwave.parse(description)
+    if (cmd) {
+        result = zwaveEvent(cmd)
+    }
+    return result
 }
 
 // Handle a button being pressed
 def buttonEvent(button) {
-  button = button as Integer
-  def result = []
+    button = button as Integer
+    def result = []
 
     log.debug "Button event fired"
 
@@ -82,7 +80,7 @@ def buttonEvent(button) {
         result << createEvent(name: "pushed", value: button, isStateChange: true)
         // turn off the button LED
         result << response(zwave.sceneActuatorConfV1.sceneActuatorConfReport(dimmingDuration: 255, level: 255, sceneId: 0))
-  }
+    }
     else {
         // update the device state, recording the button press
         result << createEvent(name: "pushed", value: button, isStateChange: true)//, descriptionText: "$device.displayName button was released", isStateChange: true)
@@ -95,15 +93,14 @@ def buttonEvent(button) {
 
 // A zwave command for a button press was received
 def zwaveEvent(hubitat.zwave.commands.sceneactivationv1.SceneActivationSet cmd) {
-
-  // The controller likes to repeat the command... ignore repeats
-  if (state.lastScene == cmd.sceneId && (state.repeatCount < 4) && (now() - state.repeatStart < 2000)) {
-      log.debug "Button ${cmd.sceneId} repeat ${state.repeatCount}x ${now()}"
+    // The controller likes to repeat the command... ignore repeats
+    if (state.lastScene == cmd.sceneId && (state.repeatCount < 4) && (now() - state.repeatStart < 2000)) {
+        log.debug "Button ${cmd.sceneId} repeat ${state.repeatCount}x ${now()}"
         state.repeatCount = state.repeatCount + 1
         createEvent([:])
     }
     else {
-      // If the button was really pressed, store the new scene and handle the button press
+        // If the button was really pressed, store the new scene and handle the button press
         state.lastScene = cmd.sceneId
         state.lastLevel = 0
         state.repeatCount = 0
@@ -115,24 +112,21 @@ def zwaveEvent(hubitat.zwave.commands.sceneactivationv1.SceneActivationSet cmd) 
 
 // A scene command was received -- it's probably scene 0, so treat it like a button release
 def zwaveEvent(hubitat.zwave.commands.sceneactuatorconfv1.SceneActuatorConfGet cmd) {
-
-  buttonEvent(cmd.sceneId)
-
+    buttonEvent(cmd.sceneId)
 }
 
 // The controller sent a scene activation report.  Log it, but it really shouldn't happen.
 def zwaveEvent(hubitat.zwave.commands.sceneactuatorconfv1.SceneActuatorConfReport cmd) {
     log.debug "Scene activation report"
-  log.debug "Scene ${cmd.sceneId} set to ${cmd.level}"
+    log.debug "Scene ${cmd.sceneId} set to ${cmd.level}"
 
     createEvent([:])
 }
 
-
 // Configuration Reports are replys to configuration value requests... If we knew what configuration parameters
 // to request this could be very helpful.
 def zwaveEvent(hubitat.zwave.commands.associationcommandconfigurationv1.CommandConfigurationReport cmd) {
-  createEvent([:])
+    createEvent([:])
 }
 
 // The VRC supports hail commands, but I haven't seen them.
@@ -142,9 +136,9 @@ def zwaveEvent(hubitat.zwave.commands.hailv1.Hail cmd) {
 
 // Update manufacturer information when it is reported
 def zwaveEvent(hubitat.zwave.commands.manufacturerspecificv2.ManufacturerSpecificReport cmd) {
-  if (state.manufacturer != cmd.manufacturerName) {
-    updateDataValue("manufacturer", cmd.manufacturerName)
-  }
+    if (state.manufacturer != cmd.manufacturerName) {
+        updateDataValue("manufacturer", cmd.manufacturerName)
+    }
 
     createEvent([:])
 }
@@ -152,10 +146,10 @@ def zwaveEvent(hubitat.zwave.commands.manufacturerspecificv2.ManufacturerSpecifi
 // Association Groupings Reports tell us how many groupings the device supports.  This equates to the number of
 // buttons/scenes in the VRCS
 def zwaveEvent(hubitat.zwave.commands.associationv2.AssociationGroupingsReport cmd) {
-  def response = []
+    def response = []
 
     log.debug "${getDataByName("numButtons")} buttons stored"
-  if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings)) {
+    if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings)) {
         updateState("numButtons", "$cmd.supportedGroupings")
         updateState("numberOfButtons", (int) cmd.supportedGroupings)
         log.debug "${cmd.supportedGroupings} groups available"
@@ -163,14 +157,13 @@ def zwaveEvent(hubitat.zwave.commands.associationv2.AssociationGroupingsReport c
         response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
 
         response << associateHub()
-  }
+    }
     else {
-      response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
-      response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
+        response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
+        response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
     }
     return response
 }
-
 
 // Handles all Z-Wave commands we don't know we are interested in
 def zwaveEvent(hubitat.zwave.Command cmd) {
@@ -181,8 +174,8 @@ def zwaveEvent(hubitat.zwave.Command cmd) {
 
 // Create a list of the configuration commands to send to the device
 def configurationCmds() {
-  // Always check the manufacturer and the number of groupings allowed
-  def commands = [
+    // Always check the manufacturer and the number of groupings allowed
+    def commands = [
     zwave.manufacturerSpecificV1.manufacturerSpecificGet().format(),
     zwave.associationV1.associationGroupingsGet().format(),
     zwave.sceneControllerConfV1.sceneControllerConfSet(dimmingDuration:0, groupId:1, sceneId:1).format(),
@@ -195,21 +188,19 @@ def configurationCmds() {
 
     ]
 
-   // commands << associateHub()
-  //  log.debug "192"
-//    delayBetween(commands)
+    // commands << associateHub()
+    //  log.debug "192"
+    //    delayBetween(commands)
     associateHub(commands)
 }
 
 // Configure the device
 def configure(var=null) {
-  def cmd=configurationCmds()
+    def cmd = configurationCmds()
     log.debug("Sending configuration: ${cmd}")
     sendEvent(name:"numberOfButtons", value: 7)
     return cmd
-
 }
-
 
 //
 // Associate the hub with the buttons on the device, so we will get status updates
@@ -218,11 +209,10 @@ def associateHub(commands) {
 
     // Loop through all the buttons on the controller
     for (def buttonNum = 1; buttonNum <= integer(getDataByName("numButtons")); buttonNum++) {
-          pauseExecution(100)
-          // Associate the hub with the button so we will get status updates
-          commands << zwave.associationV1.associationSet(groupingIdentifier: buttonNum, nodeId: zwaveHubNodeId).format()
-
-  }
+        pauseExecution(100)
+        // Associate the hub with the button so we will get status updates
+        commands << zwave.associationV1.associationSet(groupingIdentifier: buttonNum, nodeId: zwaveHubNodeId).format()
+    }
 
     return commands
 }
@@ -230,37 +220,37 @@ def associateHub(commands) {
 // Update State
 // Store mode and settings
 def updateState(String name, String value) {
-  state[name] = value
-  device.updateDataValue(name, value)
+    state[name] = value
+    device.updateDataValue(name, value)
 }
 
 // Get Data By Name
 // Given the name of a setting/attribute, lookup the setting's value
 def getDataByName(String name) {
-  state[name] ?: device.getDataValue(name)
+    state[name] ?: device.getDataValue(name)
 }
 
 //Stupid conversions
 
 // convert a double to an integer
 def integer(double v) {
-  return v.toInteger()
+    return v.toInteger()
 }
 
 // convert a hex string to integer
 def integerhex(String v) {
-  if (v == null) {
-      return 0
+    if (v == null) {
+        return 0
     }
 
-  return Integer.parseInt(v, 16)
+    return Integer.parseInt(v, 16)
 }
 
 // convert a hex string to integer
 def integer(String v) {
-  if (v == null) {
-      return 0
+    if (v == null) {
+        return 0
     }
 
-  return Integer.parseInt(v)
+    return Integer.parseInt(v)
 }

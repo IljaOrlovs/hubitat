@@ -8,7 +8,7 @@
 *
 *  Changelog:
 *    0.22 (Feb 15, 2020)
-*	- Updated naming schema
+*    - Updated naming schema
 *
 *    0.21 - No changes
 *
@@ -36,12 +36,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Lightify Child - Dimmable",
     namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child)%20Lightify%20Child%20-%20Dimmable.groovy") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Polling"
@@ -51,7 +50,7 @@ definition (
         capability "Switch Level"
     }
     preferences {
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
@@ -60,65 +59,63 @@ definition (
     }
 }
 
-def on(){
+def on() {
     // Turn the device on
 
     sendEvent(name: "switch", value: "on")
     parent.on(device.deviceNetworkId)
 }
-def off(){
+def off() {
     // Turn the device off
 
     sendEvent(name: "switch", value: "on")
     parent.off(device.deviceNetworkId)
 }
-def setLevel(levelValue, duration=0){
+def setLevel(levelValue, duration=0) {
     // Update the brightness of  adevice
 
     sendEvent(name: "level", value: levelValue.toInteger())
     parent.setLevel(device.deviceNetworkId, levelValue.toInteger())
 }
 
-def initialize(){
-    // Do nothing
-
+def initialize() {
+// Do nothing
 }
 
-def updated(){
-    // Do nothing
-
+def updated() {
+// Do nothing
 }
 
-def refresh(){
+def refresh() {
     // Request an info packet from the gateway
 
     parent.refresh()
 }
 
-def preStage(){
+def preStage() {
     // Turn on a light when values change if this setting is false
 
     settings.enableColorPrestaging ? null : ( device.currentValue("switch") == "off" ? on() : null )
 }
 
-def logDescriptionText(text){
+def logDescriptionText(text) {
     // Log device changes if set to
 
     settings.logDescriptionText == true ? log.info("${device.deviceNetworkId}: ${text}") : null
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value

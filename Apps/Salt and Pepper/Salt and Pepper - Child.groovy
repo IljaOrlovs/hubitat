@@ -1,5 +1,5 @@
 /**
-*	Salt and Pepper Child - Hubitat
+*    Salt and Pepper Child - Hubitat
 *
 *    Author:
 *        Adam Kempenich
@@ -25,9 +25,7 @@ preferences {
 
 def childSetup() {
     dynamicPage(name: "childSetup", title: "Salt and Pepper - Child", nextPage: null, install: true, uninstall: true, refreshInterval:0) {
-
         section() {
-
             paragraph("<h2>Start ...</h2>")
             input "deviceName", "string", title: "<h3>Grouped light name:</h3>", required: true, defaultValue: "Salt & Pepper"
 
@@ -42,19 +40,14 @@ def childSetup() {
                     required: true, displayDuringSetup: true)
 
             label title: "<h2>Enter a name for this app (optional)</h2>", required: false
-
         }
-
-
     }
-
 }
 
-def initialize(){
+def initialize() {
     logDebug("Initializing with settings: ${settings}")
 
-
-    def currentchild = getChildDevices()?.find { it.deviceNetworkId == "${settings.deviceName}"}
+    def currentchild = getChildDevices()?.find { it.deviceNetworkId == "${settings.deviceName }" }
 
     if (currentchild == null) {
         logDebug "Device does not exist. Creating"
@@ -71,9 +64,7 @@ def initialize(){
     subscribe(childDevice, "switch", powerHandler)
     subscribe(childDevice, "colorTemperature", colorTemperatureHandler)
     subscribe(childDevice, "level", levelHandler)
-
 }
-
 
 def installed() {
     logDebug "Installed"
@@ -87,65 +78,59 @@ def updated() {
     initialize()
 }
 
-def powerHandler( evt ){
-
+def powerHandler( evt ) {
     log.trace "${evt}"
 
     def childDevice = getChildDevice(settings.deviceName)
 
-    if(evt.value == "on"){
-        if(childDevice.currentValue("colorTemperature") != settings.warmCTValue){
-            for(device in settings.warmDevices){
+    if (evt.value == "on") {
+        if (childDevice.currentValue("colorTemperature") != settings.warmCTValue) {
+            for (device in settings.warmDevices) {
                 device.on()
             }
         }
-        if(childDevice.currentValue("colorTemperature") != settings.coldCTValue){
-            for(device in settings.coldDevices){
+        if (childDevice.currentValue("colorTemperature") != settings.coldCTValue) {
+            for (device in settings.coldDevices) {
                 device.on()
             }
         }
     } else {
-        for(device in settings.warmDevices){
+        for (device in settings.warmDevices) {
             device.off()
         }
-        for(device in settings.coldDevices){
+        for (device in settings.coldDevices) {
             device.off()
         }
     }
 }
 
-def colorTemperatureHandler( evt ){
+def colorTemperatureHandler( evt ) {
     def childDevice = getChildDevice(settings.deviceName)
 
     setDevices(childDevice.currentValue("level"), evt.value.toInteger())
-
 }
 
-def levelHandler( evt ){
+def levelHandler( evt ) {
     def childDevice = getChildDevice(settings.deviceName)
 
     setDevices(evt.value.toInteger(), childDevice.currentValue("colorTemperature").toInteger())
-
 }
 
-def setDevices( level, colorTemperature ){
+def setDevices( level, colorTemperature ) {
     def childDevice = getChildDevice(settings.deviceName)
 
     def percentage = getPercentage(settings.warmCTValue, settings.coldCTValue, clamp(colorTemperature, settings.warmCTValue, settings.coldCTValue))
 
-
-    for(device in settings.warmDevices){
+    for (device in settings.warmDevices) {
         device.setLevel(((100 - ( percentage * 100 )) * level / 100).toInteger())
     }
 
-    for(device in settings.coldDevices){
+    for (device in settings.coldDevices) {
         device.setLevel((percentage * level).toInteger())
     }
-
 }
 
-
-def calculateFromPercentage(lowValue, highValue, percentage){
+def calculateFromPercentage(lowValue, highValue, percentage) {
     lowValue = lowValue.toDouble()
     highValue = highValue.toDouble()
     percentage = percentage.toDouble()
@@ -154,34 +139,33 @@ def calculateFromPercentage(lowValue, highValue, percentage){
     return value
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
 }
 
-def getPercentage(lowValue, highValue, median){
-
+def getPercentage(lowValue, highValue, median) {
     percentCompleted = 1 - ((highValue - median) / (highValue - lowValue))
 
     return percentCompleted
 }
 
-private logDebug( text ){
+private logDebug( text ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "Salt and Pepper: (${app.name}): ${text}"
     }
 }

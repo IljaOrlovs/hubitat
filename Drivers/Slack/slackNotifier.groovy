@@ -1,22 +1,22 @@
 /**
-*	Hubitat Slack Notifier 0.10
+*    Hubitat Slack Notifier 0.10
 *
-*	Author:
-*		Adam Kempenich
+*    Author:
+*        Adam Kempenich
 *
-*	Documentation: Does not exist
+*    Documentation: Does not exist
 *
 *  Changelog:
 *
-*	0.10 (Apr 02 2019)
-*		- Initial (development internal) release
+*    0.10 (Apr 02 2019)
+*        - Initial (development internal) release
 *
-* 	To-Do:
-*		- Everything
+*     To-Do:
+*        - Everything
 *
 */
 metadata {
-    definition (
+    definition(
         name: "Slack Notifier",
         namespace: "slacknotifier",
         author: "Adam Kempenich",
@@ -28,7 +28,6 @@ metadata {
         }
 }
 
-
 def installed() {
     unsubscribe()
     unschedule()
@@ -36,14 +35,12 @@ def installed() {
 }
 
 def updated() {
-
 }
 
 private def initialize() {
-
 }
 
-def deviceNotification(text){
+def deviceNotification(text) {
     def params = [
         uri: "${settings.apiURL}",
         body: [text: "${text}"]
@@ -60,26 +57,22 @@ def deviceNotification(text){
     }
 }
 
-def debuglog(statement)
-{
+def debuglog(statement) {
     def logL = 0
     if (logLevel) logL = logLevel.toInteger()
-    if (logL == 0) {return}//bail
-    else if (logL >= 2)
-    {
+    if (logL == 0) { return }//bail
+    else if (logL >= 2) {
         log.debug(statement)
     }
 }
-def infolog(statement)
-{
+def infolog(statement) {
     def logL = 0
     if (logLevel) logL = logLevel.toInteger()
-    if (logL == 0) {return}//bail
-    else if (logL >= 1)
-    {
+    if (logL == 0) { return }//bail
+    else if (logL >= 1) {
         log.info(statement)
     }
 }
-def getLogLevels(){
-    return [["0":"None"],["1":"Running"],["2":"NeedHelp"]]
+def getLogLevels() {
+    return [["0":"None"], ["1":"Running"], ["2":"NeedHelp"]]
 }

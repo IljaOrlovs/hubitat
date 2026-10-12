@@ -8,7 +8,7 @@
 *
 *  Changelog:
 *    0.22 (Feb 25, 2020)
-*	- Updated naming schema
+*    - Updated naming schema
 *
 *    0.21 (Feb 10, 2020)
 *        - Initial Commit
@@ -25,12 +25,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Lightify Child - Switch",
     namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child)%20Lightify%20Child%20-%20Switch.groovy") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Polling"
@@ -39,43 +38,40 @@ definition (
         capability "Switch"
     }
     preferences {
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
     }
 }
 
-def on(){
+def on() {
     // Turn the device on
 
     sendEvent(name: "switch", value: "on")
     parent.on(device.deviceNetworkId)
 }
-def off(){
+def off() {
     // Turn the device off
 
     sendEvent(name: "switch", value: "on")
     parent.off(device.deviceNetworkId)
 }
 
-def initialize(){
-    // Do nothing
-
+def initialize() {
+// Do nothing
 }
 
-def updated(){
-    // Do nothing
-
+def updated() {
+// Do nothing
 }
 
-def refresh(){
+def refresh() {
     // Request an info packet from the gateway
 
     parent.refresh()
 }
 
-
-def logDescriptionText(text){
+def logDescriptionText(text) {
     // Log device changes if set to
 
     settings.logDescriptionText == true ? log.info("${device.deviceNetworkId}: ${text}") : null

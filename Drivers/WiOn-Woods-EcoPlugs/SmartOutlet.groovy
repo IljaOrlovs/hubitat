@@ -31,20 +31,19 @@ metadata {
         namespace: "ecoplugs",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/WiOn-Woods-EcoPlugs/SmartOutlet.groovy") {
-
         capability "Actuator"
         capability "Switch"
         capability "Polling"
         capability "Refresh"
         capability "Initialize"
-    }
+        }
 
     preferences {
         input "deviceIP", "text", title: "Device IP", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 80)", required: true, defaultValue: 80
 
         input(name:"ecoID", type:"string", title: "Eco ID (found in the EcoPlug App's Device's Settings):",
-       		  description: "ECO-12345678", defaultValue: "${ecoID}",
+                 description: "ECO-12345678", defaultValue: "${ecoID}",
               required: true, displayDuringSetup: true)
 
         input(name:"logDebug", type:"bool", title: "Log debug information?",
@@ -54,18 +53,18 @@ metadata {
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
-      //  input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
-      //        description: "When a device is unreachable, turn its state off. in Hubitat", defaultValue: true,
-      //        required: true, displayDuringSetup: true)
-      //
-        //input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
-      //      description: "Number of failed pings before reconnecting device.", defaultValue: 3,
-      //      required: true, displayDuringSetup: true)
-//
-//
-      //  input(name:"refreshTime", type:"number", title: "Time to refresh (0-60 seconds)",
-      //      description: "Interval between refreshing a device for its current value. Default: 40. Use less than 60.", defaultValue: 40,
-      //      required: true, displayDuringSetup: true)
+    //  input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
+    //        description: "When a device is unreachable, turn its state off. in Hubitat", defaultValue: true,
+    //        required: true, displayDuringSetup: true)
+    //
+    //input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
+    //      description: "Number of failed pings before reconnecting device.", defaultValue: 3,
+    //      required: true, displayDuringSetup: true)
+    //
+    //
+    //  input(name:"refreshTime", type:"number", title: "Time to refresh (0-60 seconds)",
+    //      description: "Interval between refreshing a device for its current value. Default: 40. Use less than 60.", defaultValue: 40,
+    //      required: true, displayDuringSetup: true)
     }
 }
 
@@ -73,8 +72,7 @@ def poll() {
     refresh()
 }
 
-def refresh(){
-
+def refresh() {
 }
 
 def socketStatus( status ) {
@@ -88,7 +86,7 @@ def parse( response ) {
     state.noResponse = 0
 
     def responseArray = HexUtils.hexStringToIntArray(response)
-    switch(responseArray.length) {
+    switch (responseArray.length) {
         case 167:
             logDebug "${response}"
             break;
@@ -102,18 +100,18 @@ def parse( response ) {
     }
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "WiOn/Woods/EcoPlugs (${settings.deviceIP}): ${debugText}"
     }
 }
 
-private logDescriptionText( descriptionText ){
+private logDescriptionText( descriptionText ) {
     // If descriptionText is enabled in settings, pass text to the logs
 
-    if( settings.logDescriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
@@ -133,14 +131,13 @@ def off() {
 }
 
 def sendCommand(data) {
-
     String stringBytes = HexUtils.byteArrayToHexString(data)
     new HubAction(stringBytes, Protocol.LAN, [type: HubAction.Type.LAN_TYPE_UDPCLIENT, encoding: HubAction.Encoding.HEX_STRING, destinationAddress: "${settings.deviceIP}", destinationPort: settings.devicePort])
 }
 
-def initialize(){
-    // Add persistent connection
-    // Add epoch time and other device parameters
-    // Add remaining routines
-    // Add support for energy meter devices
+def initialize() {
+// Add persistent connection
+// Add epoch time and other device parameters
+// Add remaining routines
+// Add support for energy meter devices
 }

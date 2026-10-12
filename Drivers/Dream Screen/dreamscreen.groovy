@@ -1,37 +1,29 @@
 /**
 * DreamScreen -
 *
-*	Change History:
-*		0.7 (Sep 10, 2021):
-*			- Added Clamp methods
-*			- Restructured methods
-*			- Added color capability
-*			- Added CT capability
-*			- Added colormode capability
-*			- Added lightEffects capability
-*			- Added switch capability
-*			- Added switchLevel capability
+*    Change History:
+*        0.7 (Sep 10, 2021):
+*            - Added Clamp methods
+*            - Restructured methods
+*            - Added color capability
+*            - Added CT capability
+*            - Added colormode capability
+*            - Added lightEffects capability
+*            - Added switch capability
+*            - Added switchLevel capability
 *           - added inputSource
 **/
-
-
-
 
 import hubitat.device.HubAction
 import hubitat.device.Protocol
 import hubitat.helper.HexUtils
 import hubitat.helper.ColorUtils
 
-
-
 def driverVer() {
     return "0.1" // Initial build
 }
 
-
-static def getCRCTable(){
-
-
+static def getCRCTable() {
     final byte[] CRCTABLE = [0x00, 0x07, 0x0E, 0x09, 0x1C, 0x1B, 0x12, 0x15, 0x38, 0x3F, 0x36, 0x31, 0x24,
                              0x23, 0x2A, 0x2D, 0x70, 0x77, 0x7E, 0x79, 0x6C, 0x6B, 0x62, 0x65, 0x48, 0x4F, 0x46, 0x41, 0x54, 0x53,
                              0x5A, 0x5D, (byte) 0xE0, (byte) 0xE7, (byte) 0xEE, (byte) 0xE9, (byte) 0xFC, (byte) 0xFB,
@@ -63,7 +55,6 @@ static def getCRCTable(){
                              (byte) 0x83, (byte) 0xDE, (byte) 0xD9, (byte) 0xD0, (byte) 0xD7, (byte) 0xC2,
                              (byte) 0xC5, (byte) 0xCC, (byte) 0xCB, (byte) 0xE6, (byte) 0xE1, (byte) 0xE8,
                              (byte) 0xEF, (byte) 0xFA, (byte) 0xFD, (byte) 0xF4, (byte) 0xF3]
-
 
     //def CRCTABLE = [
     //    0, 7, 4, 9, 28, 27, 18, 21,
@@ -108,14 +99,11 @@ static def getCRCTable(){
     //    239, 250, 253, 244, 243
     //] // crcTable is grabbed from a PDF from DreamScreen that describes UDP process
 
-
-
     return CRCTABLE
-
 }
 
 metadata {
-    definition (
+    definition(
         name: "DreamScreen",
         namespace: "DreamScreen",
         author: "Brock Ondayko, Adam Kempenich",
@@ -124,7 +112,6 @@ metadata {
         videoLink: ""
 
     ) {
-
         capability "Actuator"
         capability "Color Control"
         capability "Color Temperature"
@@ -155,7 +142,6 @@ metadata {
             type: "ENUM"]]
     }
     preferences {
-
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 8888)", required: true, defaultValue: 8888
 
@@ -178,7 +164,6 @@ metadata {
               description: "If your device is linked to a group in the DreamScreen app, this needs to match that number. Default: 0.", defaultValue: 0,
               required: true, displayDuringSetup: true)
 
-
         // indicator light auto off
         // minimum luminosity
         // music mode type
@@ -200,7 +185,6 @@ metadata {
         // hdr tone remapping
         // rgb saturation levels
 
-
         // Settigns that I'm not sure work
 
         input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
@@ -217,67 +201,63 @@ metadata {
         input(name:"refreshTime", type:"number", title: "Time to refresh (seconds)",
               description: "Interval between refreshing a device for its current value. Default: 59. Use number between 0-59", defaultValue: 59,
               required: true, displayDuringSetup: true)
-
     }
 }
 
-def setSource(value){
-     setInputSource(value)
+def setSource(value) {
+    setInputSource(value)
 }
-def setInputSource(inputName){
+def setInputSource(inputName) {
     logDebug "setInputSource: ${source}"
 
     byte[] data
     switch (inputName) {
         case 1:
         case "HDMI1":
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x00], 1))
-        sendEvent(name: "mediaInputSource", value: "HDMI1")
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x00], 1))
+            sendEvent(name: "mediaInputSource", value: "HDMI1")
+            break
 
         case 2:
         case "HDMI2":
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x01], 1))
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x01], 1))
 
-        sendEvent(name: "mediaInputSource", value: "HDMI2")
-        break
+            sendEvent(name: "mediaInputSource", value: "HDMI2")
+            break
 
         case 3:
         case "HDMI3":
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x02], 1))
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x02], 1))
 
-        sendEvent(name: "mediaInputSource", value: "HDMI3")
-        break
+            sendEvent(name: "mediaInputSource", value: "HDMI3")
+            break
 
         default:
         sendEvent(name: "mediaInputSource", value: "HDMI1")
             data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x20, 0x00], 1))
-
     }
 
     sendCommand(data)
 }
 
-
-def on(){
+def on() {
     // set to last known input
     // set light mode to last known mode
 
     logDebug "Sending on command"
     sendEvent(name: "switch", value: "on")
 
-    if(device.currentValue("colorMode") == "EFFECTS"){
+    if (device.currentValue("colorMode") == "EFFECTS") {
         log.trace "Sending FX of ${device.currentValue("Effect")[1]}"
         setEffect(device.currentValue("Effect")[1].toInteger())
-
-    } else if(device.currentValue("colorMode") == "RGB"){
+    } else if (device.currentValue("colorMode") == "RGB") {
         setColor(null)
-    } else if(device.currentValue("colorMode") == "CT"){
+    } else if (device.currentValue("colorMode") == "CT") {
         setColorTemperature()
     }
 }
 
-def off(){
+def off() {
     // set mode off
 
     logDebug "Sending off command"
@@ -300,7 +280,6 @@ def setSaturation(value) {
     clamp(value)
 
     setColor(hue: device.currentValue("hue"), level: device.currentValue("level"), saturation: value)
-
 }
 
 def setLevel(value, duration = 0) {
@@ -314,16 +293,15 @@ def setLevel(value, duration = 0) {
     sendCommand(data)
 }
 
-def setColor(colorMap){
-
-    if(colorMap == null){
+def setColor(colorMap) {
+    if (colorMap == null) {
         colorMap = [hue: device.currentValue('hue'), saturation: device.currentValue('saturation'), level: device.currentValue('level')]
     } else {
         sendEvent(name: "hue", value: colorMap.hue)
         sendEvent(name: "saturation", value: colorMap.saturation)
     }
 
-    if(colorMap.containsKey('setFromCT')){
+    if (colorMap.containsKey('setFromCT')) {
         setColorMode("CT")
     } else {
         setColorMode("RGB")
@@ -338,11 +316,9 @@ def setColor(colorMap){
     sendCommand(setToAmbient)
     sendCommand(setAmbientToColorMode)
     sendCommand(data)
-
 }
 
-def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level'), duration = 0){
-
+def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level'), duration = 0) {
     sendEvent(name: "colorTemperature", value: colorTemperature)
     sendEvent(name: "level", value: level)
     setColorMode("CT")
@@ -352,15 +328,15 @@ def setColorTemperature(colorTemperature = device.currentValue('colorTemperature
     def green
     def blue
 
-    if( temp <= 66 ){
+    if ( temp <= 66 ) {
         red = 255
         green = temp
         green = 99.4708025861 * Math.log(green) - 161.1195681661
 
-        if( temp <= 19){
+        if ( temp <= 19) {
             blue = 0
         } else {
-            blue = temp-10
+            blue = temp - 10
             blue = 138.5177312231 * Math.log(blue) - 305.0447927307
         }
     } else {
@@ -373,31 +349,29 @@ def setColorTemperature(colorTemperature = device.currentValue('colorTemperature
         blue = 255
     }
 
-    def hsvColors = ColorUtils.rgbToHSV([red/2.55, green/2.55, blue/2.55])
+    def hsvColors = ColorUtils.rgbToHSV([red / 2.55, green / 2.55, blue / 2.55])
     setColor([hue: hsvColors[0], saturation: hsvColors[1], level: level.toInteger(), setFromCT: true])
-
 }
 
 def setColorMode(value) {
     // Set colormode of device, then fire setColor, setColorTemperature, or setEffect
 
-    if(value == "RGB"){
+    if (value == "RGB") {
         sendEvent(name: "colorMode", value: "RGB")
     }
-    else if(value == "CT" || value == "CCT"){
+    else if (value == "CT" || value == "CCT") {
         sendEvent(name: "colorMode", value: "CT")
     }
-    else if(value == "FX" || value == "EFFECTS"){
+    else if (value == "FX" || value == "EFFECTS") {
         sendEvent(name: "colorMode", value: "EFFECTS")
     }
 }
-
 
 def setEffect(value) {
     // Set lightEffect of device, shows us which mode the device is in
     // 0: Off, 1: Video, 2: Audio, 3: Ambient, 4+: Actual Effect no. + 4
 
-    if(value != 2){
+    if (value != 2) {
         setColorMode('FX')
     }
 
@@ -408,107 +382,99 @@ def setEffect(value) {
     byte[] data
 
     switch (value) {
-
         case 0: //case "Video":
-        log.trace "Video"
-        data = prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x01, 0x01, 0x0a])
-        sendEvent(name: "Effect", value: [0, "Video"])
-        break
+            log.trace "Video"
+            data = prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x01, 0x01, 0x0a])
+            sendEvent(name: "Effect", value: [0, "Video"])
+            break
 
         case 1: //case "Music":
-        data = prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x01, 0x02, 0x03 ])
-        sendEvent(name: "Effect", value: [1, "Music"])
-        break
+            data = prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x01, 0x02, 0x03 ])
+            sendEvent(name: "Effect", value: [1, "Music"])
+            break
 
         case 2:
-        data =  appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x00], 1))
-        sendEvent(name: "Effect", value: [2, "Random Color"])
-        break
+            data =  appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x00], 1))
+            sendEvent(name: "Effect", value: [2, "Random Color"])
+            break
 
         case 3:
-        data =  appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x01], 1))
-        sendEvent(name: "Effect", value: [3, "Fireside"])
-        break
+            data =  appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x01], 1))
+            sendEvent(name: "Effect", value: [3, "Fireside"])
+            break
 
         case 4:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x02], 1))
-        sendEvent(name: "Effect", value: [4, "Twinkle"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x02], 1))
+            sendEvent(name: "Effect", value: [4, "Twinkle"])
+            break
 
         case 5:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x03], 1))
-        sendEvent(name: "Effect", value: [5, "Ocean"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x03], 1))
+            sendEvent(name: "Effect", value: [5, "Ocean"])
+            break
 
         case 6:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x04], 1))
-        sendEvent(name: "Effect", value: [6, "Rainbow"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x04], 1))
+            sendEvent(name: "Effect", value: [6, "Rainbow"])
+            break
 
         case 7:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x05], 1))
-        sendEvent(name: "Effect", value: [7, "July 4th"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x05], 1))
+            sendEvent(name: "Effect", value: [7, "July 4th"])
+            break
 
         case 8:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x06], 1))
-        sendEvent(name: "Effect", value: [8, "Holiday"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x06], 1))
+            sendEvent(name: "Effect", value: [8, "Holiday"])
+            break
 
         case 9:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x07], 1))
-        sendEvent(name: "Effect", value: [9, "Pop"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x07], 1))
+            sendEvent(name: "Effect", value: [9, "Pop"])
+            break
 
         case 10:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x08], 1))
-        sendEvent(name: "Effect", value: [10, "Enchanted Forest"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x08], 1))
+            sendEvent(name: "Effect", value: [10, "Enchanted Forest"])
+            break
 
         case 11:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x09], 1))
-        sendEvent(name: "Effect", value: [11, "Orange Crawling"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x09], 1))
+            sendEvent(name: "Effect", value: [11, "Orange Crawling"])
+            break
 
         case 12:
-        data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x0a], 1))
-        sendEvent(name: "Effect", value: [12, "White Crawling"])
-        break
+            data = appendCRC(prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x03, 0x0d, 0x0a], 1))
+            sendEvent(name: "Effect", value: [12, "White Crawling"])
+            break
 
         default:
             payload = 0
     }
 
-
-
-    if(value >= 2){
+    if (value >= 2) {
         // Scenes require ambient mode to be set, and also ambient mode to be set to scene mode
         log.trace "sending ambient scene"
         sendCommand(setToAmbient)
         sendCommand(setAmbientToSceneMode)
-
     } else {
-
-
     }
     sendCommand(data)
-
 }
 
-
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
-    } else if(lowerBound == upperBound){
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
+    } else if (lowerBound == upperBound) {
         value = upperBound
     }
 
@@ -520,9 +486,7 @@ def parse( response ) {
 
     log.trace "Received ${response} back"
     state.noResponse = 0
-
 }
-
 
 def refresh(value) {
     // Set hue of device, then fire setColor
@@ -542,7 +506,6 @@ def updated(value) {
     initialize()
 }
 
-
 def installed(value) {
     // Instantiate variables
 
@@ -552,22 +515,20 @@ def installed(value) {
 
 def logDescriptionText(text) {
     // Set hue of device, then fire setColor
-    if( settings.logDescriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "DreamScreen (${settings.deviceIP}): ${text}"
     }
-
 }
 
 def logDebug(text) {
     // Set hue of device, then fire setColor
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "DreamScreen (${settings.deviceIP}): ${text}"
     }
 }
 
-def appendCRC(arrayToAppend){
-
+def appendCRC(arrayToAppend) {
     log.trace "Array to append ${arrayToAppend}"
     byte[] sendToCalculateCRC = arrayToAppend
 
@@ -575,7 +536,7 @@ def appendCRC(arrayToAppend){
 
     log.trace "received CRC: ${crc}"
     def data = []
-    for(item in arrayToAppend){
+    for (item in arrayToAppend) {
         data << item
     }
     data << crc
@@ -587,7 +548,7 @@ def appendCRC(arrayToAppend){
     return convertedData
 }
 
-def calculateCRC(byte[] data){ // Adam's version
+def calculateCRC(byte[] data) { // Adam's version
     log.trace "calculateCRC ${data}"
 
     byte size = (byte) (data[1] + 0x01)
@@ -595,11 +556,11 @@ def calculateCRC(byte[] data){ // Adam's version
     byte crc = 0x00
     def crcTable = getCRCTable()
 
-    while(cntr < size){
+    while (cntr < size) {
         crc = crcTable[(byte) (crc ^ (data[cntr])) & 0xFF]
         byte[] crcString = crc
         cntr++
-            }
+    }
     return crc
 }
 
@@ -618,7 +579,6 @@ def sendCommand( data ) {
                                                     callback: "parse",
                                                     parseWarning: true])
     sendHubCommand(myHubAction)
-
 }
 
 def initialize() {
@@ -632,13 +592,12 @@ def initialize() {
     device.mediaInputSource.value = ["HDMI1", "HDMI2", "HDMI3"]
     logDebug "Initializing device."
 
-
     // Initialize Settings
 
     byte[] hdrData
-    if(settings.enableHDR){
+    if (settings.enableHDR) {
         hdrData = prefixPacketLength([settings.groupAddress.toInteger(), 0x41, 0x03, 0x60, 0x01, 0x16])
-    } else{
+    } else {
         hdrData = prefixPacketLength([settings.groupAddress.toInteger(), 0x41, 0x03, 0x60, 0x00, 0x11])
     }
     sendCommand(hdrData)
@@ -647,23 +606,21 @@ def initialize() {
     byte[] subscribeRequest = prefixPacketLength([settings.groupAddress.toInteger(), 0x11, 0x01, 0x0C, 0x01])
     sendCommand(subscribeRequest)
 
-
     unschedule()
-    //connectDevice([firstRun: true])
-
+//connectDevice([firstRun: true])
 }
 
-def prefixPacketLength(data, addCRCLength = 0){
+def prefixPacketLength(data, addCRCLength = 0) {
     def packetLength = 0
 
-    try{
+    try {
         packetLength = data.length // array
-    } catch(listError){
+    } catch (listError) {
         packetLength = data.size // list
     }
 
     def arrayBuilder = [0xFC, (packetLength + addCRCLength)] // prefix checksum and initial packet data for positions [0 and 1]
-    for(element in data){
+    for (element in data) {
         arrayBuilder << element // add remaining elements now that they've been counted
     }
 
@@ -674,7 +631,7 @@ def prefixPacketLength(data, addCRCLength = 0){
 def connectDevice(data) {
     // Set hue of device, then fire setColor
 
-    if(data.firstRun){
+    if (data.firstRun) {
         logDebug "Stopping refresh loop. Starting connectDevice loop"
         unschedule() // remove the refresh loop
         schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
@@ -692,18 +649,17 @@ def connectDevice(data) {
         pauseExecution(1000)
         logDescriptionText "Connection successfully established"
         tryWasGood = true
-
-    } catch(e) {
+    } catch (e) {
         logDebug("Error attempting to establish socket connection to device.")
         logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
         settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
         tryWasGood = false
     }
 
-    if(tryWasGood){
+    if (tryWasGood) {
         unschedule()
         logDebug "Stopping connectDevice loop. Starting refresh loop"
         schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
         state.noResponse = 0
     }
-}
+    }

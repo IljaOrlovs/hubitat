@@ -24,21 +24,21 @@ def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
     if (s == 0.0) {
         h = 0.0
     }
-    else{
-        if (r == max){
-        		h = ((g - b) / delta)
+    else {
+        if (r == max) {
+            h = ((g - b) / delta)
         }
-        else if(g == max) {
-        		h = (2 + (b - r) / delta)
+        else if (g == max) {
+            h = (2 + (b - r) / delta)
         }
         else if (b == max) {
-        		h = (4 + (r - g) / delta)
+            h = (4 + (r - g) / delta)
         }
     }
 
     h *= 60.0
-    	h < 0 ? ( h += 360 ) : null
+    h < 0 ? ( h += 360 ) : null
 
-  	resolution == "low" ? h /= 3.6 : null
-  	return [ hue: h, saturation: s, value: v ]
+    resolution == "low" ? h /= 3.6 : null
+    return [ hue: h, saturation: s, value: v ]
 }

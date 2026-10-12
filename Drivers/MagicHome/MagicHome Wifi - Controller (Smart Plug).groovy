@@ -28,19 +28,18 @@ import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 metadata {
-    definition (
+    definition(
         name: "MagicHome Wifi — Controller (Smart Plug)",
         namespace: "MagicHome",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Controller%20(Smart%20Plug).groovy") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Polling"
         capability "Refresh"
         capability "Sensor"
         capability "Switch"
-    }
+        }
 
     preferences {
         input "deviceIP", "text", title: "Device IP", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
@@ -49,7 +48,7 @@ metadata {
         input(name:"logDebug", type:"bool", title: "Log debug information?",
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
               required: true, displayDuringSetup: true)
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
@@ -60,10 +59,8 @@ metadata {
         input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
             description: "Number of failed pings before reconnecting device.", defaultValue: 3,
             required: true, displayDuringSetup: true)
-
     }
 }
-
 
 def on() {
     // Turn on the device
@@ -83,10 +80,10 @@ def off() {
     sendCommand(data)
 }
 
-def checkInstantiation( map, setName ){
+def checkInstantiation( map, setName ) {
     // Description
 
-    if(map[setName]){
+    if (map[setName]) {
         sendEvent(name: setName, value: clamp(map[setName].value))
         return clamp(map[setName].value)
     } else {
@@ -96,38 +93,38 @@ def checkInstantiation( map, setName ){
 
 // ------------------- Helper Functions ------------------------- //
 
-def powerOnWithChanges( ){
+def powerOnWithChanges( ) {
     // If the device is off and light settings change, turn it on (if user settings apply)
 
-        settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
+    settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
 }
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound}
-        if(value > upperBound){ value = upperBound}
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound}
-        if(value > lowerBound ){ value = lowerBound}
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
 }
 
-def calculateChecksum( data ){
+def calculateChecksum( data ) {
     // Totals an array of bytes
 
     int sum = 0;
-    for(int d : data)
+    for (int d : data)
         sum += d;
     return sum & 255
 }
 
-def appendChecksum( data ){
+def appendChecksum( data ) {
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
@@ -141,16 +138,16 @@ def parse( response ) {
 
     def responseArray = HexUtils.hexStringToIntArray(response)
 
-    switch(responseArray.length) {
+    switch (responseArray.length) {
         case 4:
             logDebug( "Received power-status packet of ${response}" )
-            if( responseArray[2] == 35 ){
-                if(device.currentValue("switch") != "on"){
+            if ( responseArray[2] == 35 ) {
+                if (device.currentValue("switch") != "on") {
                     sendEvent(name: "switch", value: "on")
                 }
             }
-            else{
-                if(device.currentValue("switch") != "off"){
+            else {
+                if (device.currentValue("switch") != "off") {
                     sendEvent(name: "switch", value: "off")
                 }
             }
@@ -159,13 +156,13 @@ def parse( response ) {
         case 14:
             logDebug( "Received general-status packet of ${response}" )
 
-            if( responseArray[2] == 35 ){
-                if(device.currentValue("switch") != "on"){
+            if ( responseArray[2] == 35 ) {
+                if (device.currentValue("switch") != "on") {
                     sendEvent(name: "switch", value: "on")
                 }
             }
-            else{
-                if(device.currentValue("switch") != "off"){
+            else {
+                if (device.currentValue("switch") != "off") {
                     sendEvent(name: "switch", value: "off")
                 }
             }
@@ -182,16 +179,16 @@ def parse( response ) {
     }
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
-private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) {
+private logDescriptionText( descriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${descriptionText}"
     }
 }
@@ -205,7 +202,6 @@ def sendCommand( data ) {
 }
 
 def refresh( ) {
-
     logDebug "Number of failed responses: ${state.noResponse}"
     state.noResponse++
     state.noResponse >= settings.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
@@ -223,27 +219,26 @@ def poll() {
     refresh()
 }
 
-def updated(){
+def updated() {
     initialize()
 }
 
-def connectDevice( data ){
-
-    if(data.firstRun){
+def connectDevice( data ) {
+    if (data.firstRun) {
         logDebug "Stopping refresh loop. Starting connectDevice loop"
         unschedule() // remove the refresh loop
         schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
     }
 
-    try{
-    InterfaceUtils.socketClose(device)
-    } catch(e){
+    try {
+        InterfaceUtils.socketClose(device)
+    } catch (e) {
         logDebug "Attempted to close a socket when there is none to close."
     }
 
     pauseExecution(1000)
 
-    if( data.firstRun || ( now() - state.lastConnectionAttempt) > clamp(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
+    if ( data.firstRun || ( now() - state.lastConnectionAttempt) > clamp(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
         def tryWasGood = false
         try {
             logDebug "Opening Socket Connection."
@@ -251,25 +246,24 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-
-        } catch(e) {
+        } catch (e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
             settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
 
-        if(tryWasGood){
-        	unschedule()
-        	logDebug "Stopping connectDevice loop. Starting refresh loop"
-        	schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
-        	state.noResponse = 0
+        if (tryWasGood) {
+            unschedule()
+            logDebug "Stopping connectDevice loop. Starting refresh loop"
+            schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
+            state.noResponse = 0
         }
         log.debug "Proper time has passed, or it is the device's first run."
         log.debug "${(now() - state.lastConnectionAttempt)} >= ${clamp(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}"
         state.lastConnectionAttempt = now()
     }
-    else{
+    else {
         log.debug "Tried to connect too soon. Skipping this round."
         log.debug "X ${(now() - state.lastConnectionAttempt)} >= ${clamp(settings.refreshTime, 1, 60) * 500}"
         state.lastConnectionAttempt = now()
@@ -285,7 +279,7 @@ def initialize() {
     connectDevice([firstRun: true])
 }
 
-def installed(){
+def installed() {
     state.noResponse = 0
     state.lastConnectionAttempt = now()
 }

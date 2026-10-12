@@ -23,12 +23,11 @@
 */
 
 metadata {
-definition (
+    definition(
     name: "Lightify Child - Group",
     namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child) Lightify Child - Group.groovy") {
-
         capability "Actuator"
         capability "Color Control"
         capability "Color Mode"
@@ -41,7 +40,7 @@ definition (
         capability "Switch Level"
     }
     preferences {
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
@@ -50,21 +49,21 @@ definition (
     }
 }
 
-def on(){
+def on() {
     // Turn the device on
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
     sendEvent(name: "switch", value: "on")
     parent.groupOn(nomenclature[1])
 }
-def off(){
+def off() {
     // Turn the device off
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
     sendEvent(name: "switch", value: "off")
     parent.groupOff(nomenclature[1])
 }
-def setLevel(levelValue, duration=0){
+def setLevel(levelValue, duration=0) {
     // Update the brightness of  adevice
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
@@ -72,7 +71,7 @@ def setLevel(levelValue, duration=0){
     parent.setGroupLevel(nomenclature[1], levelValue.toInteger())
 }
 
-def setHue(hueValue){
+def setHue(hueValue) {
     // Update only the hue of a device
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
@@ -80,14 +79,13 @@ def setHue(hueValue){
 
     logDescriptionText("Hue set to ${hueValue}")
 
-
     sendEvent(name: "saturation", value: hueValue.toFloat())
     def parameters = [hue: device.currentValue('hue'), saturation: hueValue, level: device.currentValue('level')]
     parent.setGroupColor(nomenclature[1], parameters)
     preStage()
 }
 
-def setSaturation(saturationValue){
+def setSaturation(saturationValue) {
     // Update only the saturation of a device
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
@@ -95,27 +93,26 @@ def setSaturation(saturationValue){
 
     logDescriptionText("Saturation set to ${saturationValue}")
 
-
     sendEvent(name: "saturation", value: saturationValue.toFloat())
     def parameters = [hue: device.currentValue('hue'), saturation: saturationValue, level: device.currentValue('level')]
     parent.setGroupColor(nomenclature[1], parameters)
     preStage()
 }
 
-def setColor(parameters){
+def setColor(parameters) {
     // Update the color of a device
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
     setParameters = [:]
 
-    if (parameters.hue.toString().isInteger()){ setParameters.hue = clamp(parameters.hue)
-    } else {setParameters.hue = device.currentValue("hue")}
+    if (parameters.hue.toString().isInteger()) { setParameters.hue = clamp(parameters.hue)
+    } else { setParameters.hue = device.currentValue("hue") }
 
-    if(parameters.saturation){setParameters.saturation = clamp(parameters.saturation)
-    } else{ setParameters.saturation = device.currentValue("saturation") }
+    if (parameters.saturation) { setParameters.saturation = clamp(parameters.saturation)
+    } else { setParameters.saturation = device.currentValue("saturation") }
 
-    if(parameters.level){setParameters.level = clamp(parameters.level)
-    } else{ setParameters.level = device.currentValue("level") }
+    if (parameters.level) { setParameters.level = clamp(parameters.level)
+    } else { setParameters.level = device.currentValue("level") }
 
     sendEvent(name: "hue", value: setParameters.hue.toFloat())
     sendEvent(name: "saturation", value: setParameters.saturation.toFloat())
@@ -125,8 +122,7 @@ def setColor(parameters){
     preStage()
 }
 
-
-def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), levelValue = device.currentValue('level')){
+def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), levelValue = device.currentValue('level')) {
     // Update the colorTemperature of a device
     def nomenclature = device.deviceNetworkId.split(" - ") // "${settings.deviceMAC} - ${group}" format
 
@@ -138,46 +134,44 @@ def setColorTemperature(colorTemperature = device.currentValue('colorTemperature
     preStage()
 }
 
-def initialize(){
-    // Do nothing
-
+def initialize() {
+// Do nothing
 }
 
-def updated(){
-    // Do nothing
-
+def updated() {
+// Do nothing
 }
 
-def refresh(){
+def refresh() {
     // Request an info packet from the gateway
 
     parent.refresh()
 }
 
-def preStage(){
+def preStage() {
     // Turn on a light when values change if this setting is false
 
     settings.enableColorPrestaging ? null : ( device.currentValue("switch") == "off" ? on() : null )
 }
 
-def logDescriptionText(text){
+def logDescriptionText(text) {
     // Log device changes if set to
 
     settings.logDescriptionText == true ? log.info("${device.deviceNetworkId}: ${text}") : null
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound }
-        if(value > upperBound){ value = upperBound }
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound }
-        if(value > lowerBound ){ value = lowerBound }
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value

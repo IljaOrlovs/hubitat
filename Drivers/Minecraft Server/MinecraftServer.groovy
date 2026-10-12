@@ -21,7 +21,7 @@ import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 metadata {
-    definition (name: "Minecraft Server", namespace: "adamkempenich", author: "AdamKempenich", importUrl: "") {
+    definition(name: "Minecraft Server", namespace: "adamkempenich", author: "AdamKempenich", importUrl: "") {
         capability "PresenceSensor"
         capability "Initialize"
         capability "Refresh"
@@ -48,32 +48,24 @@ metadata {
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
-
         input(name:"refreshTime", type:"number", title: "Time to refresh (seconds)",
               description: "Interval between refreshing a device for its current value. Default: 10. Use number between 10-60", defaultValue: 10,
               required: true, displayDuringSetup: true)
     }
-
-
 }
 
-def testParse(data){
-
+def testParse(data) {
     log.trace "Testing ${data}"
     //parse(HexUtils.hexStringToByteArray(data))
     parse(data)
 }
 
-void parse( data ){
-
-
-    if(data != ""){
-
+void parse( data ) {
+    if (data != "") {
         log.debug "Parse: ${data}"
 
         sendEvent(name: "switch", value: "on")
         def dataBytes = HexUtils.hexStringToByteArray(data)
-
 
         log.trace dataBytes
         // Remove All 00 pairs
@@ -88,28 +80,27 @@ void parse( data ){
         def firstCurrentPlayersByte
         def firstMaxPlayersByte
 
-
         def cleanOutput = []
 
-        for(i=0; i < dataBytes.length; i++){
-            if(dataBytes[i] != 0x00){
+        for (i = 0; i < dataBytes.length; i++) {
+            if (dataBytes[i] != 0x00) {
                 cleanOutput << dataBytes[i]
-                // log.trace "databytes[i] ${dataBytes[i]}"
+            // log.trace "databytes[i] ${dataBytes[i]}"
             }
         }
 
         log.trace cleanOutput
 
-        for(i = 0; i < cleanOutput.size; i++){
+        for (i = 0; i < cleanOutput.size; i++) {
             //if(cleanOutput[i] == 40 /*0x66*/ && firstNameByte == null){ // beginning of name location
             //    firstNameByte = i + 1
             //    log.trace "firstNameByte - ${i}"
             //}
-            if(cleanOutput[i] == -89 /*0xA7*/ && firstCurrentPlayersByte == null){ // beginning of currentTotalPlayers
+            if (cleanOutput[i] == -89 /*0xA7*/ && firstCurrentPlayersByte == null) { // beginning of currentTotalPlayers
                 firstCurrentPlayersByte = i + 1
                 log.trace "firstCurrentPlayersByte - ${i}"
             }
-            else if(cleanOutput[i] == -89 /*0xA7*/ && firstMaxPlayersByte == null){ // beginning of maxPlayers
+            else if (cleanOutput[i] == -89 /*0xA7*/ && firstMaxPlayersByte == null) { // beginning of maxPlayers
                 firstMaxPlayersByte = i + 1
                 log.trace "firstMaxPlayersByte - ${i}"
             }
@@ -117,11 +108,11 @@ void parse( data ){
 
         // Name Buffer
         def deviceName = []
-        for(i=firstNameByte; i < firstCurrentPlayersByte - 1; i++){
+        for (i = firstNameByte; i < firstCurrentPlayersByte - 1; i++) {
             // if we read an end of line, break
-            try{
+            try {
                 deviceName << cleanOutput[i]
-            } catch(e){
+            } catch (e) {
                 log.trace "Made it to ${i}. firstNameByte: ${firstNameByte}. firstCurrentPlayersByte: ${firstCurrentPlayersByte}"
             }
         }
@@ -129,12 +120,9 @@ void parse( data ){
         serverName = new String(HexUtils.hexStringToByteArray(deviceNameToBytes), "UTF-8")
         log.trace "Name - ${serverName}"
 
-
-
-
         // Current Players Buffer
         def currentPlayersData = []
-        for(i = firstCurrentPlayersByte; i < firstMaxPlayersByte - 1; i++){
+        for (i = firstCurrentPlayersByte; i < firstMaxPlayersByte - 1; i++) {
             // if we read an end of line, break
             currentPlayersData << cleanOutput[i]
         }
@@ -142,12 +130,9 @@ void parse( data ){
         currentPlayers = new String(HexUtils.hexStringToByteArray(currentPlayersDataToBytes), "UTF-8").toInteger()
         log.trace "current Players - ${currentPlayers}"
 
-
-
-
         // Max Players Buffer
         def maxPlayersData = []
-        for(i = firstMaxPlayersByte; i <= cleanOutput.size; i++){
+        for (i = firstMaxPlayersByte; i <= cleanOutput.size; i++) {
             // if we read an end of line, break
             maxPlayersData << cleanOutput[i]
         }
@@ -156,7 +141,7 @@ void parse( data ){
 
         log.trace "max players ${maxPlayers}"
 
-        if(currentPlayers > 0){
+        if (currentPlayers > 0) {
             sendEvent(name: "presence", value: "present")
         } else {
             sendEvent(name: "presence", value: "not present")
@@ -166,56 +151,53 @@ void parse( data ){
         sendEvent(name: "maxPlayers", value: maxPlayers)
         sendEvent(name: "serverName", value: serverName)
 
-        if(currentPlayers > mostPlayersOnlineAtOnce || mostPlayersOnlineAtOnce == null){
+        if (currentPlayers > mostPlayersOnlineAtOnce || mostPlayersOnlineAtOnce == null) {
             mostPlayersOnlineAtOnce == currentPlayers
         }
-    } else{
+    } else {
         log.trace "Null data received"
     }
 }
 
-
 def refresh( ) {
-
     byte[] data = [0xFE]
-    try{
+    try {
         sendCommand(data)
-    } catch(refreshError){
+    } catch (refreshError) {
         logDebug "Can't connect to server"
         sendEvent(name: "switch", value: "off")
-
     }
 }
 
-private logDebug( text ){
+private logDebug( text ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "${device.name} (${settings.deviceIP}): ${text}"
     }
 }
 
-private logDescriptionText( text ){
-    if( settings.logDescriptionText ) {
+private logDescriptionText( text ) {
+    if ( settings.logDescriptionText ) {
         log.info "${device.name} (${settings.deviceIP}): ${text}"
     }
 }
 
-def getChallengeToken(){
+def getChallengeToken() {
     byte[] data = [0xFE, 0xFD, 0x09]
     sendCommand(data)
 }
 
-def calculateChecksum( data ){
+def calculateChecksum( data ) {
     // Totals an array of bytes
 
     int sum = 0;
-    for(int d : data)
+    for (int d : data)
     sum += d;
     return sum & 255
 }
 
-def appendChecksum( data ){
+def appendChecksum( data ) {
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
@@ -229,33 +211,29 @@ byte[] asByteArray(List buffer) {
 def sendCommand( data ) {
     // Sends commands to the device
 
-
     String stringBytes = HexUtils.byteArrayToHexString(data)
     log.debug "${data} was converted. Transmitting: ${stringBytes}"
 
     interfaces.rawSocket.connect([byteInterface: true], settings.deviceIP.toString(), devicePort.toInteger())
     interfaces.rawSocket.sendMessage(stringBytes)
-
-
 }
 
 def socketStatus( status ) {
     logDebug "socketStatus: ${status}"
-
 }
 
-def clamp( value, lowerBound = 0, upperBound = 100 ){
+def clamp( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound}
-        if(value > upperBound){ value = upperBound}
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound}
-        if(value > lowerBound ){ value = lowerBound}
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
@@ -272,10 +250,9 @@ def initialize() {
     unschedule()
     logDebug "Creating refresh loop"
     schedule("0/${clamp(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
-
 }
 
-def installed(){
+def installed() {
     state.noResponse = 0
     state.lastConnectionAttempt = now()
 }

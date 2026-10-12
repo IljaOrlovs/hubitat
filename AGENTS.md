@@ -10,6 +10,7 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 ## Commands (Docker only, no local JVM)
 - `make check` — syntax-parses every `.groovy` (CONVERSION phase; `hubitat.*` won't resolve off-hub) and runs the color tests.
 - `make lint` — CodeNarc with `codenarc.groovy`. Fails on P1 only; P2/P3 are a known baseline (unused imports/vars), clean up opportunistically.
+- `make format` — npm-groovy-lint auto-format (config: `.groovylintrc.json`), then re-runs `make check`. Brace-adding, quote and unused-code fixers are deliberately off: they changed structure (dropped a `}` in Simple Sprinklers) or churned quotes.
 - CI (`.github/workflows/ci.yml`) runs both.
 
 ## Conventions

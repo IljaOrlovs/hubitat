@@ -18,46 +18,46 @@
 *        - Fixed powerOnWithChanges
 *        - Added null 2nd option to setLevel for duration
 *
-*	0.88 (June 12, 2019)
-*		- Added option for failed pings threshold
-*		- Resolved issue with recursive loops and initializing devices
+*    0.88 (June 12, 2019)
+*        - Added option for failed pings threshold
+*        - Resolved issue with recursive loops and initializing devices
 *
-*	0.87 (May 16, 2019)
-*		- Added an option for telnet/socket
-*		- If you are on firmware before 2.1, use TELNET (does not support parse)
-*		- ---> Otherwise, use SOCKET (supports parse) <----
-*		- Greatly improved scheduling
-*		- Started adding some features back in. Fully tested before release.
-*		- Changed powerOnWithChanges to enablePreStaging — this matches Hubitat's vernacular
+*    0.87 (May 16, 2019)
+*        - Added an option for telnet/socket
+*        - If you are on firmware before 2.1, use TELNET (does not support parse)
+*        - ---> Otherwise, use SOCKET (supports parse) <----
+*        - Greatly improved scheduling
+*        - Started adding some features back in. Fully tested before release.
+*        - Changed powerOnWithChanges to enablePreStaging — this matches Hubitat's vernacular
 *
-*	0.86 (April 14 2019)
-*		- Fixed parse()
+*    0.86 (April 14 2019)
+*        - Fixed parse()
 *
-*	0.85 (April 12 2019)
-*		- Simplified most of the code
-*		- Eliminated Telnet method
-*		- Removed most of parse() while I simplify it further. Only power reports.
-*		- Continued to enhance self-healing. Devices that are physically powered off report as off.
-*		- Reworked powerOnWithChanges.
-*		- Corrected all function parameters
-*		- Removed setColorTemperature()
-* 		- Added import URL
+*    0.85 (April 12 2019)
+*        - Simplified most of the code
+*        - Eliminated Telnet method
+*        - Removed most of parse() while I simplify it further. Only power reports.
+*        - Continued to enhance self-healing. Devices that are physically powered off report as off.
+*        - Reworked powerOnWithChanges.
+*        - Corrected all function parameters
+*        - Removed setColorTemperature()
+*         - Added import URL
 *
-*	0.84 (Mar 28 2019)
-* 		- Completely reworked Telnet and Socket methods... Waiting on some bugfixes
-* 		- Greatly enhanced self-healing capabilities
+*    0.84 (Mar 28 2019)
+*         - Completely reworked Telnet and Socket methods... Waiting on some bugfixes
+*         - Greatly enhanced self-healing capabilities
 *
-*	0.83 (Feb 27 2019)
-*	  - Un-did the parse() removal. Added Data checking for parse()
-*	  - Added a setting for time-to-refresh
+*    0.83 (Feb 27 2019)
+*      - Un-did the parse() removal. Added Data checking for parse()
+*      - Added a setting for time-to-refresh
 *
-*  	0.82 (Feb 25 2019)
-*	  - Commented out parse() contents, since I think they are causing slowdown...
+*      0.82 (Feb 25 2019)
+*      - Commented out parse() contents, since I think they are causing slowdown...
 *
 *    0.81 (Feb 19 2019)
-* 		- Added try/catch to initialize method
-* 		- Removed a bunch of extraneous code
-* 		- Fixed an issue with data loss for CCT in parse method
+*         - Added try/catch to initialize method
+*         - Removed a bunch of extraneous code
+*         - Fixed an issue with data loss for CCT in parse method
 *
 *    0.8 (Feb 11 2019)
 *      - Initial Release
@@ -84,12 +84,11 @@ import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 metadata {
-    definition (
+    definition(
         name: "MagicHome Wifi — Controller (RGBW)",
         namespace: "MagicHome",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Controller%20(RGBW).groovy") {
-
         capability "Switch Level"
         capability "Actuator"
         capability "Switch"
@@ -125,7 +124,7 @@ metadata {
         attribute "currentPreset", "number" // 0 (off), 1-20 (other presets)
         attribute "presetSpeed", "number" // 0 - 100
         attribute "whiteLevel", "number"
-    }
+        }
 
     preferences {
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
@@ -145,7 +144,6 @@ metadata {
         input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
             description: "Number of failed pings before reconnecting device.", defaultValue: 3,
             required: true, displayDuringSetup: true)
-
 
         input(name:"enablePreStaging", type:"bool", title: "Enable Color Pre-Staging?",
               defaultValue: false, required: true, displayDuringSetup: true)
@@ -173,7 +171,7 @@ def off() {
     sendCommand(data)
 }
 
-def setHue(hue){
+def setHue(hue) {
     // Set the hue of a device ( 0-100)
 
     hue > 100 ? (hue = 100) : null
@@ -183,7 +181,7 @@ def setHue(hue){
     setColor(hue: hue, level: device.currentValue("level"), saturation: device.currentValue("saturation"))
 }
 
-def setSaturation(saturation){
+def setSaturation(saturation) {
     // Set the saturation of a device (0-100)
 
     saturation > 100 ? (saturation = 100) : null
@@ -202,7 +200,7 @@ def setLevel(level, duration=0) {
     setColor(hue: device.currentValue("hue"), saturation: device.currentValue("saturation"), level: level)
 }
 
-def setWhiteLevel(whiteLevel){
+def setWhiteLevel(whiteLevel) {
     // Set the warm white level of a device (0-100)
 
     whiteLevel > 100 ? (whiteLevel = 100) : null
@@ -212,9 +210,7 @@ def setWhiteLevel(whiteLevel){
     setColor(hue: device.currentValue("hue"), saturation: device.currentValue("saturation"), level: device.currentValue("level"))
 }
 
-
-def setColor( value ){
-
+def setColor( value ) {
     if (value.hue == null || value.hue == "NaN" || value.saturation == null || value.saturation == "NaN") {
         logDebug("Exiting setColor because no hue and/or saturation set")
         return
@@ -227,14 +223,14 @@ def setColor( value ){
     if (value.level) sendEvent(name: "level", value: value.level)
     powerOnWithChanges()
 
-    rgbColors = ColorUtils.hsvToRGB( [value.hue.toFloat(), value.saturation.toFloat(), (value.level?:device.currentValue("level")).toFloat()] )
+    rgbColors = ColorUtils.hsvToRGB( [value.hue.toFloat(), value.saturation.toFloat(), (value.level ?: device.currentValue("level")).toFloat()] )
     byte[] data = appendChecksum(  [ 0x31, rgbColors[0], rgbColors[1], rgbColors[2], device.currentValue("whiteLevel") * 2.55, 0x00, 0x0f ] )
     sendCommand( data )
 
     powerOnWithChanges()
 }
 
-def sendPreset(preset = 1, speed = 100){
+def sendPreset(preset = 1, speed = 100) {
     // Turn on preset mode (true), turn off preset mode (false). Preset (1 - 20), Speed (1 (slow) - 100 (fast)).
 
     // Presets:
@@ -258,102 +254,102 @@ def sendPreset(preset = 1, speed = 100){
     sendCommand( data )
 }
 
-def presetSevenColorDissolve( speed = 100 ){
+def presetSevenColorDissolve( speed = 100 ) {
     sendPreset( 1, speed )
 }
-def presetRedFade( speed = 100 ){
+def presetRedFade( speed = 100 ) {
     sendPreset( 2, speed )
 }
-def presetGreenFade( speed = 100 ){
+def presetGreenFade( speed = 100 ) {
     sendPreset( 3, speed )
 }
-def presetBlueFade( speed = 100 ){
+def presetBlueFade( speed = 100 ) {
     sendPreset( 4, speed )
 }
-def presetYellowFade( speed = 100 ){
+def presetYellowFade( speed = 100 ) {
     sendPreset( 5, speed )
 }
-def presetCyanFade( speed = 100 ){
+def presetCyanFade( speed = 100 ) {
     sendPreset( 6, speed )
 }
-def presetPurpleFade( speed = 100 ){
+def presetPurpleFade( speed = 100 ) {
     sendPreset( 7, speed )
 }
-def presetWhiteFade( speed = 100 ){
+def presetWhiteFade( speed = 100 ) {
     sendPreset( 8, speed )
 }
-def presetRedGreenDissolve( speed = 100 ){
+def presetRedGreenDissolve( speed = 100 ) {
     sendPreset( 9, speed )
 }
-def presetRedBlueDissolve( speed = 100 ){
+def presetRedBlueDissolve( speed = 100 ) {
     sendPreset( 10, speed )
 }
-def presetGreenBlueDissolve( speed = 100 ){
+def presetGreenBlueDissolve( speed = 100 ) {
     sendPreset( 11, speed )
 }
-def presetSevenColorStrobe( speed = 100 ){
+def presetSevenColorStrobe( speed = 100 ) {
     sendPreset( 12, speed )
 }
-def presetRedStrobe( speed = 100 ){
+def presetRedStrobe( speed = 100 ) {
     sendPreset( 13, speed )
 }
-def presetGreenStrobe( speed = 100 ){
+def presetGreenStrobe( speed = 100 ) {
     sendPreset( 14, speed )
 }
-def presetBlueStrobe( speed = 100 ){
+def presetBlueStrobe( speed = 100 ) {
     sendPreset( 15, speed )
 }
-def presetYellowStrobe( speed = 100 ){
+def presetYellowStrobe( speed = 100 ) {
     sendPreset( 16, speed )
 }
-def presetCyanStrobe( speed = 100 ){
+def presetCyanStrobe( speed = 100 ) {
     sendPreset( 17, speed )
 }
-def presetPurpleStrobe( speed = 100 ){
+def presetPurpleStrobe( speed = 100 ) {
     sendPreset( 18, speed )
 }
-def presetWhiteStrobe( speed = 100 ){
+def presetWhiteStrobe( speed = 100 ) {
     sendPreset( 19, speed )
 }
-def presetSevenColorJump( speed = 100 ){
+def presetSevenColorJump( speed = 100 ) {
     sendPreset( 20, speed )
 }
 
 // ------------------- Helper Functions ------------------------- //
 
-def powerOnWithChanges( ){
+def powerOnWithChanges( ) {
     // If the device is off and light settings change, turn it on (if user settings apply)
 
     settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
 }
 
-def limit( value, lowerBound = 0, upperBound = 100 ){
+def limit( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound}
-        if(value > upperBound){ value = upperBound}
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound}
-        if(value > lowerBound ){ value = lowerBound}
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
 }
 
-def calculateChecksum( data ){
+def calculateChecksum( data ) {
     // Totals an array of bytes
 
     int sum = 0;
-    for(int d : data)
+    for (int d : data)
         sum += d;
     return sum & 255
 }
 
-def appendChecksum( data ){
+def appendChecksum( data ) {
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
@@ -366,16 +362,16 @@ def parse( response ) {
     state.noResponse = 0
 
     def responseArray = HexUtils.hexStringToIntArray(response)
-    switch(responseArray.length) {
+    switch (responseArray.length) {
         case 4:
             logDebug( "Received power-status packet of ${response}" )
-            if( responseArray[2] == 35 ){
-                if(device.currentValue("switch") != "on"){
+            if ( responseArray[2] == 35 ) {
+                if (device.currentValue("switch") != "on") {
                     sendEvent(name: "switch", value: "on")
                 }
             }
-            else{
-                if(device.currentValue("switch") != "off"){
+            else {
+                if (device.currentValue("switch") != "off") {
                     sendEvent(name: "switch", value: "off")
                 }
             }
@@ -384,13 +380,13 @@ def parse( response ) {
         case 14:
             logDebug( "Received general-status packet of ${response}" )
 
-            if( responseArray[2] == 35 ){
-                if(device.currentValue("switch") != "on"){
+            if ( responseArray[2] == 35 ) {
+                if (device.currentValue("switch") != "on") {
                     sendEvent(name: "switch", value: "on")
                 }
             }
-            else{
-                if(device.currentValue("switch") != "off"){
+            else {
+                if (device.currentValue("switch") != "off") {
                     sendEvent(name: "switch", value: "off")
                 }
             }
@@ -406,16 +402,16 @@ def parse( response ) {
     }
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
-private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) {
+private logDescriptionText( descriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
@@ -428,9 +424,7 @@ def sendCommand( data ) {
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 
-
 def refresh( ) {
-
     logDebug "Number of failed responses: ${state.noResponse}"
     state.noResponse++
     state.noResponse >= settings.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
@@ -443,18 +437,16 @@ def socketStatus( status ) {
     logDebug "Attempting to reconnect after ${limit(settings.reconnectPings, 0, 10)-state.noResponse} more failed attempt(s)."
 }
 
-
 def poll() {
     refresh()
 }
 
-def updated(){
+def updated() {
     initialize()
 }
 
-def connectDevice( data ){
-
-    if(data.firstRun){
+def connectDevice( data ) {
+    if (data.firstRun) {
         logDebug "Stopping refresh loop. Starting connectDevice loop"
         unschedule() // remove the refresh loop
         schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
@@ -465,7 +457,7 @@ def connectDevice( data ){
 
     pauseExecution(1000)
 
-    if( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
+    if ( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
         def tryWasGood = false
         try {
             logDebug "Opening Socket Connection."
@@ -473,25 +465,24 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-
-        } catch(e) {
+        } catch (e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
             settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
 
-        if(tryWasGood){
-        	unschedule()
-        	logDebug "Stopping connectDevice loop. Starting refresh loop"
-        	schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
-        	state.noResponse = 0
+        if (tryWasGood) {
+            unschedule()
+            logDebug "Stopping connectDevice loop. Starting refresh loop"
+            schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
+            state.noResponse = 0
         }
         log.debug "Proper time has passed, or it is the device's first run."
         log.debug "${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}"
         state.lastConnectionAttempt = now()
     }
-    else{
+    else {
         log.debug "Tried to connect too soon. Skipping this round."
         log.debug "X ${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}"
         state.lastConnectionAttempt = now()
@@ -510,7 +501,7 @@ def initialize() {
     connectDevice([firstRun: true])
 }
 
-def installed(){
+def installed() {
     sendEvent(name: "hue", value: 0)
     sendEvent(name: "saturation", value: 100)
     sendEvent(name: "level", value: 99)

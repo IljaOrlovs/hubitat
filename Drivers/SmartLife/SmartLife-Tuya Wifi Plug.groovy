@@ -27,19 +27,17 @@ import hubitat.helper.InterfaceUtils
 import hubitat.device.Protocol
 
 metadata {
-    definition (
+    definition(
         name: "SmartLife/Tuya Wifi Plug",
         namespace: "Tuya",
         author: "Adam Kempenich") {
-
         capability "Actuator"
         capability "Initialize"
         capability "Polling"
         capability "Refresh"
         capability "Sensor"
         capability "Switch"
-
-    }
+        }
 
     preferences {
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
@@ -59,7 +57,7 @@ metadata {
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
               required: true, displayDuringSetup: true)
 
-         input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
+        input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
 
@@ -101,16 +99,16 @@ def off() {
 
 // ------------------- Helper Functions ------------------------- //
 
-def calculateChecksum( data ){
+def calculateChecksum( data ) {
     // Totals an array of bytes
 
     int sum = 0;
-    for(int d : data)
+    for (int d : data)
         sum += d;
     return sum & 255
 }
 
-def appendChecksum( data ){
+def appendChecksum( data ) {
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
@@ -123,7 +121,7 @@ def parse( response ) {
     state.noResponse = 0
 
     def responseArray = HexUtils.hexStringToIntArray(response)
-    switch(responseArray.length) {
+    switch (responseArray.length) {
         case null:
             logDebug "Null response received from device but hey, at least it's responding!"
             break;
@@ -134,33 +132,33 @@ def parse( response ) {
     }
 }
 
-def limit( value, lowerBound = 0, upperBound = 100 ){
+def limit( value, lowerBound = 0, upperBound = 100 ) {
     // Takes a value and ensures it's between two defined thresholds
 
     value == null ? value = upperBound : null
 
-    if(lowerBound < upperBound){
-        if(value < lowerBound ){ value = lowerBound}
-        if(value > upperBound){ value = upperBound}
+    if (lowerBound < upperBound) {
+        if (value < lowerBound ) { value = lowerBound }
+        if (value > upperBound) { value = upperBound }
     }
-    else if(upperBound < lowerBound){
-        if(value < upperBound){ value = upperBound}
-        if(value > lowerBound ){ value = lowerBound}
+    else if (upperBound < lowerBound) {
+        if (value < upperBound) { value = upperBound }
+        if (value > lowerBound ) { value = lowerBound }
     }
 
     return value
 }
 
-private logDebug( debugText ){
+private logDebug( debugText ) {
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) {
+    if ( settings.logDebug ) {
         log.debug "Tuya (${settings.deviceIP}): ${debugText}"
     }
 }
 
-private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) {
+private logDescriptionText( descriptionText ) {
+    if ( settings.logDescriptionText ) {
         log.info "Tuya (${settings.deviceIP}): ${descriptionText}"
     }
 }
@@ -174,16 +172,15 @@ def sendCommand( data ) {
 }
 
 def refresh( ) {
-
     logDebug "refresh() called. Number of failed responses: ${state.noResponse}"
     state.noResponse++
     state.noResponse >= settings.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
     byte[] data = null
-    if(device.currentValue("switch") == "on"){
+    if (device.currentValue("switch") == "on") {
         off()
     }
-    else{
-       on()
+    else {
+        on()
     }
 }
 
@@ -197,13 +194,12 @@ def poll() {
     refresh()
 }
 
-def updated(){
+def updated() {
     initialize()
 }
 
-def connectDevice( data ){
-
-    if(data.firstRun){
+def connectDevice( data ) {
+    if (data.firstRun) {
         logDebug "Stopping refresh loop. Starting connectDevice loop"
         unschedule() // remove the refresh loop
         schedule("0/${limit(settings.refreshTime, 1, 60)} * * * * ? *", connectDevice, [data: [firstRun: false]])
@@ -213,7 +209,7 @@ def connectDevice( data ){
 
     pauseExecution(1000)
 
-    if( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
+    if ( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
         def tryWasGood = false
         try {
             logDebug "Opening Socket Connection."
@@ -221,24 +217,23 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-
-        } catch(e) {
+        } catch (e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
             settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
 
-        if(tryWasGood){
-        	unschedule()
-        	logDebug "Stopping connectDevice loop. Starting refresh loop"
-        	schedule("0/${limit(settings.refreshTime, 1, 60)} * * * * ? *", refresh)
-        	state.noResponse = 0
+        if (tryWasGood) {
+            unschedule()
+            logDebug "Stopping connectDevice loop. Starting refresh loop"
+            schedule("0/${limit(settings.refreshTime, 1, 60)} * * * * ? *", refresh)
+            state.noResponse = 0
         }
         logDebug "Proper time has passed, or this is the first time this device has attempted to reconnect."
         state.lastConnectionAttempt = now()
     }
-    else{
+    else {
         logDebug "This device has tried to reconnect too quickly. Skipping this round."
         state.lastConnectionAttempt = now()
     }
@@ -252,10 +247,9 @@ def initialize() {
     connectDevice([firstRun: true])
 }
 
-def installed(){
+def installed() {
     sendEvent(name: "switch", value: "off")
     state.noResponse = 0
-
 
     state.lastConnectionAttempt = now()
 }

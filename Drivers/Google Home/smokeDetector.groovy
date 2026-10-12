@@ -26,7 +26,6 @@ metadata {
         namespace: "adamkempenich",
         author: "Adam Kempenich",
         importUrl: "") {
-
         capability "Smoke Detector"
 
         command "clear"
@@ -35,10 +34,9 @@ metadata {
 
         attribute "SmokeLevel", "string"
         attribute "smokeLevelPPM", "number"
-    }
+        }
 
     preferences {
-
     }
 }
 
@@ -46,13 +44,13 @@ def poll() {
     refresh()
 }
 
-def setSmokeLevel(){
+def setSmokeLevel() {
 }
 
-def smoke(value){
+def smoke(value) {
     log.trace "smoke(${value})"}
 
-def setSmoke(value){
+def setSmoke(value) {
     log.trace "setSmoke(${value})"
 }
 
@@ -72,17 +70,15 @@ def sendSmokeAlarmEvent( value, isDigital=false ) {    // attributes: smoke ("de
 
     def map = [:]
 
-    map.value = value==0 ? "detected" : value==1 ? "clear" : value==2 ? "tested" : null
+    map.value = value == 0 ? "detected" : value == 1 ? "clear" : value == 2 ? "tested" : null
 
-    if(value == 0) {
+    if (value == 0) {
         sendEvent(name: "smokeLevel", value: "smoke detected")
         sendEvent(name: "smokeLevelPPM", value:  100000)
-
     }
-    if(value == 1) {
+    if (value == 1) {
         sendEvent(name: "smokeLevel", value: "no smoke detected")
         sendEvent(name: "smokeLevelPPM", value:  0)
-
     }
 
     map.name = "smoke"

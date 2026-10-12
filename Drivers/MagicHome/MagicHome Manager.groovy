@@ -1,5 +1,5 @@
 /**
-*	MagicHome Manager
+*    MagicHome Manager
 *
 *    Author:
 *        Adam Kempenich
@@ -27,7 +27,6 @@ def installed() {
     initialize()
 }
 
-
 def updated() {
     log.info "Updated with settings: ${settings}"
     unsubscribe()
@@ -41,14 +40,13 @@ def initialize() {
 }
 
 def mainPage() {
-    dynamicPage(name: "mainPage", refreshInterval:0){
-
-        section("<h2>Information</h2>"){
+    dynamicPage(name: "mainPage", refreshInterval:0) {
+        section("<h2>Information</h2>") {
             paragraph "This app will help you manage your MagicHome devices without needing the app. While I recommend that you reserve an IP for your devices on your router, this app will do its best to find lights if they change their IP on your network."
             label title: "<h2>Want to give MagicHome Manager a different name? (optional)</h2>", required: false, submitOnChange: true
         }
 
-        section("<h2>Pixel Controller Effect Builder</h2>", hideable: true, hidden: true ){
+        section("<h2>Pixel Controller Effect Builder</h2>", hideable: true, hidden: true ) {
             paragraph "There's a good chance this only works on desktop. Tested in FireFox.<br>"
 
             paragraph """
@@ -57,10 +55,7 @@ def mainPage() {
                         </iframe>"""
         }
 
-
-
-        section("Debug settings", hideable: true){
-
+        section("Debug settings", hideable: true) {
             input(name:"logDebug", type:"bool", title: "Log debug information?",
                   description: "Logs data for debugging. (Default: Off)", defaultValue: true,
                   required: false, displayDuringSetup: true, submitOnChange: true)
@@ -69,7 +64,7 @@ def mainPage() {
                   description: "Logs when useful things happen. (Default: On)", defaultValue: true,
                   required: true, displayDuringSetup: true, submitOnChange: true)
         }
-        section("<h2>Help/Information</h2>"){
+        section("<h2>Help/Information</h2>") {
             paragraph "Thanks for installing MagicHome Manager!"
         }
     }

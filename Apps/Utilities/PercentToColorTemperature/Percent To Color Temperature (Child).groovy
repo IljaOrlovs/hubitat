@@ -1,5 +1,5 @@
 /**
-*	Percentage to Color Temperature (Child) 0.7
+*    Percentage to Color Temperature (Child) 0.7
 *
 *    Author:
 *        Adam Kempenich
@@ -48,11 +48,10 @@ def childSetup() {
             paragraph "When the dimmer is at 100%, the color temperature will be set to..."
             input "coldWhiteValue", "number", title: "Cold White Temperature", required: true, defaultValue: 6000
         }
-
     }
 }
 
-def initialize(){
+def initialize() {
     log.info("Initializing with settings: ${settings}")
     subscribe(dimmingDevice, "level", modeHandler)
 }
@@ -69,10 +68,10 @@ def updated() {
     initialize()
 }
 
-def modeHandler(evt){
+def modeHandler(evt) {
     // Converts the level of the dimmer to the range of CT
     def colorTemp = (warmWhiteValue + ( (( coldWhiteValue - warmWhiteValue ) / 100 ) * dimmingDevice.currentValue("level").toInteger())).toInteger()
-    for(device in colorTemperatureDevices){
+    for (device in colorTemperatureDevices) {
         device.setColorTemperature( colorTemp )
     }
 }

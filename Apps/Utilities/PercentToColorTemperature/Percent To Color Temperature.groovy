@@ -40,14 +40,13 @@ definition(
     )
 
 preferences {
-     page name: "mainPage", title: "", install: true, uninstall: true
+    page name: "mainPage", title: "", install: true, uninstall: true
 }
 
 def installed() {
     log.info "Installed with settings: ${settings}"
     initialize()
 }
-
 
 def updated() {
     log.info "Updated with settings: ${settings}"
@@ -66,17 +65,16 @@ def installCheck() {
     state.appInstalled = app.getInstallationState()
 
     if (state.appInstalled != 'COMPLETE') {
-        section{paragraph "Press <i>Done</i> to complete installation."}
+        section { paragraph "Press <i>Done</i> to complete installation." }
     }
 }
 
 def mainPage() {
     dynamicPage(name: "mainPage") {
+        installCheck()
 
-    	installCheck()
-
-        if(state.appInstalled == 'COMPLETE'){
-            section("<h2>Credits/App Name:</h2>", hideable: true, hidden: true){
+        if (state.appInstalled == 'COMPLETE') {
+            section("<h2>Credits/App Name:</h2>", hideable: true, hidden: true) {
                 paragraph "Developed by @AdamKempenich"
                 label title: "Enter a name for parent app (optional)", required: false
             }

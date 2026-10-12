@@ -1,0 +1,21 @@
+{
+  "extends": "recommended",
+  "rules": {
+    "formatting.Indentation": { "spacesPerIndentLevel": 4 },
+    "style.UnnecessaryGString": "off",
+    "braces.IfStatementBraces": "off",
+    "braces.ElseBlockBraces": "off",
+    "braces.ForStatementBraces": "off",
+    "braces.WhileStatementBraces": "off",
+    "style.UnnecessarySemicolon": "off",
+    "style.UnnecessaryGetter": "off",
+    "style.UnnecessaryDefInMethodDeclaration": "off",
+    "style.UnnecessaryReturnKeyword": "off",
+    "unused.UnusedImport": "off",
+    "unused.UnusedVariable": "off",
+    "unused.UnusedMethodParameter": "off",
+    "unused.UnusedPrivateMethod": "off",
+    "unused.UnusedPrivateMethodParameter": "off",
+    "unused.UnusedPrivateField": "off"
+  }
+}

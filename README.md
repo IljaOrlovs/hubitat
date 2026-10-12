@@ -11,6 +11,7 @@ Requires Docker only.
 ```bash
 make check   # syntax-parse all files + unit tests for Methods/
 make lint    # CodeNarc (fails on priority 1)
+make format  # auto-format with npm-groovy-lint
 ```
 
 See [AGENTS.md](AGENTS.md) for layout, conventions, docs links and known issues.
