@@ -8,6 +8,7 @@ ruleset {
     ruleset('rulesets/unused.xml') {
         exclude 'UnusedMethodParameter' // Hubitat callbacks need fixed signatures
         exclude 'UnusedPrivateMethodParameter'
+        exclude 'UnusedPrivateMethod' // string-named callbacks (runIn/subscribe) look unused
     }
     ruleset('rulesets/imports.xml')
     DuplicateMapKey

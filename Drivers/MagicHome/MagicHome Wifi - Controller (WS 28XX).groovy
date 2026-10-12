@@ -22,7 +22,6 @@
 
 import hubitat.helper.HexUtils
 import hubitat.helper.ColorUtils
-import groovy.json.JsonSlurper
 import groovy.transform.Field
 
 metadata {

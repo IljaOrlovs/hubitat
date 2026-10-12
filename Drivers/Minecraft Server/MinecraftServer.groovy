@@ -16,9 +16,6 @@
 **/
 
 import hubitat.helper.HexUtils
-import hubitat.device.HubAction
-import hubitat.device.Protocol
-import hubitat.helper.ColorUtils
 
 metadata {
     definition(name: "Minecraft Server", namespace: "adamkempenich", author: "AdamKempenich", importUrl: "") {

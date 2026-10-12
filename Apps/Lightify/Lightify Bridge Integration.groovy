@@ -65,7 +65,6 @@
 */
 
 import hubitat.helper.HexUtils
-import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 definition(
@@ -389,7 +388,6 @@ def parse( response ) {
     // Parse data received back from this device
     def responseArray = HexUtils.hexStringToIntArray(response)
 
-    def devices = [:]
     def isGroup = false
     for (i = 1; i < 16; i++) {
         if (11 + (18 * i) == responseArray.length) { isGroup = true }
@@ -450,7 +448,6 @@ def parse( response ) {
             for (thisDevice = 0; thisDevice < totalDevices; thisDevice++) {
                 def location = 11 + (thisDevice * 50) // Devices start at byte 11 (from zero. 0-10 are gateway data) Each device's data is 50 bytes long
                 // Create a locator
-                def deviceID = [state.buffer[location], state.buffer[location + 1]] // Not sure if we need this
 
                 def deviceMAC = []
                 for ( i = 2; i < 10; i++ ) {
@@ -468,7 +465,6 @@ def parse( response ) {
 
                 def deviceOnline = state.buffer[location + 15]  // GDK// Not sure what to do with this --- check Mike's drivers then ask Mike/Chuck
 
-                def deviceGroupID = [state.buffer[location + 16], state.buffer[location + 17]]  // GDK// Not quite sure what to do with this
 
                 def deviceSwitchStatus = state.buffer[location + 18]  // GDK// 0 is off, 1 is on // Add to child device status
 
@@ -480,7 +476,6 @@ def parse( response ) {
                 //log.trace "R: ${responseArray[location+22]} G: ${responseArray[location+23]} B: ${responseArray[location+24]}"
                 def deviceHSV = ColorUtils.rgbToHSV([state.buffer[location + 22], state.buffer[location + 23], state.buffer[location + 24]]) // GDK
 
-                def deviceWhite = state.buffer[location + 25]  // GDK // Learn what this is
 
                 def deviceName = []
                 for (i = 26; i < 50; i++) {
@@ -519,7 +514,7 @@ def parse( response ) {
                     }
                         childDevice.sendEvent(name: "level", value: deviceLevel)
                         childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                     }
                 }
@@ -535,7 +530,7 @@ def parse( response ) {
                     }
                         childDevice.sendEvent(name: "level", value: deviceLevel)
                         childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                     }
             }
@@ -550,7 +545,7 @@ def parse( response ) {
                             childDevice.sendEvent(name: "switch", value: "on")
                     }
                         childDevice.sendEvent(name: "level", value: deviceLevel)
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                     }
             }
@@ -567,7 +562,7 @@ def parse( response ) {
                         childDevice.sendEvent(name: "hue", value: deviceHSV[0].toFloat())
                         childDevice.sendEvent(name: "saturation", value: deviceHSV[1].toFloat())
                         childDevice.sendEvent(name: "level", value: deviceLevel)
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                     }
             }
@@ -584,7 +579,7 @@ def parse( response ) {
                         childDevice.sendEvent(name: "saturation", value: deviceHSV[1].toFloat())
                         childDevice.sendEvent(name: "level", value: deviceLevel)
                         childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                     }
             }
@@ -603,7 +598,7 @@ def parse( response ) {
                         childDevice.sendEvent(name: "saturation", value: deviceHSV[1].toFloat())
                         childDevice.sendEvent(name: "level", value: deviceLevel)
                         childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                } catch (e) { // Device does not exist
+                } catch (ignored) { // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
 
             //} // GDK

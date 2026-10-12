@@ -455,14 +455,13 @@ def modeHandler(evt) {
         def color = [hex: hex, hue: hsv.h, saturation: hsv.s, level: bright]
         for (colorDevice in colorDevices) {
             if (colorDevice.currentValue("switch") == "on") {
-                def tmp = colorDevice.currentValue("color")
                 if (colorDevice.currentValue("color") != hex) {
                     if (checkCurrentMode() || settings.dynamicBrightness == true) {
                         color.value = bright
                     } else {
                         color.value = colorDevice.currentValue("level")
                     }
-                    def ret = colorDevice.setColor(color)
+                    colorDevice.setColor(color)
                 }
             }
         }
@@ -485,37 +484,26 @@ def checkCurrentMode() {
     switch (location.mode) {
         case mode1Override:
             return true
-            break
         case mode2Override:
             return true
-            break
         case mode3Override:
             return true
-            break
         case mode4Override:
             return true
-            break
         case mode5Override:
             return true
-            break
         case mode6Override:
             return true
-            break
         case mode7Override:
             return true
-            break
         case mode8Override:
             return true
-            break
         case mode9Override:
             return true
-            break
         case mode10Override:
             return true
-            break
         default:
             return false
-            break
     }
 }
 

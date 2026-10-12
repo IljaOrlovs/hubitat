@@ -117,7 +117,6 @@ def levelHandler( evt ) {
 }
 
 def setDevices( level, colorTemperature ) {
-    def childDevice = getChildDevice(settings.deviceName)
 
     def percentage = getPercentage(settings.warmCTValue, settings.coldCTValue, clamp(colorTemperature, settings.warmCTValue, settings.coldCTValue))
 

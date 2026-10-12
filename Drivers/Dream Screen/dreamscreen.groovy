@@ -14,8 +14,6 @@
 *           - added inputSource
 **/
 
-import hubitat.device.HubAction
-import hubitat.device.Protocol
 import hubitat.helper.HexUtils
 import hubitat.helper.ColorUtils
 
@@ -457,7 +455,6 @@ def setEffect(value) {
         log.trace "sending ambient scene"
         sendCommand(setToAmbient)
         sendCommand(setAmbientToSceneMode)
-    } else {
     }
     sendCommand(data)
 }
@@ -558,7 +555,6 @@ def calculateCRC(byte[] data) { // Adam's version
 
     while (cntr < size) {
         crc = crcTable[(byte) (crc ^ (data[cntr])) & 0xFF]
-        byte[] crcString = crc
         cntr++
     }
     return crc

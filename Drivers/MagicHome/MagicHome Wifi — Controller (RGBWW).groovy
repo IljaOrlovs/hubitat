@@ -78,9 +78,7 @@
 */
 
 import hubitat.helper.HexUtils
-import hubitat.device.HubAction
 import hubitat.helper.InterfaceUtils
-import hubitat.device.Protocol
 import hubitat.helper.ColorUtils
 
 metadata {
@@ -490,8 +488,6 @@ def parse( response ) {
                 }
             }
 
-            def warmWhite = ( responseArray[ 9 ].toDouble() / 2.55 ).round()
-            def coldWhite = ( responseArray[ 11 ].toDouble() / 2.55 ).round()
             hsvMap = ColorUtils.rgbToHSV([responseArray[ 6 ], responseArray[ 7 ], responseArray[ 8 ]])
 
             //if( (warmWhite + coldWhite) > 0) {

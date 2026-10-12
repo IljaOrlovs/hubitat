@@ -321,8 +321,6 @@ def setHeatingSetpoint(degrees, delay = 30000) {
 def setHeatingSetpoint(Double degrees, Integer delay = 30000) {
     log.trace "setHeatingSetpoint($degrees, $delay)"
     def deviceScale = state.scale ?: 1
-    def deviceScaleString = deviceScale == 2 ? "C" : "F"
-    def locationScale = getTemperatureScale()
     def p = (state.precision == null) ? 1 : state.precision
 
     def convertedDegrees
@@ -350,8 +348,6 @@ def setecoHeatingSetpoint(degrees, delay = 30000) {
 def setecoHeatingSetpoint(Double degrees, Integer delay = 30000) {
     log.trace "setecoHeatingSetpoint($degrees, $delay)"
     def deviceScale = state.scale ?: 1
-    def deviceScaleString = deviceScale == 2 ? "C" : "F"
-    def locationScale = getTemperatureScale()
     def p = (state.precision == null) ? 1 : state.precision
 
     def convertedDegrees
@@ -422,7 +418,6 @@ def switchMode() {
     def cmds = []
     // log.debug("currentMode is $currentMode")
     if (currentMode == "off") {
-        def nextMode = "heat"
         sendEvent(name: "thermostatMode", value: "heat")
         sendEvent(name: "thermostatOperatingState", value: "heating")
 
@@ -432,7 +427,6 @@ def switchMode() {
         poll()
     }
     else if (currentMode == "heat") {
-        def nextMode = "energySaveHeat"
         sendEvent(name: "thermostatMode", value: "energySaveHeat")
         sendEvent(name: "thermostatOperatingState", value: "energySaveHeat")
         cmds << zwave.thermostatModeV2.thermostatModeSet(mode: 11)
@@ -441,7 +435,6 @@ def switchMode() {
         poll()
     }
     else if (currentMode == "energySaveHeat") {
-        def nextMode = "off"
         sendEvent(name: "thermostatMode", value: "off")
         sendEvent(name: "thermostatOperatingState", value: "idle")
         cmds << zwave.thermostatModeV2.thermostatModeSet(mode: 11)
@@ -528,10 +521,9 @@ private getStandardDelay() {
 ####################
 */
 def parse(String description) {
-    def result = []
     logging("${device.displayName} - Parsing: ${description}")
     if (description.startsWith("Err 106")) {
-        result = createEvent(
+        createEvent(
                 descriptionText: "Failed to complete the network security key exchange. If you are unable to receive data from it, you must remove it from your network and add it again.",
                 eventType: "ALERT",
                 name: "secureInclusion",

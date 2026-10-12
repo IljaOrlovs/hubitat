@@ -47,7 +47,6 @@
 
 /*****  DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING *****/
 import groovy.transform.Field
-import hubitat.device.HubAction
 
 definition(
   name: "Rootin' Tootin' Self-Rebootin'",
@@ -116,7 +115,6 @@ def initialize() {
 }
 
 def getCookie(doReboot = false) {
-    def body = "username=${username}&password=${password}"
 
     def params = [
     uri: "http://${hubIP}:8080",

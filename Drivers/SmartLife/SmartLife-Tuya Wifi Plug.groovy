@@ -22,9 +22,7 @@
 */
 
 import hubitat.helper.HexUtils
-import hubitat.device.HubAction
 import hubitat.helper.InterfaceUtils
-import hubitat.device.Protocol
 
 metadata {
     definition(
@@ -175,7 +173,6 @@ def refresh( ) {
     logDebug "refresh() called. Number of failed responses: ${state.noResponse}"
     state.noResponse++
     state.noResponse >= settings.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
-    byte[] data = null
     if (device.currentValue("switch") == "on") {
         off()
     }
