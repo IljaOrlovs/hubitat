@@ -11,9 +11,9 @@ definition(
     author: "Adam Kempenich",
     description: "Use two lights of different color temperatures to create a range of CT.",
     category: "Lighting",
-	
+
     parent: "Salt and Pepper:Salt and Pepper",
-    
+
     iconUrl: "",
     iconX2Url: "",
     iconX3Url: "",
@@ -25,8 +25,8 @@ preferences {
 
 def childSetup() {
     dynamicPage(name: "childSetup", title: "Salt and Pepper - Child", nextPage: null, install: true, uninstall: true, refreshInterval:0) {
-                
-        section() {   
+
+        section() {
 
             paragraph("<h2>Start ...</h2>")
             input "deviceName", "string", title: "<h3>Grouped light name:</h3>", required: true, defaultValue: "Salt & Pepper"
@@ -42,20 +42,20 @@ def childSetup() {
                     required: true, displayDuringSetup: true)
 
             label title: "<h2>Enter a name for this app (optional)</h2>", required: false
-            
+
         }
 
 
-	}
+    }
 
 }
 
 def initialize(){
     logDebug("Initializing with settings: ${settings}")
-    
-    
+
+
     def currentchild = getChildDevices()?.find { it.deviceNetworkId == "${settings.deviceName}"}
-    
+
     if (currentchild == null) {
         logDebug "Device does not exist. Creating"
 
@@ -67,7 +67,7 @@ def initialize(){
 
     unsubscribe()
     unschedule()
-    
+
     subscribe(childDevice, "switch", powerHandler)
     subscribe(childDevice, "colorTemperature", colorTemperatureHandler)
     subscribe(childDevice, "level", levelHandler)
@@ -88,11 +88,11 @@ def updated() {
 }
 
 def powerHandler( evt ){
-    
+
     log.trace "${evt}"
-    
+
     def childDevice = getChildDevice(settings.deviceName)
-    
+
     if(evt.value == "on"){
         if(childDevice.currentValue("colorTemperature") != settings.warmCTValue){
             for(device in settings.warmDevices){
@@ -116,24 +116,24 @@ def powerHandler( evt ){
 
 def colorTemperatureHandler( evt ){
     def childDevice = getChildDevice(settings.deviceName)
-    
+
     setDevices(childDevice.currentValue("level"), evt.value.toInteger())
 
 }
 
 def levelHandler( evt ){
     def childDevice = getChildDevice(settings.deviceName)
-    
+
     setDevices(evt.value.toInteger(), childDevice.currentValue("colorTemperature").toInteger())
- 
+
 }
 
 def setDevices( level, colorTemperature ){
     def childDevice = getChildDevice(settings.deviceName)
-    
+
     def percentage = getPercentage(settings.warmCTValue, settings.coldCTValue, clamp(colorTemperature, settings.warmCTValue, settings.coldCTValue))
 
-    
+
     for(device in settings.warmDevices){
         device.setLevel(((100 - ( percentage * 100 )) * level / 100).toInteger())
     }
@@ -149,7 +149,7 @@ def calculateFromPercentage(lowValue, highValue, percentage){
     lowValue = lowValue.toDouble()
     highValue = highValue.toDouble()
     percentage = percentage.toDouble()
-    
+
     value = ((highValue - lowValue) * percentage) + lowValue
     return value
 }
@@ -172,9 +172,9 @@ def clamp( value, lowerBound = 0, upperBound = 100 ){
 }
 
 def getPercentage(lowValue, highValue, median){
-    
+
     percentCompleted = 1 - ((highValue - median) / (highValue - lowValue))
-    
+
     return percentCompleted
 }
 
@@ -185,4 +185,3 @@ private logDebug( text ){
         log.debug "Salt and Pepper: (${app.name}): ${text}"
     }
 }
-

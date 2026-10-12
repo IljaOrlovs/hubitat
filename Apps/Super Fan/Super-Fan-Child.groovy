@@ -29,31 +29,31 @@ preferences {
 def childSetup() {
     dynamicPage(name: "childSetup", title: "Super Fan Device Setup and Overrides", nextPage: null, install: true, uninstall: true, refreshInterval:0) {
 
-        section() {   
+        section() {
             paragraph """<style>.mdl-switch__track, .mdl-switch__thumb, .mdl-switch__ripple-container{display:none;}
 .left-selected{
-background:#3498db; 
-border-top-left-radius:25px; 
-border-bottom-left-radius:25px; 
+background:#3498db;
+border-top-left-radius:25px;
+border-bottom-left-radius:25px;
 padding: 1em; color:#ecf0f1
 }
 .left{
-background:#ecf0f1; 
-border-top-left-radius:25px; 
-border-bottom-left-radius:25px; 
-padding: 1em; 
+background:#ecf0f1;
+border-top-left-radius:25px;
+border-bottom-left-radius:25px;
+padding: 1em;
 color: #95a5a6;
 }
 .right-selected{
-background:#3498db; 
-border-top-right-radius:25px; 
-border-bottom-right-radius:25px; 
+background:#3498db;
+border-top-right-radius:25px;
+border-bottom-right-radius:25px;
 padding: 1em; color:#ecf0f1;
 }
 .right{
-background:#ecf0f1; 
-border-top-right-radius:25px; 
-border-bottom-right-radius:25px; 
+background:#ecf0f1;
+border-top-right-radius:25px;
+border-bottom-right-radius:25px;
 padding: 1em;
 color: #95a5a6;
 }
@@ -97,7 +97,7 @@ display:none;
             } catch(maxWarning){
             input "humidityMaximumValue", "number", title: "When the difference in humidity is this high or greater, my fan should run at full: <b>Current Difference: ${baseHumidity.currentValue('humidity') == null || checkHumidity.currentValue('humidity') == null ? '(Select devices)' : checkHumidity.currentValue('humidity')-baseHumidity.currentValue('humidity')}</b>", defaultValue: 50, required: true
             }
-            
+
             input "humidityMinimumValue", "number", title: "When the difference in humidity is this low or less, my fan should be off", defaultValue: 10, required: true
 
             input "fanFull", "number", title: "My fan's full speed should run at:", defaultValue: 100, required: true
@@ -119,7 +119,7 @@ display:none;
                   required: true, displayDuringSetup: true, submitOnChange: true)
         }
         section("<h2>Help/Information</h2>"){
-            paragraph "Thanks for installing Super Fan!"    
+            paragraph "Thanks for installing Super Fan!"
         }
 
         logDebug("Parent settings: ${parent.settings}")
@@ -135,7 +135,7 @@ def initialize(){
     logDebug("Initializing with settings: ${settings}")
 
     unsubscribe()
-    unschedule()    
+    unschedule()
 
     subscribe(baseHumidity, "humidity", humidityHandler)
     subscribe(checkHumidity, "humidity", humidityHandler)
@@ -150,7 +150,7 @@ def initialize(){
 
 
     }
-    state.override = false   
+    state.override = false
     state.allowOffReset = false
     humidityHandler()
 }
@@ -196,7 +196,7 @@ def overrideFanHandler( evt ){
 }
 
 void resetOverride(){
-    state.override = false   
+    state.override = false
 }
 
 def humidityHandler( evt ){
@@ -229,7 +229,7 @@ def setFan(speed){
         fan.setLevel(speed.toInteger(), dimmingRate)
         if(speed.toInteger() != 0){
             state.lastSetPower = "on"
-        } 
+        }
         else{
             state.lastSetPower = "off"
         }
@@ -316,11 +316,11 @@ private logDebug( text ){
     if( settings.logDebug ) {
         log.debug "(${app.name}): ${text}"
     }
-}   
+}
 
 def withinThreshold(testValue, baseValue, range){
-    // Returns a boolean if a test value is between a threshold range 
-    // EG: Test if a CT is +/- 10k of the prior value set 
+    // Returns a boolean if a test value is between a threshold range
+    // EG: Test if a CT is +/- 10k of the prior value set
 
     testValue = testValue.toDouble()
     baseValue = baseValue.toDouble()
@@ -331,9 +331,9 @@ def withinThreshold(testValue, baseValue, range){
     if(testValue > (baseValue - range) && testValue < (baseValue + range)){
         log.trace "within range"
         withinRange = true
-    } else { 
+    } else {
         log.trace "not within range"
-        withinRange = false 
+        withinRange = false
     }
 
     return withinRange

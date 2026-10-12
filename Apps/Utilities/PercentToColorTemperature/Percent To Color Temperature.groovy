@@ -4,7 +4,7 @@
 *    Author:
 *        Adam Kempenich
 *
-*    Documentation:  
+*    Documentation:
 *        [TBA]
 *
 *    Changelog:
@@ -12,7 +12,7 @@
 *            - Initial Commit
 *
 *    Remnant code probably exists somewhere in here from @Cobra or @BPTWorld, from whom I have learned incredibly much
-*    Although, I'm not entirely sure, so I best credit them here regardless! :) 
+*    Although, I'm not entirely sure, so I best credit them here regardless! :)
 *
 *    ***********************************************************************************************************
 *
@@ -41,7 +41,7 @@ definition(
 
 preferences {
      page name: "mainPage", title: "", install: true, uninstall: true
-} 
+}
 
 def installed() {
     log.info "Installed with settings: ${settings}"
@@ -62,9 +62,9 @@ def initialize() {
     }
 }
 
-def installCheck() {         
+def installCheck() {
     state.appInstalled = app.getInstallationState()
-    
+
     if (state.appInstalled != 'COMPLETE') {
         section{paragraph "Press <i>Done</i> to complete installation."}
     }
@@ -75,14 +75,14 @@ def mainPage() {
 
     	installCheck()
 
-		if(state.appInstalled == 'COMPLETE'){
-			section("<h2>Credits/App Name:</h2>", hideable: true, hidden: true){
+        if(state.appInstalled == 'COMPLETE'){
+            section("<h2>Credits/App Name:</h2>", hideable: true, hidden: true){
                 paragraph "Developed by @AdamKempenich"
                 label title: "Enter a name for parent app (optional)", required: false
             }
-			section() {
-				app(name: "anyOpenApp", appName: "Percent to Color Temperature - Child", namespace: "AdamKempenich", title: "<h3>Add a new correlation</h3>", multiple: true)
-			}
-		}
-	}
+            section() {
+                app(name: "anyOpenApp", appName: "Percent to Color Temperature - Child", namespace: "AdamKempenich", title: "<h3>Add a new correlation</h3>", multiple: true)
+            }
+        }
+    }
 }

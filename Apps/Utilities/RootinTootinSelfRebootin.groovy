@@ -16,8 +16,8 @@
  *        - Changed an issue with CRON that may have had an issue
  *        - Allowed multiple maintenance windows
  *        - Fixed the hardcoded IP
- *    0.95 (Feb 11 2020) - Thanks to @CodaHQ for the updates! 
- *        - Added ignore restart during maintenance window 
+ *    0.95 (Feb 11 2020) - Thanks to @CodaHQ for the updates!
+ *        - Added ignore restart during maintenance window
  *        - Consolidated the options to the very top of file
  *        - Added more targeted logging with configuration options
  *    0.94 (Jan 03 2020)

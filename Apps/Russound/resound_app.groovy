@@ -181,11 +181,11 @@ private getDeviceId(controller, zone) {
 }
 
 private getHttpHeaders(headers) {
-	def obj = [:]
-	new String(headers.decodeBase64()).split("\r\n").each {param ->
+    def obj = [:]
+    new String(headers.decodeBase64()).split("\r\n").each {param ->
     def nameAndValue = param.split(":")
     obj[nameAndValue[0]] = (nameAndValue.length == 1) ? "" : nameAndValue[1].trim()
-	}
+    }
   return obj
 }
 
@@ -199,7 +199,7 @@ private getHttpBody(body) {
 }
 
 private getProxyAddress() {
-	return settings.proxyAddress + ":" + settings.proxyPort
+    return settings.proxyAddress + ":" + settings.proxyPort
 }
 
 private getNotifyAddress() {

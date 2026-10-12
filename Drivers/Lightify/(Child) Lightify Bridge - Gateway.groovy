@@ -1,8 +1,8 @@
 /**
-* Lightify Bridge - Gateway (0.22) 
+* Lightify Bridge - Gateway (0.22)
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *  Documentation:  [Does not exist, yet]
 *
@@ -23,7 +23,7 @@
 *        X send a test command to the bridge
 *        X create structure for parent/children
 *        X send command to individual devices
-*        - send command to groups 
+*        - send command to groups
 *        / add separate device types
 *        X add power
 *        X add brightness
@@ -50,31 +50,31 @@ import hubitat.helper.ColorUtils
 
 metadata {
     definition (
-        name: "Lightify Bridge - Gateway", 
-        namespace: "Lightify", 
+        name: "Lightify Bridge - Gateway",
+        namespace: "Lightify",
         author: "Adam Kempenich",
-		importUrl: "https://github.com/adamkempenich/hubitat/raw/master/Drivers/Lightify/(Child)%20Lightify%20Bridge%20-%20Gateway.groovy") {
-        
+        importUrl: "https://github.com/adamkempenich/hubitat/raw/master/Drivers/Lightify/(Child)%20Lightify%20Bridge%20-%20Gateway.groovy") {
+
         capability "Actuator"
-		capability "Initialize"
+        capability "Initialize"
         capability "Polling"
         capability "Refresh"
-		capability "Sensor"
-		capability "Switch"
-	    command "getGroups"
+        capability "Sensor"
+        capability "Switch"
+        command "getGroups"
     }
-    preferences {  
-        
+    preferences {
+
         //state.deviceIP
         //state.devicePort
         //state.deviceMAC
         //state.refreshTime
         //state.reconnectPings
-        
+
         input(name:"logDebug", type:"bool", title: "Log debug information?",
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: true,
               required: true, displayDuringSetup: true)
-        
+
          input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
@@ -122,36 +122,36 @@ def parse( response ) {
 
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
-    
-    if( settings.logDebug ) { 
+
+    if( settings.logDebug ) {
         log.debug "Lightify (${state.deviceIP}): ${debugText}"
     }
 }
 
 private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "Lightify (${state.deviceIP}): ${descriptionText}"
     }
 }
 
 def sendCommand( data ) {
     // Sends commands to the device
-    
+
     String stringBytes = HexUtils.byteArrayToHexString(data)
     logDebug "Transmitting: ${stringBytes}"
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 
 def refresh( ) {
-	
-	logDebug "Number of failed responses: ${state.noResponse}"
-	state.noResponse++
+
+    logDebug "Number of failed responses: ${state.noResponse}"
+    state.noResponse++
     state.noResponse >= state.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
     byte[] data =  [0x0B, 0x00, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00]
     sendCommand(data)
-}		
+}
 
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDescriptionText "A connection issue occurred."
     logDebug "socketStatus: ${status}"
 }
@@ -165,11 +165,11 @@ def updated(){
 }
 
 def uninstalled(){
-	removeChildDevices(getChildDevices())
+    removeChildDevices(getChildDevices())
 }
 
 private removeChildDevices(delete) {
-	delete.each {deleteChildDevice(it.deviceNetworkId)}
+    delete.each {deleteChildDevice(it.deviceNetworkId)}
 }
 
 def clamp( value, lowerBound = 0, upperBound = 100 ){
@@ -196,9 +196,9 @@ def connectDevice( data ){
         unschedule() // remove the refresh loop
         schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
     }
-    
+
     InterfaceUtils.socketClose(device)
-    
+
     pauseExecution(1000)
     //    if it's the first run
     if( data.firstRun || ( now() - state.lastConnectionAttempt) > clamp(state.refreshTime, 1, 60) * 500 /* Stops the app from initializing too fast */ ) {
@@ -209,20 +209,20 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-    
+
         } catch(e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${state.refreshTime} seconds.")
             state.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
-	    
-	    if(tryWasGood){
-	    	unschedule()
-	    	logDebug "Stopping connectDevice loop. Starting refresh loop"
-	    	schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", refresh)
-	    	state.noResponse = 0
-	    }
+
+        if(tryWasGood){
+        	unschedule()
+        	logDebug "Stopping connectDevice loop. Starting refresh loop"
+        	schedule("0/${clamp(state.refreshTime, 1, 59)} * * * * ? *", refresh)
+        	state.noResponse = 0
+        }
         logDebug "Proper time has passed, or it is the device's first run."
         logDebug "${(now() - state.lastConnectionAttempt)} >= ${clamp(state.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}"
         state.lastConnectionAttempt = now()

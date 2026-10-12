@@ -1,8 +1,8 @@
 /**
 *  MagicHome Wifi - Controller (WS 28XX) 1.00
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *  Documentation:  https://community.hubitat.com/t/release-beta-0-7-magic-home-wifi-devices-initial-public-release/5197
 *
@@ -27,8 +27,8 @@ import groovy.transform.Field
 
 metadata {
     definition (
-        name: "MagicHome Wifi — Controller (Pixel Controller) - Dev", 
-        namespace: "MagicHome", 
+        name: "MagicHome Wifi — Controller (Pixel Controller) - Dev",
+        namespace: "MagicHome",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20-%20Controller%20(WS%2028XX).groovy") {
 
@@ -47,14 +47,14 @@ metadata {
 
         command "customEffectRun", [[name: "Program Name:", type: "STRING"]]
         command "customEffectAdd", [[name: "Program Name:", type: "STRING" ], [name: "Generated Code:", type: "STRING" ]]
-        
+
         command "customEffectRemove", [[name: "Program Name:", type: "STRING"]]
         command "setEffectSpeed", [[name: "Speed", type: "NUMBER"]]
         attribute "effectSpeed", "number" // 0 - 100
 
     }
 
-    preferences {  
+    preferences {
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 5577)", required: true, defaultValue: 5577
 
@@ -393,7 +393,7 @@ metadata {
 def on() {
     // Turn on the device
 
-    logDebug "Sending on command" 
+    logDebug "Sending on command"
     byte[] data = [0x71, 0x23, 0x0F, 0xA3]
     sendCommand(data)
 }
@@ -401,13 +401,13 @@ def on() {
 def off() {
     // Turn off the device
 
-    logDebug "Sending off command" 
+    logDebug "Sending off command"
     byte[] data = [0x71, 0x24, 0x0F, 0xA4]
     sendCommand(data)
 }
 
 def setHue(hue){
-    // Set the hue of a device ( 0 - 100 ) 
+    // Set the hue of a device ( 0 - 100 )
 
     logDebug "Sending hue change of ${hue}"
 
@@ -435,10 +435,10 @@ def setColor( parameters ){
 
     // initialize our own parameters in case something didn't get passed through
     def setParameters = [:]
-    
-    
+
+
     if(parameters.containsKey('setFromCT')){
-        setColorMode("CT")   
+        setColorMode("CT")
     } else {
         setColorMode("RGB")
     }
@@ -460,7 +460,7 @@ def setColor( parameters ){
         setParameters['level'] = parameters.level
     } catch(noLevel){
         setParameters['level'] = device.currentValue('level')
-    }  
+    }
 
     def rgbColors = ColorUtils.hsvToRGB([setParameters.hue.toFloat(), setParameters.saturation.toFloat(), setParameters.level.toFloat()])
 
@@ -471,7 +471,7 @@ def setColor( parameters ){
 }
 
 def setColorTemperature( setTemp = device.currentValue("colorTemperature"), level = device.currentValue("level"), duration = 0 ){
-    // Adjust the color temperature of a device 
+    // Adjust the color temperature of a device
 
     sendEvent(name: "colorTemperature", value: colorTemperature)
     sendEvent(name: "level", value: level)
@@ -482,8 +482,8 @@ def setColorTemperature( setTemp = device.currentValue("colorTemperature"), leve
     def green
     def blue
 
-    if( temp <= 66 ){ 
-        red = 255 
+    if( temp <= 66 ){
+        red = 255
         green = temp
         green = 99.4708025861 * Math.log(green) - 161.1195681661
 
@@ -535,12 +535,12 @@ def setEffect(int effectNumber = 1, int speed = 85){
     effectNumber = clamp(effectNumber, 1, 300)
 
     logDebug "Setting effect by number ${effectNumber}"
-    
+
     def selectedEffect = lightEffects[effectNumber]
     logDescriptionText "Setting effect ${selectedEffect}"
 
     sendEvent(name:"effectName", value:selectedEffect)
-    sendEvent(name: "effect", value: effectNumber)        
+    sendEvent(name: "effect", value: effectNumber)
 
     setColorMode("FX")
 
@@ -552,7 +552,7 @@ def setEffect(int effectNumber = 1, int speed = 85){
 
     def byte[] setPresetByte = [(effectNumber & 0xFF), ((effectNumber >> 8) & 0xFF)]
     byte[] data = appendChecksum(  [ 0x61, setPresetByte[1], setPresetByte[0], speed, 0x0F ] )
-    sendCommand( data ) 
+    sendCommand( data )
 
     powerOnWithChanges()
 
@@ -565,7 +565,7 @@ def setNextEffect(){
     currentEffect++
 
     currentEffect > lightEffects.length ? (currentEffect = 1) : null
-    
+
     setEffect(currentEffect, device.currentValue("effectSpeed").toInteger())
 }
 
@@ -586,7 +586,7 @@ def void setColorMode(value) {
 
     if(value == "RGB"){
         sendEvent(name: "colorMode", value: "RGB")
-    } 
+    }
     else if(value == "CT" || value == "CCT"){
         sendEvent(name: "colorMode", value: "CT")
     }
@@ -598,15 +598,15 @@ def void setColorMode(value) {
 
 
 def customEffectAdd(effectName, function){
-    
+
     state.customEffects == null ? (state.customEffects = [:]) : null
-    
+
     if(function.length() != 580){
         log.warn "It looks like your function wasn't copied in properly. Either there are extra characters in it, or it's been truncated prematurely. It's ${function.length()}/582 characters."
     } else {
         if(!state.customEffects.containsKey("${name}")){
             state.customEffects += ["${effectName}" : "${function}"]
-            logDescriptionText "Stored effect: ${effectName} as effect number ${state.customEffects.size()}"  
+            logDescriptionText "Stored effect: ${effectName} as effect number ${state.customEffects.size()}"
         } else {
 
             log.warn "An effect with the name ${effectName} already exists. Remove this effect, or change your effect's name"
@@ -615,47 +615,47 @@ def customEffectAdd(effectName, function){
 }
 
 def customEffectRemove(String name){
-    
-    
+
+
     logDescriptionText "Removing ${name}"
     def stateArray = state.customEffects
-    
-    
+
+
     try {
         stateArray.remove(name)
         state.customEffects = stateArray
     } catch( removeError ){
-        logDescriptionText "The effect ${name} cannot be removed because: ${removeError}"   
+        logDescriptionText "The effect ${name} cannot be removed because: ${removeError}"
     }
-    
+
     logDebug "Effects Array is now ${state.customEffects}"
 }
 
 def customEffectRemove( int effectNumber ){
-    
+
     def effectName = state.customEffects[effectNumber + 1].key
     customEffectRemove(effectName)
-    
+
 }
 
 def customEffectRun( int effectNumber ){
-    
+
     def effectName = state.customEffects[effectNumber + 1].key
 
     customEffectRun( effectName )
-    
+
 }
 
 def customEffectRun( String effectName ){
 
     try{
-        def compiledArray = HexUtils.hexStringToByteArray(state.customEffects."${effectName}".value.toString())  
+        def compiledArray = HexUtils.hexStringToByteArray(state.customEffects."${effectName}".value.toString())
 
         byte[] data = appendChecksum(  [ *compiledArray ] )
-        sendEvent(name: "effectName", value: "Custom") 
+        sendEvent(name: "effectName", value: "Custom")
         sendEvent(name: "effect", value: 0)
-        sendCommand( data ) 
-        
+        sendCommand( data )
+
     } catch(matchError){
         logDescriptionText "Could not find effect with name ${effectName}"
     }
@@ -704,23 +704,23 @@ def appendChecksum( data ){
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
-    return data 
+    return data
 }
 
 def parse( response ) {
     // Parse data received back from this device
 
-    state.noResponse = 0    
+    state.noResponse = 0
 
-    def responseArray = HexUtils.hexStringToIntArray(response)  
-    
-    
+    def responseArray = HexUtils.hexStringToIntArray(response)
+
+
     switch(responseArray.length) {
-        
-        
+
+
         case 4:
             logDebug( "Received power-status packet of ${response}" )
-    
+
             if( responseArray[2] == 35 ){
                 sendEvent(name: "switch", value: "on")
             }
@@ -731,8 +731,8 @@ def parse( response ) {
 
         case 14:
             logDebug( "Received general-status packet of ${response}" )
-        
-            
+
+
             byte effectPart1 = (byte) responseArray[3]
             byte effectPart2 = (byte) responseArray[4]
             int effectNumber = ((effectPart1 & 0xFF) << 8) | (effectPart2 & 0xFF)
@@ -741,62 +741,62 @@ def parse( response ) {
             // 00 01 02 03 04 05 06 07 08 09 10 11 12 13
             // P1 DT PW FX FX SP RR GG BB ?? ?? ?? ?? CS
             //          |- 00 61 - Color
-        
+
             // After Set Color
             // 81 A1 23 00 61 4D FF 00 00 03 03 00 0F 07
-            
+
             // After Set Effect #1
             // 81 A1 23 64 00 55 FF 00 00 03 03 00 0F 12
-        
+
             // After Set Effect #2
             // 81 A1 23 65 00 55 FF 00 00 03 03 00 0F 13
-            
+
             // after effect 200
             // 81 A1 23 01 2B 55 FF 00 FF 03 03 00 0F D9
-        
+
             // After set effect 300
             // 81 A1 23 01 8F 55 8D 00 00 03 03 00 0F CC
-        
+
             // 81 A1 23 65 00 55 FF 00 00 03 03 00 0F 13
-        
+
             // 81 A1 23 00 65 55 FF EE EE 03 03 00 0F EF
             // After set custom fn
             // 81 A1 23 64 00 55 FF 00 00 03 03 00 0F 12
-        
+
             // from app
             // 81 A1 23 00 60 55 09 00 05 03 03 00 0F 1D
-        
+
             if( responseArray[2] == 35 ){
                 sendEvent(name: "switch", value: "on")
             }
             else{
                 sendEvent(name: "switch", value: "off")
             }
-            
+
             hsvMap = ColorUtils.rgbToHSV([responseArray[ 6 ], responseArray[ 7 ], responseArray[ 8 ]])
 
             // Always updated
-        
+
             sendEvent(name: "level", value: hsvMap[2])
             sendEvent(name: "saturation", value: hsvMap[1])
             sendEvent(name: "hue", value: hsvMap[0])
             sendEvent(name: "effectSpeed", value: responseArray[5])
-                      
+
             if( effectNumber == 97 ){
                 // color
                 setColorMode("RGB")
-                
+
                 // add color temperature reverse
-                
+
             } else if(effectNumber == 96){
                 // custom effect
                 setColorMode("FX")
-                sendEvent(name: "effectName", value: "Custom") 
+                sendEvent(name: "effectName", value: "Custom")
                 sendEvent(name: "effect", value: 0)
 
-                
+
             } else {
-                // preset effect 
+                // preset effect
                 def presetEffect = effectNumber - 99
                 sendEvent(name: "effect", value: presetEffect)
                 sendEvent(name: "effectName", value: lightEffects[presetEffect])
@@ -820,13 +820,13 @@ def parse( response ) {
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) { 
+    if( settings.logDebug ) {
         log.debug "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${descriptionText}"
     }
 }
@@ -848,7 +848,7 @@ def refresh( ) {
     sendCommand(data)
 }
 
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDescriptionText "A connection issue occurred."
     logDebug "socketStatus: ${status}"
     logDebug "Attempting to reconnect after ${clamp(settings.reconnectPings, 0, 10)-state.noResponse} more failed attempt(s)."
@@ -909,7 +909,7 @@ def initialize() {
     device.currentValue("effectName") == null ? sendEvent(name: "effectName", value: "Unset...") : null
 
     state.customEffects == null ? (state.customEffects = [:]) : null
-    
+
     def lightEffectsJSON = new groovy.json.JsonBuilder( lightEffects )
     sendEvent( name:"lightEffects", value: lightEffectsJSON )
 

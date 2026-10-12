@@ -13,7 +13,7 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 - CI (`.github/workflows/ci.yml`) runs both.
 
 ## Conventions
-- 4 spaces, LF, final newline (`.editorconfig`). Older files use tabs; don't reformat whole files in a functional change.
+- 4 spaces, LF, final newline (`.editorconfig`); all `.groovy` files are normalized to this.
 - Prefer built-ins over copies: `hubitat.helper.ColorUtils`, `HexUtils`. ~15 drivers still carry their own `clamp`, `calculateChecksum`, `logDebug`; Hubitat has no shared-library import except Libraries code, so extract to a Hubitat Library (`#include`) rather than copy again.
 - Every new driver/app: `importUrl` (lowercase `l` — `importURL` is silently ignored), `updated()` that calls `unschedule()` and re-inits, no secrets in source, and logging gated by a preference.
 - Float vs BigDecimal: `BigDecimal == float` is false in Groovy; cast before comparing (this broke `rgbToHSV`).

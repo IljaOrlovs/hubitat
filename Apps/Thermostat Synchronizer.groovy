@@ -186,38 +186,38 @@ def syncFromMaster(){
         if(masterDevice.deviceNetworkId != comparisonDevice.deviceNetworkId){
             log.trace "Names are different"
 
-            if(comparisonDevice.hasCommand("setThermostatSetpoint")){      
-                
+            if(comparisonDevice.hasCommand("setThermostatSetpoint")){
+
                 log.trace masterDevice.currentValue('thermostatSetpoint')
                 log.trace comparisonDevice.currentValue('thermostatSetpoint')
-                
+
                 if(masterDevice.currentValue('thermostatSetpoint') != comparisonDevice.currentValue('thermostatSetpoint')){
 
                     comparisonDevice.setThermostatSetpoint(masterDevice.currentValue('thermostatSetpoint').toFloat())
                 }
             }
 
-            if(comparisonDevice.hasCommand("setCoolingSetpoint")){                
+            if(comparisonDevice.hasCommand("setCoolingSetpoint")){
                 if(masterDevice.currentValue('coolingSetpoint') != comparisonDevice.currentValue('coolingSetpoint')){
 
                     comparisonDevice.setCoolingSetpoint(masterDevice.currentValue('coolingSetpoint').toFloat())
                 }
             }
 
-            if(comparisonDevice.hasCommand("setHeatingSetpoint")){                
+            if(comparisonDevice.hasCommand("setHeatingSetpoint")){
                 if(masterDevice.currentValue('heatingSetpoint') != comparisonDevice.currentValue('heatingSetpoint')){
 
                     comparisonDevice.setHeatingSetpoint(masterDevice.currentValue('heatingSetpoint').toFloat())
                 }
             }
-            if(comparisonDevice.hasCommand("setThermostatFanMode")){                
+            if(comparisonDevice.hasCommand("setThermostatFanMode")){
                 if(masterDevice.currentValue('thermostatFanMode') != comparisonDevice.currentValue('thermostatFanMode')){
 
                     comparisonDevice.serThermostatFanMode(masterDevice.currentValue('thermostatFanMode'))
                 }
             }
 
-            if(comparisonDevice.hasCommand("setThermostatMode")){                
+            if(comparisonDevice.hasCommand("setThermostatMode")){
                 if(masterDevice.currentValue('thermostatMode') != comparisonDevice.currentValue('thermostatMode')){
 
                     comparisonDevice.setThermostatMode(masterDevice.currentValue('thermostatMode'))

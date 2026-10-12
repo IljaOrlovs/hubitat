@@ -1,18 +1,18 @@
 /**
-*  _   _           _       _   _             _                 __  __   _                                         __   _   
-* | | | |  _   _  | |__   (_) | |_    __ _  | |_       _      |  \/  | (_)  _ __     ___    ___   _ __    __ _   / _| | |_ 
+*  _   _           _       _   _             _                 __  __   _                                         __   _
+* | | | |  _   _  | |__   (_) | |_    __ _  | |_       _      |  \/  | (_)  _ __     ___    ___   _ __    __ _   / _| | |_
 * | |_| | | | | | | '_ \  | | | __|  / _` | | __|    _| |_    | |\/| | | | | '_ \   / _ \  / __| | '__|  / _` | | |_  | __|
-* |  _  | | |_| | | |_) | | | | |_  | (_| | | |_    |_   _|   | |  | | | | | | | | |  __/ | (__  | |    | (_| | |  _| | |_ 
+* |  _  | | |_| | | |_) | | | | |_  | (_| | | |_    |_   _|   | |  | | | | | | | | |  __/ | (__  | |    | (_| | |  _| | |_
 * |_| |_|  \__,_| |_.__/  |_|  \__|  \__,_|  \__|     |_|     |_|  |_| |_| |_| |_|  \___|  \___| |_|     \__,_| |_|    \__|
 *
-*                                                                                                                          
+*
 * ---------- The integration you and your kids can both enjoy -----------
-* 
-* ___  _   _    ____ ___  ____ _  _    _  _ ____ _  _ ___  ____ _  _ _ ____ _  _ 
-* |__]  \_/     |__| |  \ |__| |\/|    |_/  |___ |\/| |__] |___ |\ | | |    |__| 
-* |__]   |      |  | |__/ |  | |  |    | \_ |___ |  | |    |___ | \| | |___ |  | 
-*                                                                                
-* 
+*
+* ___  _   _    ____ ___  ____ _  _    _  _ ____ _  _ ___  ____ _  _ _ ____ _  _
+* |__]  \_/     |__| |  \ |__| |\/|    |_/  |___ |\/| |__] |___ |\ | | |    |__|
+* |__]   |      |  | |__/ |  | |  |    | \_ |___ |  | |    |___ | \| | |___ |  |
+*
+*
 **/
 
 import hubitat.helper.HexUtils
@@ -26,7 +26,7 @@ metadata {
         capability "Initialize"
         capability "Refresh"
         capability "Switch"
-        
+
         command "testParse", ["string"]
         command "getChallengeToken"
 
@@ -36,7 +36,7 @@ metadata {
         attribute "serverName", "string"
     }
 
-    preferences {  
+    preferences {
         input "deviceIP", "text", title: "Device IP", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 25565)", required: true, defaultValue: 25565
 
@@ -65,12 +65,12 @@ def testParse(data){
 }
 
 void parse( data ){
-    
+
 
     if(data != ""){
-        
+
         log.debug "Parse: ${data}"
-        
+
         sendEvent(name: "switch", value: "on")
         def dataBytes = HexUtils.hexStringToByteArray(data)
 
@@ -89,7 +89,7 @@ void parse( data ){
         def firstMaxPlayersByte
 
 
-        def cleanOutput = [] 
+        def cleanOutput = []
 
         for(i=0; i < dataBytes.length; i++){
             if(dataBytes[i] != 0x00){
@@ -118,7 +118,7 @@ void parse( data ){
         // Name Buffer
         def deviceName = []
         for(i=firstNameByte; i < firstCurrentPlayersByte - 1; i++){
-            // if we read an end of line, break 
+            // if we read an end of line, break
             try{
                 deviceName << cleanOutput[i]
             } catch(e){
@@ -135,7 +135,7 @@ void parse( data ){
         // Current Players Buffer
         def currentPlayersData = []
         for(i = firstCurrentPlayersByte; i < firstMaxPlayersByte - 1; i++){
-            // if we read an end of line, break 
+            // if we read an end of line, break
             currentPlayersData << cleanOutput[i]
         }
         def currentPlayersDataToBytes = HexUtils.intArrayToHexString(*currentPlayersData)
@@ -148,7 +148,7 @@ void parse( data ){
         // Max Players Buffer
         def maxPlayersData = []
         for(i = firstMaxPlayersByte; i <= cleanOutput.size; i++){
-            // if we read an end of line, break 
+            // if we read an end of line, break
             maxPlayersData << cleanOutput[i]
         }
         def maxPlayersDataToBytes = HexUtils.intArrayToHexString(*maxPlayersData)
@@ -157,7 +157,7 @@ void parse( data ){
         log.trace "max players ${maxPlayers}"
 
         if(currentPlayers > 0){
-            sendEvent(name: "presence", value: "present")   
+            sendEvent(name: "presence", value: "present")
         } else {
             sendEvent(name: "presence", value: "not present")
         }
@@ -190,13 +190,13 @@ def refresh( ) {
 private logDebug( text ){
     // If debugging is enabled in settings, pass text to the logs
 
-    if( settings.logDebug ) { 
+    if( settings.logDebug ) {
         log.debug "${device.name} (${settings.deviceIP}): ${text}"
     }
 }
 
 private logDescriptionText( text ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "${device.name} (${settings.deviceIP}): ${text}"
     }
 }
@@ -219,7 +219,7 @@ def appendChecksum( data ){
     // Adds a checksum to an array
 
     data += calculateChecksum(data)
-    return data 
+    return data
 }
 
 byte[] asByteArray(List buffer) {
@@ -239,7 +239,7 @@ def sendCommand( data ) {
 
 }
 
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDebug "socketStatus: ${status}"
 
 }

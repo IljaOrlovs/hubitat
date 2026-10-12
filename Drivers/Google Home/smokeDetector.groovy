@@ -2,8 +2,8 @@
 *  Google Home Virtual Smoke Detector
 *  Converts Hubitat Smoke events into events readable by the Community Google Home Integration
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *
 *  Changelog:
@@ -23,7 +23,7 @@
 metadata {
     definition(
         name: "Google Home Smoke Detector",
-        namespace: "adamkempenich", 
+        namespace: "adamkempenich",
         author: "Adam Kempenich",
         importUrl: "") {
 
@@ -37,7 +37,7 @@ metadata {
         attribute "smokeLevelPPM", "number"
     }
 
-    preferences {  
+    preferences {
 
     }
 }
@@ -68,10 +68,10 @@ def tested() {
     sendSmokeAlarmEvent( 2 )
 }
 
-def sendSmokeAlarmEvent( value, isDigital=false ) {    // attributes: smoke ("detected","clear","tested")    ea.STATE, true, false).withDescription('Smoke alarm status'),  [dp=1] 
-    
+def sendSmokeAlarmEvent( value, isDigital=false ) {    // attributes: smoke ("detected","clear","tested")    ea.STATE, true, false).withDescription('Smoke alarm status'),  [dp=1]
+
     def map = [:]
-    
+
     map.value = value==0 ? "detected" : value==1 ? "clear" : value==2 ? "tested" : null
 
     if(value == 0) {
@@ -84,7 +84,7 @@ def sendSmokeAlarmEvent( value, isDigital=false ) {    // attributes: smoke ("de
         sendEvent(name: "smokeLevelPPM", value:  0)
 
     }
-    
+
     map.name = "smoke"
     map.unit = ""
     map.type = isDigital == true ? "digital" : "physical"

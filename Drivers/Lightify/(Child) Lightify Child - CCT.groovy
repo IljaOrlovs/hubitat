@@ -1,7 +1,7 @@
 /**
 * Lightify Child - CCT (0.22)
 *
-*  Author: 
+*  Author:
 *    Adam Kempenich
 *
 *  Documentation:  [Does not exist, yet]
@@ -36,20 +36,20 @@
 
 metadata {
 definition (
-    name: "Lightify Child - CCT", 
-    namespace: "Lightify", 
+    name: "Lightify Child - CCT",
+    namespace: "Lightify",
     author: "Adam Kempenich",
     importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Lightify/(Child)%20Lightify%20Child%20-%20CCT.groovy") {
-    
+
         capability "Actuator"
         capability "Color Temperature"
-		capability "Initialize"
+        capability "Initialize"
         capability "Polling"
         capability "Refresh"
-		capability "Sensor"
-		capability "Switch"
-		capability "Switch Level"
-	}
+        capability "Sensor"
+        capability "Switch"
+        capability "Switch Level"
+    }
 }
 
 def on(){
@@ -62,7 +62,7 @@ def off(){
 }
 def setLevel(brightness, duration=0){
     sendEvent(name: "level", value: brightness.toFloat())
-    parent.setLevel(device.deviceNetworkId, brightness.toFloat())   
+    parent.setLevel(device.deviceNetworkId, brightness.toFloat())
 }
 
 def setColorTemperature(colorTemperature = device.currentValue('colorTemperature'), level = device.currentValue('level')){

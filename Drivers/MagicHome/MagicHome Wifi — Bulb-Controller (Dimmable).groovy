@@ -1,8 +1,8 @@
 /**
 *  MagicHome Wifi - Bulb/Controller (Dimmable) 0.88
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *  Documentation:  https://community.hubitat.com/t/release-beta-0-7-magic-home-wifi-devices-initial-public-release/5197
 *
@@ -15,7 +15,7 @@
 *        - Added null 2nd option to setLevel for duration
 *
 *	0.88 (June 12, 2019)
-*		- Added option for failed pings threshold 
+*		- Added option for failed pings threshold
 *		- Resolved issue with recursive loops and initializing devices
 *
 *	0.87 (May 16, 2019)
@@ -37,21 +37,21 @@
 *		- Reworked powerOnWithChanges.
 * 		- Added import URL
 *
-*	0.84 (Mar 28 2019) 
+*	0.84 (Mar 28 2019)
 * 		- Completely reworked Telnet and Socket methods... Waiting on some bugfixes
 * 		- Greatly enhanced self-healing capabilities
 *
-*	0.83 (Feb 27 2019) 
+*	0.83 (Feb 27 2019)
 *	  - Un-did the parse() removal. Added Data checking for parse()
 *	  - Added a setting for time-to-refresh
 *
 *  	0.82 (Feb 25 2019)
 *	  - Commented out parse() contents, since I think they are causing slowdown...
 *
-*    0.81 (Feb 19 2019) 
+*    0.81 (Feb 19 2019)
 * 		- Added try/catch to initialize method
 * 		- Removed a bunch of extraneous code
-* 		- Fixed an issue with data loss for CCT in parse method 
+* 		- Fixed an issue with data loss for CCT in parse method
 *
 *    0.8 (Feb 11 2019)
 *      - Initial Release
@@ -78,11 +78,11 @@ import hubitat.device.Protocol
 
 metadata {
     definition (
-        name: "MagicHome Wifi — Bulb/Controller (Dimmable)", 
-        namespace: "MagicHome", 
+        name: "MagicHome Wifi — Bulb/Controller (Dimmable)",
+        namespace: "MagicHome",
         author: "Adam Kempenich",
-		importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Bulb-Controller%20(Dimmable).groovy") {
-        
+        importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Bulb-Controller%20(Dimmable).groovy") {
+
         capability "Switch Level"
         capability "Actuator"
         capability "Switch"
@@ -90,31 +90,31 @@ metadata {
         capability "Refresh"
         capability "Sensor"
         capability "Initialize"
-	}
-    
-    preferences {  
+    }
+
+    preferences {
         input "deviceIP", "text", title: "Device IP", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 5577)", required: true, defaultValue: 5577
-		
+
         input(name:"logDebug", type:"bool", title: "Log debug information?",
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
               required: true, displayDuringSetup: true)
          input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
-		
-		input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
+
+        input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
             description: "Number of failed pings before reconnecting device.", defaultValue: 3,
             required: true, displayDuringSetup: true)
 
-		input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
+        input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
               description: "When a device is unreachable, turn its state off. in Hubitat", defaultValue: true,
               required: true, displayDuringSetup: true)
 
         input(name:"enablePreStaging", type:"bool", title: "Enable Brightness Pre-Staging?",
               defaultValue: false, required: true, displayDuringSetup: true)
 
-		input(name:"refreshTime", type:"number", title: "Time to refresh (seconds)",
+        input(name:"refreshTime", type:"number", title: "Time to refresh (seconds)",
             description: "Interval between refreshing a device for its current value. Default: 60. Recommended: Under 200", defaultValue: 60,
             required: true, displayDuringSetup: true)
     }
@@ -123,7 +123,7 @@ def on() {
     // Turn on the device
 
     sendEvent(name: "switch", value: "on")
-    logDebug "Switch set to on" 
+    logDebug "Switch set to on"
     byte[] data = [0x71, 0x23, 0x0F, 0xA3]
     sendCommand(data)
 }
@@ -132,19 +132,19 @@ def off() {
     // Turn off the device
 
     sendEvent(name: "switch", value: "off")
-    logDebug "Switch set to off" 
+    logDebug "Switch set to off"
     byte[] data = [0x71, 0x24, 0x0F, 0xA4]
     sendCommand(data)
 }
 
 def setLevel(level, duration=0) {
     // Set the brightness of a device (0-100)
-	limit( level )
+    limit( level )
     sendEvent(name: "level", value: level)
     logDebug "Level set to ${level}"
-	
-	byte[] data = appendChecksum([0x31, level*2.55, 0, 0, 0x03, 0x01, 0x0f])
-    sendCommand( data ) 
+
+    byte[] data = appendChecksum([0x31, level*2.55, 0, 0, 0x03, 0x01, 0x0f])
+    sendCommand( data )
     powerOnWithChanges()
 }
 
@@ -153,7 +153,7 @@ def setLevel(level, duration=0) {
 
 def powerOnWithChanges( ){
     // If the device is off and light settings change, turn it on (if user settings apply)
-		
+
     settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
 }
 
@@ -176,7 +176,7 @@ def limit( value, lowerBound = 0, upperBound = 100 ){
 
 def calculateChecksum( data ){
     // Totals an array of bytes
-    
+
     int sum = 0;
     for(int d : data)
         sum += d;
@@ -185,17 +185,17 @@ def calculateChecksum( data ){
 
 def appendChecksum( data ){
     // Adds a checksum to an array
-    
+
     data += calculateChecksum(data)
-    return data 
+    return data
 }
 
 def parse( response ) {
     // Parse data received back from this device
-    
-    state.noResponse = 0    
-    
-    def responseArray = HexUtils.hexStringToIntArray(response)  
+
+    state.noResponse = 0
+
+    def responseArray = HexUtils.hexStringToIntArray(response)
     switch(responseArray.length) {
         case 4:
             logDebug( "Received power-status packet of ${response}" )
@@ -210,10 +210,10 @@ def parse( response ) {
                 }
             }
             break;
-        
+
         case 14:
             logDebug( "Received general-status packet of ${response}" )
-        
+
             if( responseArray[2] == 35 ){
                 if(device.currentValue("switch") != "on"){
                     sendEvent(name: "switch", value: "on")
@@ -225,11 +225,11 @@ def parse( response ) {
                 }
             }
             break;
-        
+
         case null:
             logDebug "Null response received from device"
             break;
-        
+
         default:
             logDebug "Received a response with an unexpected length of ${responseArray.length} containing ${response}"
             break;
@@ -238,36 +238,36 @@ def parse( response ) {
 
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
-    
-    if( settings.logDebug ) { 
+
+    if( settings.logDebug ) {
         log.debug "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 def sendCommand( data ) {
     // Sends commands to the device
-    
+
     String stringBytes = HexUtils.byteArrayToHexString(data)
     logDebug "${data} was converted. Transmitting: ${stringBytes}"
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 
 def refresh( ) {
-	
-	logDebug "Number of failed responses: ${state.noResponse}"
-	state.noResponse++
+
+    logDebug "Number of failed responses: ${state.noResponse}"
+    state.noResponse++
     state.noResponse >= settings.reconnectPings ? ( initialize() ) : null // if a device hasn't responded after N attempts, reconnect
     byte[] data =  [0x81, 0x8A, 0x8B, 0x96 ]
     sendCommand(data)
 }
 
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDescriptionText "A connection issue occurred."
     logDebug "socketStatus: ${status}"
     logDebug "Attempting to reconnect after ${limit(settings.reconnectPings, 0, 10)-state.noResponse} more failed attempt(s)."
@@ -288,12 +288,12 @@ def connectDevice( data ){
         unschedule() // remove the refresh loop
         schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
     }
-    
+
     InterfaceUtils.socketClose(device)
     telnetClose()
-    
+
     pauseExecution(1000)
-    
+
     if( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
         def tryWasGood = false
         try {
@@ -302,20 +302,20 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-    
+
         } catch(e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
             settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
-	    
-	    if(tryWasGood){
-	    	unschedule()
-	    	logDebug "Stopping connectDevice loop. Starting refresh loop"
-	    	schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
-	    	state.noResponse = 0
-	    }
+
+        if(tryWasGood){
+        	unschedule()
+        	logDebug "Stopping connectDevice loop. Starting refresh loop"
+        	schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
+        	state.noResponse = 0
+        }
         log.debug "Proper time has passed, or it is the device's first run."
         log.debug "${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}"
         state.lastConnectionAttempt = now()
@@ -333,15 +333,15 @@ def initialize() {
     state.remove("refreshRunning")
     state.remove("initializeLoop")
     state.remove("oldvariablename")
-     
+
     state.noResponse = 0
-	
+
     logDebug "Initializing device."
     state.lastConnectionAttempt = now()
     connectDevice([firstRun: true])
 }
 
 def installed(){
-	sendEvent(name: "level", value: 100)
-	sendEvent(name: "switch", value: "off")
+    sendEvent(name: "level", value: 100)
+    sendEvent(name: "switch", value: "off")
 }

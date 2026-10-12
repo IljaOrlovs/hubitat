@@ -1,21 +1,21 @@
 /**
 *  MagicHome Wifi - Bulb (RGB + WW/CW CCT) 0.90
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *  Documentation:  https://community.hubitat.com/t/release-beta-0-7-magic-home-wifi-devices-initial-public-release/5197
 *
 *  Changelog:
 *  0.90 (Oct. 12, 2021)
-*	- Changed log.debug to logdebug on lines 583,584,588,589 so Log message follows Debug switch state 
+*	- Changed log.debug to logdebug on lines 583,584,588,589 so Log message follows Debug switch state
 *
 *   	0.89 (June 21, 2019)
 *       	 - Removed Telnet, as Socket is now reliable
 *        	 - Added null 2nd option to setLevel for duration
 *
 *	0.88 (June 12, 2019)
-*		- Added option for failed pings threshold 
+*		- Added option for failed pings threshold
 *		- Resolved issue with recursive loops and initializing devices
 *
 *	0.87 (May 16, 2019)
@@ -38,21 +38,21 @@
 *		- Corrected all function parameters except for setColorTemperature() which is mostly corrected
 * 		- Added import URL
 *
-*	0.84 (Mar 28 2019) 
+*	0.84 (Mar 28 2019)
 * 		- Completely reworked Telnet and Socket methods... Waiting on some bugfixes
 * 		- Greatly enhanced self-healing capabilities
 *
-*	0.83 (Feb 27 2019) 
+*	0.83 (Feb 27 2019)
 *	  - Un-did the parse() removal. Added Data checking for parse()
 *	  - Added a setting for time-to-refresh
 *
 *  	0.82 (Feb 25 2019)
 *	  - Commented out parse() contents, since I think they are causing slowdown...
 *
-*    0.81 (Feb 19 2019) 
+*    0.81 (Feb 19 2019)
 * 		- Added try/catch to initialize method
 * 		- Removed a bunch of extraneous code
-* 		- Fixed an issue with data loss for CCT in parse method 
+* 		- Fixed an issue with data loss for CCT in parse method
 *
 *    0.8 (Feb 11 2019)
 *      - Initial Release
@@ -81,21 +81,21 @@ import hubitat.helper.ColorUtils
 
 metadata {
     definition (
-        name: "MagicHome Wifi — Bulb (RGB + WW/CW CCT)", 
-        namespace: "MagicHome", 
+        name: "MagicHome Wifi — Bulb (RGB + WW/CW CCT)",
+        namespace: "MagicHome",
         author: "Adam Kempenich",
-		importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Bulb%20(RGBWW).groovy") {
-        
+        importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/MagicHome/MagicHome%20Wifi%20—%20Bulb%20(RGBWW).groovy") {
+
         capability "Actuator"
         capability "Color Control"
-		capability "Color Mode"
+        capability "Color Mode"
         capability "Color Temperature"
-		capability "Initialize"
+        capability "Initialize"
         capability "Polling"
         capability "Refresh"
-		capability "Sensor"
-		capability "Switch"
-		capability "Switch Level"
+        capability "Sensor"
+        capability "Switch"
+        capability "Switch Level"
 
         command "sendPreset",               ["number", "number"]       // 0 (off), 1-20 (other presets)
         command "presetSevenColorDissolve", [ "number" ] // 0 - 100 (speed)
@@ -124,34 +124,34 @@ metadata {
         attribute "warmWhiteLevel", "number"
         attribute "coldWhiteLevel", "number"
     }
-    
-    preferences {  
+
+    preferences {
         input "deviceIP", "text", title: "Device IP", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 5577)", required: true, defaultValue: 5577
-		
+
         input(name:"logDebug", type:"bool", title: "Log debug information?",
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
               required: true, displayDuringSetup: true)
          input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
               description: "Logs when things happen. (Default: On)", defaultValue: true,
               required: true, displayDuringSetup: true)
-		
-		input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
+
+        input(name:"turnOffWhenDisconnected", type:"bool", title: "Turn off when disconnected?",
               description: "When a device is unreachable, turn its state off. in Hubitat", defaultValue: true,
               required: true, displayDuringSetup: true)
-		input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
+        input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
             description: "Number of failed pings before reconnecting device.", defaultValue: 3,
             required: true, displayDuringSetup: true)
 
-		
+
         input(name:"enablePreStaging", type:"bool", title: "Enable Color Pre-Staging?",
               defaultValue: false, required: true, displayDuringSetup: true)
-		
-		input(name:"refreshTime", type:"number", title: "Time to refresh (0-60 seconds)",
+
+        input(name:"refreshTime", type:"number", title: "Time to refresh (0-60 seconds)",
             description: "Interval between refreshing a device for its current value. Default: 40. Use less than 60.", defaultValue: 40,
             required: true, displayDuringSetup: true)
-		
-		
+
+
         input(name:"deviceWWTemperature", type:"number", title: "Warm White rating of this light",
             description: "Temp in K (default 2700)", defaultValue: 2700,
             required: true, displayDuringSetup: true)
@@ -166,7 +166,7 @@ def on() {
     // Turn on the device
 
     sendEvent(name: "switch", value: "on")
-    logDebug "Switch set to on" 
+    logDebug "Switch set to on"
     byte[] data = [0x71, 0x23, 0x0F, 0xA3]
     sendCommand(data)
 }
@@ -175,18 +175,18 @@ def off() {
     // Turn off the device
 
     sendEvent(name: "switch", value: "off")
-    logDebug "Switch set to off" 
+    logDebug "Switch set to off"
     byte[] data = [0x71, 0x24, 0x0F, 0xA4]
     sendCommand(data)
 }
 
 def setHue(hue){
-    // Set the hue of a device (0-100) 
+    // Set the hue of a device (0-100)
 
     limit(hue)
     sendEvent(name: "hue", value: hue )
-	logDescriptionText "Hue set to ${hue}"
-	    
+    logDescriptionText "Hue set to ${hue}"
+
     setColor(hue: hue, level: device.currentValue("level"), saturation: device.currentValue("saturation"))
 }
 
@@ -196,62 +196,62 @@ def setSaturation(saturation){
     limit(saturation)
     sendEvent(name: "saturation", value: saturation)
     logDescriptionText "Saturation set to ${saturation}"
-    
+
     setColor(hue: device.currentValue("hue"), saturation: saturation, level: device.currentValue("level"))
 }
 
 def setLevel(level, duration=0) {
     // Set the brightness of a device (0-100)
-	level = limit( level, 0, 99 )
+    level = limit( level, 0, 99 )
     sendEvent(name: "level", value: level)
     logDebug "Level set to ${level}"
-    
+
     device.currentValue("colorMode") == "RGB" ? setColor(hue: device.currentValue("hue"), saturation: device.currentValue("saturation"), level: level) : setColorTemperature(device.currentValue('colorTemperature'), level)
 }
 
 def setColor( parameters ){
-   
+
    logDescriptionText "Color set to ${parameters}"
-    
+
     sendEvent(name: "currentPreset", value: 0)
-	sendEvent(name: "hue", value: parameters.hue)
-	sendEvent(name: "saturation", value: parameters.saturation)
-	sendEvent(name: "level", value: parameters.level)
-	rgbColors = ColorUtils.hsvToRGB( [parameters.hue, parameters.saturation, parameters.level] )
-	byte[] data = appendChecksum( [ 0x31, rgbColors[0], rgbColors[1], rgbColors[2], 0x00, 0x00, 0xf0, 0x0f ] )
-	sendCommand( data ) 
-	powerOnWithChanges()
+    sendEvent(name: "hue", value: parameters.hue)
+    sendEvent(name: "saturation", value: parameters.saturation)
+    sendEvent(name: "level", value: parameters.level)
+    rgbColors = ColorUtils.hsvToRGB( [parameters.hue, parameters.saturation, parameters.level] )
+    byte[] data = appendChecksum( [ 0x31, rgbColors[0], rgbColors[1], rgbColors[2], 0x00, 0x00, 0xf0, 0x0f ] )
+    sendCommand( data )
+    powerOnWithChanges()
 
 
 }
 
 def setColorTemperature( setTemp = device.currentValue("colorTemperature"), deviceLevel = device.currentValue("level") ){
-    // Adjust the color temperature of a device  
-    
-	sendEvent(name: "colorTemperature", value: setTemp)
-	logDebug "Color Temperature set to ${setTemp}"
+    // Adjust the color temperature of a device
+
+    sendEvent(name: "colorTemperature", value: setTemp)
+    logDebug "Color Temperature set to ${setTemp}"
     limit(setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature)
 
 
 
-	brightnessWW = proportionalToDeviceLevel(invertLinearValue( setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature ) )
-	brightnessCW = proportionalToDeviceLevel(invertLinearValue( setTemp, settings.deviceCWTemperature, settings.deviceWWTemperature ) )
+    brightnessWW = proportionalToDeviceLevel(invertLinearValue( setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature ) )
+    brightnessCW = proportionalToDeviceLevel(invertLinearValue( setTemp, settings.deviceCWTemperature, settings.deviceWWTemperature ) )
 
-	if( brightnessWW + brightnessCW > 100 ){
-	   brightnessWW = brightnessWW / (( brightnessWW + brightnessCW ) / 100 )
-	   brightnessCW = brightnessCW / (( brightnessWW + brightnessCW ) / 100 )
-	}
+    if( brightnessWW + brightnessCW > 100 ){
+       brightnessWW = brightnessWW / (( brightnessWW + brightnessCW ) / 100 )
+       brightnessCW = brightnessCW / (( brightnessWW + brightnessCW ) / 100 )
+    }
 
-	sendEvent(name: "warmWhiteLevel", value: brightnessWW)
-	sendEvent(name: "coldWhiteLevel", value: brightnessCW)
-	sendEvent(name: "colorMode", value: "CT")
-   
+    sendEvent(name: "warmWhiteLevel", value: brightnessWW)
+    sendEvent(name: "coldWhiteLevel", value: brightnessCW)
+    sendEvent(name: "colorMode", value: "CT")
 
-	byte[] data = appendChecksum( [0x31, 0x00, 0x00, 0x00, brightnessWW * 2.55, brightnessCW * 2.55, 0x0f, 0x0f] )
-	sendCommand( data )
-	
-	pauseExecution(300)
-	powerOnWithChanges()
+
+    byte[] data = appendChecksum( [0x31, 0x00, 0x00, 0x00, brightnessWW * 2.55, brightnessCW * 2.55, 0x0f, 0x0f] )
+    sendCommand( data )
+
+    pauseExecution(300)
+    powerOnWithChanges()
 }
 
 def sendPreset(preset = 1, speed = 100){
@@ -263,19 +263,19 @@ def sendPreset(preset = 1, speed = 100){
     // 17 Cyan Strobe, 18 Purple Strobe, 19 White Strobe, 20 Seven Color Jump
 
 
-	preset > 20 ? (preset = 20) : null
-	speed > 99 ? (speed = 99) : null
+    preset > 20 ? (preset = 20) : null
+    speed > 99 ? (speed = 99) : null
 
-	// Hex range of presets is (int) 37 - (int) 57. Add the preset number to get that range.
-	preset += 36
-	speed = (100 - speed)
+    // Hex range of presets is (int) 37 - (int) 57. Add the preset number to get that range.
+    preset += 36
+    speed = (100 - speed)
 
-	sendEvent( name: "currentPreset", value: preset )
-	sendEvent( name: "presetSpeed", value: speed )
+    sendEvent( name: "currentPreset", value: preset )
+    sendEvent( name: "presetSpeed", value: speed )
 
-	byte[] data = appendChecksum(  [ 0x61, preset, speed, 0x0F ] )
-	sendCommand( data ) 
-	pauseExecution(300)
+    byte[] data = appendChecksum(  [ 0x61, preset, speed, 0x0F ] )
+    sendCommand( data )
+    pauseExecution(300)
     powerOnWithChanges()
 }
 
@@ -345,12 +345,12 @@ def presetSevenColorJump( speed = 99 ){
 
 def proportionalToDeviceLevel( value ){
     // Returns the value of a number proportionally to the device's brightness
-    
+
     return value * device.currentValue('level') / 100
 }
 
 def invertLinearValue( neutralValue, value1, value2 ){
-    // Determines how far from a point two values are 
+    // Determines how far from a point two values are
 
     return (( 100 )/( value1 - value2 )) * neutralValue + ( 100 - ( 100 /( value1 - value2 )) * value1 )
 }
@@ -359,29 +359,29 @@ def invertLinearValue( neutralValue, value1, value2 ){
 
 def powerOnWithChanges( ){
     // If the device is off and light settings change, turn it on (if user settings apply)
-		
+
     settings.enablePreStaging ? null : ( device.currentValue("switch") != "on" ? on() : null )
 }
 
 def calculateCTSaturation( coldWhite = true, offset ) {
-		
-	def CURVE
-	def lowPoint
-	def highPoint
-	
-	if( coldWhite ) {
-		lowPoint = settings.cwSaturationLowPoint < settings.cwSaturationHighPoint ? settings.cwSaturationLowPoint : settings.cwSaturationHighPoint
-		highPoint = settings.cwSaturationHighPoint > settings.cwSaturationLowPoint ? settings.cwSaturationHighPoint : settings.cwSaturationLowPoint
-		CURVE = 1.8
-	}
-	else{ 
-		lowPoint = settings.wwSaturationLowPoint < settings.wwSaturationHighPoint ? settings.wwSaturationLowPoint : settings.wwSaturationHighPoint
-		highPoint = settings.wwSaturationHighPoint > settings.wwSaturationLowPoint ? settings.wwSaturationHighPoint : settings.wwSaturationLowPoint
-		CURVE = 2.16666
-	}
-	
-	return (((( 100 - lowPoint  ) / 100 ) * ( CURVE * Math.sqrt( offset ))) + lowPoint  ) * highPoint / 100
-}      
+
+    def CURVE
+    def lowPoint
+    def highPoint
+
+    if( coldWhite ) {
+        lowPoint = settings.cwSaturationLowPoint < settings.cwSaturationHighPoint ? settings.cwSaturationLowPoint : settings.cwSaturationHighPoint
+        highPoint = settings.cwSaturationHighPoint > settings.cwSaturationLowPoint ? settings.cwSaturationHighPoint : settings.cwSaturationLowPoint
+        CURVE = 1.8
+    }
+    else{
+        lowPoint = settings.wwSaturationLowPoint < settings.wwSaturationHighPoint ? settings.wwSaturationLowPoint : settings.wwSaturationHighPoint
+        highPoint = settings.wwSaturationHighPoint > settings.wwSaturationLowPoint ? settings.wwSaturationHighPoint : settings.wwSaturationLowPoint
+        CURVE = 2.16666
+    }
+
+    return (((( 100 - lowPoint  ) / 100 ) * ( CURVE * Math.sqrt( offset ))) + lowPoint  ) * highPoint / 100
+}
 
 def limit( value, lowerBound = 0, upperBound = 100 ){
     // Takes a value and ensures it's between two defined thresholds
@@ -411,7 +411,7 @@ def betweenOverUnder( value, comparison, totalRange = 0.5 ){
 
 def calculateChecksum( data ){
     // Totals an array of bytes
-    
+
     int sum = 0;
     for(int d : data)
         sum += d;
@@ -420,17 +420,17 @@ def calculateChecksum( data ){
 
 def appendChecksum( data ){
     // Adds a checksum to an array
-    
+
     data += calculateChecksum(data)
-    return data 
+    return data
 }
 
 def parse( response ) {
     // Parse data received back from this device
-    
-    state.noResponse = 0    
-    
-    def responseArray = HexUtils.hexStringToIntArray(response)  
+
+    state.noResponse = 0
+
+    def responseArray = HexUtils.hexStringToIntArray(response)
     switch(responseArray.length) {
         case 4:
             logDebug( "Received power-status packet of ${response}" )
@@ -445,10 +445,10 @@ def parse( response ) {
                 }
             }
             break;
-        
+
         case 14:
             logDebug( "Received general-status packet of ${response}" )
-        
+
             if( responseArray[2] == 35 ){
                 if(device.currentValue("switch") != "on"){
                     sendEvent(name: "switch", value: "on")
@@ -460,41 +460,41 @@ def parse( response ) {
                 }
             }
             def warmWhite = ( responseArray[ 9 ] / 2.55 )
-			def coldWhite = ( responseArray[ 11 ] / 2.55 )
+            def coldWhite = ( responseArray[ 11 ] / 2.55 )
             hsvMap = ColorUtils.rgbToHSV([responseArray[ 6 ], responseArray[ 7 ], responseArray[ 8 ]])
 
-			if( (warmWhite + coldWhite) > 0) {
-				// Calculate the color temperature, based on what data was received
+            if( (warmWhite + coldWhite) > 0) {
+                // Calculate the color temperature, based on what data was received
                 sendEvent(name: "colorMode", value: "CT")
                 if(!betweenOverUnder(warmWhite + coldWhite, device.currentValue('coldWhiteLevel') + device.currentValue('warmWhiteLevel'), 0.4)){
                     sendEvent(name: "level", value: limit(warmWhite + coldWhite) )
                 }
-				if(device.currentValue('warmWhiteLevel' ) != warmWhite && device.currentValue('coldWhiteLevel') != coldWhite ){
+                if(device.currentValue('warmWhiteLevel' ) != warmWhite && device.currentValue('coldWhiteLevel') != coldWhite ){
                     if(device.currentValue > 4){
-					    setTemp = settings.deviceCWTemperature - (( settings.deviceCWTemperature - settings.deviceWWTemperature ) * ( warmWhite / 100 ))
-					    sendEvent(name: "colorTemperature", value: setTemp.toInteger())
+                        setTemp = settings.deviceCWTemperature - (( settings.deviceCWTemperature - settings.deviceWWTemperature ) * ( warmWhite / 100 ))
+                        sendEvent(name: "colorTemperature", value: setTemp.toInteger())
                     }
-				}
-				sendEvent(name: "warmWhiteLevel", value: warmWhite)
-				sendEvent(name: "coldWhiteLevel", value: coldWhite)
+                }
+                sendEvent(name: "warmWhiteLevel", value: warmWhite)
+                sendEvent(name: "coldWhiteLevel", value: coldWhite)
 
-				
-			}
-			else{
-				// Or, set the color
-				sendEvent(name: "colorMode", value: "RGB")
+
+            }
+            else{
+                // Or, set the color
+                sendEvent(name: "colorMode", value: "RGB")
                 sendEvent(name: "warmWhiteLevel", value: 0)
                 sendEvent(name: "coldWhiteLevel", value: 0)
                 sendEvent(name: "level", value: hsvMap[2])
-                hsvMap[2] < 5 ? null : sendEvent(name: "hue", value: hsvMap[0]) // Hue/Sat aren't recoverable below this point. 
-        	    hsvMap[2] < 5 ? null : sendEvent(name: "saturation", value: hsvMap[1]) // Hue/Sat aren't recoverable below this point. 
-			}
+                hsvMap[2] < 5 ? null : sendEvent(name: "hue", value: hsvMap[0]) // Hue/Sat aren't recoverable below this point.
+        	    hsvMap[2] < 5 ? null : sendEvent(name: "saturation", value: hsvMap[1]) // Hue/Sat aren't recoverable below this point.
+            }
             break;
-        
+
         case null:
             logDebug "Null response received from device"
             break;
-        
+
         default:
             logDebug "Received a response with an unexpected length of ${responseArray.length} containing ${response}"
             break;
@@ -503,35 +503,35 @@ def parse( response ) {
 
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
-    
-    if( settings.logDebug ) { 
+
+    if( settings.logDebug ) {
         log.debug "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 def sendCommand( data ) {
     // Sends commands to the device
-    
+
     String stringBytes = HexUtils.byteArrayToHexString(data)
     logDebug "${data} was converted. Transmitting: ${stringBytes}"
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 
 def refresh( ) {
-	
-	state.noResponse++
+
+    state.noResponse++
     state.noResponse >= 2 ? ( initialize() ) : null // if a device hasn't responded twice, reconnect
-	
+
     byte[] data =  [0x81, 0x8A, 0x8B, 0x96 ]
     sendCommand(data)
 }
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDebug "socketStatus: ${status}"
     logDebug "Attempting to reconnect after ${settings.reconnectPings-state.noResponse} failed attempts."
     }
@@ -551,12 +551,12 @@ def connectDevice( data ){
         unschedule() // remove the refresh loop
         schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", connectDevice, [data: [firstRun: false]])
     }
-    
+
     InterfaceUtils.socketClose(device)
     telnetClose()
-    
+
     pauseExecution(1000)
-    
+
     if( data.firstRun || ( now() - state.lastConnectionAttempt) > limit(settings.refreshTime, 1, 60) * 500 /* Breaks infinite loops */ ) {
         def tryWasGood = false
         try {
@@ -565,20 +565,20 @@ def connectDevice( data ){
             pauseExecution(1000)
             logDescriptionText "Connection successfully established"
             tryWasGood = true
-    
+
         } catch(e) {
             logDebug("Error attempting to establish socket connection to device.")
             logDebug("Next initialization attempt in ${settings.refreshTime} seconds.")
             settings.turnOffWhenDisconnected ? sendEvent(name: "switch", value: "off")  : null
             tryWasGood = false
         }
-	    
-	    if(tryWasGood){
-	    	unschedule()
-	    	logDebug "Stopping connectDevice loop. Starting refresh loop"
-	    	schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
-	    	state.noResponse = 0
-	    }
+
+        if(tryWasGood){
+        	unschedule()
+        	logDebug "Stopping connectDevice loop. Starting refresh loop"
+        	schedule("0/${limit(settings.refreshTime, 1, 59)} * * * * ? *", refresh)
+        	state.noResponse = 0
+        }
         logdebug "Proper time has passed, or it is the device's first run." //JAS changed log.debug to logdebug 10/12/21
         logdebug "${(now() - state.lastConnectionAttempt)} >= ${limit(settings.refreshTime, 1, 60) * 500}. First run: ${data.firstRun}" //JAS changed log.debug to logdebug 10/12/21
         state.lastConnectionAttempt = now()
@@ -596,16 +596,16 @@ def initialize() {
     state.remove("refreshRunning")
     state.remove("initializeLoop")
     state.remove("oldvariablename")
-    
+
     logDebug "Initializing device."
     state.lastConnectionAttempt = now()
     connectDevice([firstRun: true])
 }
 
 def installed(){
-	sendEvent(name: "hue", value: 0)
-	sendEvent(name: "saturation", value: 100)
-	sendEvent(name: "level", value: 99)
-	sendEvent(name: "switch", value: "off")
-	sendEvent(name: "colorMode", value: "RGB")
+    sendEvent(name: "hue", value: 0)
+    sendEvent(name: "saturation", value: 100)
+    sendEvent(name: "level", value: 99)
+    sendEvent(name: "switch", value: "off")
+    sendEvent(name: "colorMode", value: "RGB")
 }

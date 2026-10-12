@@ -20,7 +20,7 @@ definition(
 
 preferences {
      page name: "mainPage", title: "", install: true, uninstall: true
-} 
+}
 
 def installed() {
     log.info "Installed with settings: ${settings}"
@@ -41,9 +41,9 @@ def initialize() {
     }
 }
 
-def installCheck() {         
+def installCheck() {
     state.appInstalled = app.getInstallationState()
-    
+
     if (state.appInstalled != 'COMPLETE') {
         section{paragraph "Press <i>Done</i> to complete installation. Afterward, come back to this app to create a new watering schedule."}
     }
@@ -51,14 +51,14 @@ def installCheck() {
 
 def mainPage() {
     dynamicPage(name: "mainPage") {
-                
+
             section("<h2>Help/Information</h2>"){
                 paragraph "<b>Designed for use with the Multirelay ZEN16. Shop this device at <a href='https://www.thesmartesthouse.com/'>TheSmartestHouse.com</a></b>"
                 paragraph "For help and support, visit <a href='https://www.support.getzooz.com/'>support.getzooz.com</a>"
-    
+
             }
             section() {
                 app(name: "anyOpenApp", appName: "Simple Sprinklers Setup", namespace: "Zooz", title: "<b>Add a new sprinkler setup</b>", multiple: true)
-            }       
+            }
     }
 }

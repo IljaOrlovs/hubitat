@@ -1,7 +1,7 @@
 /**
 * Salt and Pepper - Virtual Device
 *
-*  Author: 
+*  Author:
 *    Adam Kempenich
 *
 *  Documentation:  [Does not exist, yet]
@@ -22,18 +22,18 @@
 
 metadata {
 definition (
-    name: "Salt and Pepper - Virtual Device", 
-    namespace: "Salt and Pepper", 
+    name: "Salt and Pepper - Virtual Device",
+    namespace: "Salt and Pepper",
     author: "Adam Kempenich",
     importUrl: "N/A") {
-    
+
         capability "Actuator"
         capability "Color Temperature"
-		capability "Initialize"
-		capability "Sensor"
-		capability "Switch"
-		capability "Switch Level"
-	}
+        capability "Initialize"
+        capability "Sensor"
+        capability "Switch"
+        capability "Switch Level"
+    }
 }
 
 def on(){
@@ -54,18 +54,15 @@ def installed(){
     sendEvent(name: "switch", value: "off")
     sendEvent(name: "level", value: 100)
     sendEvent(name: "colorTemperature", value: 4000)
-    
+
 }
 
 def initialize(){
     // Do nothing
-    
+
 }
 
 def updated(){
     // Do nothing
-    
+
 }
-
-
-

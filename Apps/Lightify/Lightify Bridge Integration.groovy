@@ -1,8 +1,8 @@
 /**
-* Lightify Bridge Integration — Parent App (0.22) 
+* Lightify Bridge Integration — Parent App (0.22)
 *
-*  Author: 
-*    Adam Kempenich 
+*  Author:
+*    Adam Kempenich
 *
 *  Documentation:  [Does not exist, yet]
 *
@@ -25,14 +25,14 @@
 *        - Updated settings pages a lot
 *        - Beefed up initialization routine/error checking
 *        - Added color prestaging and child description text
-* 
+*
 *    0.21 (Feb 10, 2020)
 *        - Added switch device
 *        - Added CCT device
 *        - Figured out how CCT is parsed
 *        - Fixed an integer conversion issue with level
 *        - Fixed device adding --- verifies packets are the correct length before parsing
-*        
+*
 *    0.20 (Feb 04, 2020)
 *        - Added parent/child structure
 *        - Actually holds data now
@@ -45,7 +45,7 @@
 *        X send a test command to the bridge
 *        X create structure for parent/children
 *        X send command to individual devices
-*        - send command to groups 
+*        - send command to groups
 *        X add separate device types
 *        X add power
 *        X add brightness
@@ -93,37 +93,37 @@ preferences {
 
 def mainPage(){
     dynamicPage(name: "mainPage") {
-        
+
         state.discoveredDevices == null ? state.discoveredDevices = [:] : null
         state.discoveredGroups == null ? state.discoveredGroups = [:] : null
         state.initialSetupComplete == null ?  state.initialSetupComplete = false : null
-        
+
         section("Credits:", hideable: true, hidden: true) {
             paragraph "<b>Developed by:</b>"
             paragraph "- Adam Kempenich (@AdamKempenich)."
         }
-        
+
         section("<h2>App Name</h2>"){
-	    		label title: "Enter a name for this app (optional)", required: false
-        }   
-	    section("Lightify Details") {
-                        
+        		label title: "Enter a name for this app (optional)", required: false
+        }
+        section("Lightify Details") {
+
             input "deviceIP", "text", title: "Lightify Gateway IP Address (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
             input "devicePort", "number", title: "Device Port (Default: 4000)", required: true, defaultValue: 4000
-            input "deviceMAC", "text", title: "Gateway MAC Address e.g. E.G. 010203A4. <b>DO NOT CHANGE THIS VALUE AFTER YOUR INPUT IT!</b>", required: true, defaultValue: "010203A4" 
-            
+            input "deviceMAC", "text", title: "Gateway MAC Address e.g. E.G. 010203A4. <b>DO NOT CHANGE THIS VALUE AFTER YOUR INPUT IT!</b>", required: true, defaultValue: "010203A4"
+
             input(name:"logDebug", type:"bool", title: "Log debug information?",
                   description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
                   required: true, displayDuringSetup: true)
-            
+
              input(name:"logDescriptionText", type:"bool", title: "Log descriptionText?",
                   description: "Logs when things happen. (Default: On)", defaultValue: true,
                   required: true, displayDuringSetup: true)
-    
+
             input(name:"refreshTime", type:"number", title: "Time to refresh (seconds)",
                 description: "Interval between refreshing a device for its current value. Default: 30. Use number between 5-60", defaultValue: 30,
                 required: true, displayDuringSetup: true)
-	    
+
             input(name:"reconnectPings", type:"number", title: "Reconnect after ...",
                 description: "Number of failed pings before reconnecting Lightify gateway.", defaultValue: 4,
                 required: true, displayDuringSetup: true)
@@ -149,9 +149,9 @@ def mainPage(){
 
 def manageDevices(){
     dynamicPage(name: "manageDevices"){
-        
+
         refresh()
-        
+
         //section("<h2 id='propogating'>Please wait while propogating devices (10 seconds..)</h2>"){
         //    pauseExecution(10000) // Wait for devices to propogate
         //    paragraph "<style>#propogating{display:none;</style>"
@@ -160,9 +160,9 @@ def manageDevices(){
         // cron add devices - 15s
         //def childDevice = getChildDevice(deviceMAC)
         //def devices = childDevice.refresh(true)
-        // end cron        
+        // end cron
         //settings.checkedDevices = ""
-        
+
         //settings.renameDevices = false
         //addChildDevice("Lightify", "Lightify Bulb - RGBW", "${macString}", null, [label: "${friendlyDeviceName}"])
         //state.discoveredDevices = [:]
@@ -170,18 +170,18 @@ def manageDevices(){
         section("<h2>Select Devices</h2>") {
             input(name: "checkedDevices", type: "enum", title: "Add:", multiple: true, options: state.discoveredDevices)
             //input(name: "renameDevices", type: "bool", title: "Update names of checked devices?", default: false)
-            
+
             paragraph "To rename or delete devices, remove them from their device page in Hubitat"
-        } 
+        }
     }
 }
 def manageGroups(){
     dynamicPage(name: "managegroups"){
-        
+
         getGroups()
-        
+
         pauseExecution(5000)
-        
+
         //section("<h2 id='propogating'>Please wait while propogating devices (10 seconds..)</h2>"){
         //    pauseExecution(10000) // Wait for devices to propogate
         //    paragraph "<style>#propogating{display:none;</style>"
@@ -190,9 +190,9 @@ def manageGroups(){
         // cron add devices - 15s
         //def childDevice = getChildDevice(deviceMAC)
         //def devices = childDevice.refresh(true)
-        // end cron        
+        // end cron
         //settings.checkedDevices = ""
-        
+
         //settings.renameDevices = false
         //addChildDevice("Lightify", "Lightify Bulb - RGBW", "${macString}", null, [label: "${friendlyDeviceName}"])
         //state.discoveredDevices = [:]
@@ -203,12 +203,12 @@ def manageGroups(){
         section("<h2>Select Groups</h2>") {
             input(name: "checkedGroups", type: "enum", title: "Add:", multiple: true, options: state.discoveredGroups)
             //input(name: "renamegroups", type: "bool", title: "Update names of checked devices?", default: false)
-            
+
             paragraph "To rename or delete devices, remove them from their device page in Hubitat"
-        } 
+        }
     }
 }
-    
+
 
 def on(childID){
     def childDevice = getChildDevice(childID)
@@ -230,8 +230,8 @@ def off(childID){
 
 /* ——————————————————————————————————— GROUPS ——————————————————————————————————— */
 def groupOn(childID){
-    // Turns on a group 
-    
+    // Turns on a group
+
     def deviceID = childID.toInteger()
 
     def byte[] data = [0x0F, 0x00, 0x02, 0x32, 0x04, 0x00, 0x00, 0x00, deviceID, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]
@@ -239,7 +239,7 @@ def groupOn(childID){
 }
 
 def groupOff(childID){
-    // Turns on a group 
+    // Turns on a group
 
     def deviceID = childID.toInteger()
 
@@ -249,7 +249,7 @@ def groupOff(childID){
 
 def setGroupLevel(childID, brightness, duration=0) {
     // Set the brightness of a group (0-100)
-    
+
     def deviceID = childID.toInteger()
 
     clamp(brightness)
@@ -262,7 +262,7 @@ def setGroupColor(childID, parameters ){
 
     def deviceID = childID.toInteger()
 
-    
+
     def rgbColors = ColorUtils.hsvToRGB([parameters.hue.toFloat(), parameters.saturation.toFloat(), parameters.level.toFloat()])
     //                 14      00    02    36    05   00    00    00   04             00             00         00             00             00         00             00         ff         0d             01         ff  00     00
     //def byte[] data = [0x14, 0x00, 0x02, 0x36, 0x05, 0x00, 0x00, 0x00, deviceID[0], deviceID[1], deviceID[2], deviceID[3], deviceID[4], deviceID[5], deviceID[6], deviceID[7], rgbColors[0], rgbColors[1], rgbColors[2], 0x00, 0x00, 0x00]
@@ -276,7 +276,7 @@ def setGroupColorTemperature(childID, setTemp, deviceLevel ){
     // Change the color temperature of a group
 
     def deviceID = childID.toInteger()
-    
+
     setTemp = setTemp.toInteger()
     def byte[] setTempByte = [(setTemp & 0xFF), ((setTemp >> 8) & 0xFF)]
     def byte[] data = [0x12, 0x00, 0x02, 0x33, 0x07, 0x00, 0x00, 0x00, deviceID, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, setTempByte[0], setTempByte[1], 0x00, 0x00]
@@ -288,10 +288,10 @@ def setGroupColorTemperature(childID, setTemp, deviceLevel ){
 
 def allOn() {
     // Turn on the device
-    
+
     def childDevice = getChildDevice(settings.deviceMAC)
     childDevice.sendEvent(name: "switch", value: "on")
-    
+
     byte[] data = [0x0f, 0x00, 0x00, 0x32, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01] // all on
     sendCommand(data)
 }
@@ -301,14 +301,14 @@ def allOff() {
 
     def childDevice = getChildDevice(settings.deviceMAC)
     childDevice.sendEvent(name: "switch", value: "off")
-    
+
     byte[] data = [0x0f, 0x00, 0x00, 0x32, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00] // all off
     sendCommand(data)
 }
 
 def getGroups(){
     // Gets a list of groups
-    
+
     byte[] data = [0x0f, 0x00, 0x00, 0x1e, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00] // all off
 
     sendCommand(data)
@@ -338,10 +338,10 @@ def setSaturation(childID, saturation){
 
 def setLevel(childID, brightness, duration=0) {
     // Set the brightness of a device (0-100)
-    
+
     def byte[] deviceID = HexUtils.hexStringToByteArray(childID)
     clamp(brightness)
-    
+
     def byte[] data = [0x11, 0x00, 0x00, 0x31, 0x00, 0x00, 0x00, 0x00, deviceID[0], deviceID[1], deviceID[2], deviceID[3], deviceID[4], deviceID[5], deviceID[6], deviceID[7], brightness, 0x00, 0x00]
     sendCommand(data)
 }
@@ -352,11 +352,11 @@ def updateChildLevel(childID, level){
 }
 
 def setColor(childID, parameters ){
-    
+
     def byte[] deviceID = HexUtils.hexStringToByteArray(childID)
-    
+
     def rgbColors = ColorUtils.hsvToRGB([parameters.hue.toFloat(), parameters.saturation.toFloat(), parameters.level.toFloat()])
-    
+
     def byte[] data = [0x14, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x00, deviceID[0], deviceID[1], deviceID[2], deviceID[3], deviceID[4], deviceID[5], deviceID[6], deviceID[7], rgbColors[0], rgbColors[1], rgbColors[2], 0, 0x00, 0x00]
     sendCommand(data)
 }
@@ -369,10 +369,10 @@ def updateChildColor(childID, parameters){
 
 def setColorTemperature(childID, setTemp, deviceLevel ){
     def byte[] deviceID = HexUtils.hexStringToByteArray(childID)
-    
+
     setTemp = setTemp.toInteger()
     def byte[] setTempByte = [(setTemp & 0xFF), ((setTemp >> 8) & 0xFF)]
-    
+
     def byte[] data = [0x12, 0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x00, deviceID[0], deviceID[1], deviceID[2], deviceID[3], deviceID[4], deviceID[5], deviceID[6], deviceID[7], setTempByte[0], setTempByte[1], 0x00, 0x00]
     sendCommand(data)
 }
@@ -406,10 +406,10 @@ def parse( response ) {
 
     // Parse data received back from this device
     def responseArray = HexUtils.hexStringToIntArray(response)
-    
+
     def devices = [:]
     def isGroup = false
-    for(i = 1; i < 16; i++){ 
+    for(i = 1; i < 16; i++){
         if(11 + (18 * i) == responseArray.length){ isGroup = true }
     }
     if (!state.buffer) state.buffer = [];
@@ -420,41 +420,41 @@ def parse( response ) {
         logDebug "Response Length: 20. Data: ${responseArray.length} : ${response}"
         logDebug "Data is: ${responseArray}. array[0] is ${responseArray[0]}"
     break;
-    
+
     case {isGroup == true}: //0x51 packet for my groups
         logDebug "Parsing groups from response ${response}"
-        
+
         def totalGroups = responseArray[9]
         logDebug "${totalGroups} Groups"
-    
+
         for(thisGroup = 0; thisGroup < totalGroups; thisGroup++){
             def location = 11 + (thisGroup * 18) // Groups start at byte 11 (from zero. 0-10 are gateway data) Byte 0 of each group is its id, 1-16 are name, 17 is termination
-            
+
             def groupID = responseArray[location]
             logDebug "${groupID}"
-            
+
             def groupName = []
             for(i=2; i < 18; i++){
                //// if we read an end of line, break
                //if(responseArray[location + i] == 0 && responseArray[location + i + 1] == 0 && responseArray[location + i + 2] == 0 ){
                //    break
-               //} 
+               //}
                 groupName += responseArray[location + i]
-                
+
             }
-            
+
             def groupNameToBytes = HexUtils.intArrayToHexString(*groupName)
             def String friendlyGroupName = new String(HexUtils.hexStringToByteArray(groupNameToBytes), "UTF-8")
-            
+
             logDebug "${friendlyGroupName}"
-            
+
             state.discoveredGroups.put("${groupID}", "${friendlyGroupName}")
-            
+
             // check if device ${settings.deviceMAC}-${groupID}${friendlyGroupName}
         }
-    
+
         break;
-    
+
     case {it == 1024}:  //GDK//
         // If length of response is 1024 there is more data coming.  Maximum size 2511 bytes (50 device maximum per lightify gateway)
         state.buffer.addAll(responseArray) //HexUtils.hexStringToIntArray(response)   //GDK//
@@ -468,49 +468,49 @@ def parse( response ) {
 
         for(thisDevice = 0; thisDevice < totalDevices; thisDevice++){
             def location = 11 + (thisDevice * 50) // Devices start at byte 11 (from zero. 0-10 are gateway data) Each device's data is 50 bytes long
-            // Create a locator 
+            // Create a locator
             def deviceID = [state.buffer[location], state.buffer[location+1]] // Not sure if we need this
-           
+
             def deviceMAC = []
             for( i=2; i < 10; i++ ){
                 deviceMAC += state.buffer[location + i] // GDK
             }
 
             def macString = HexUtils.intArrayToHexString(*deviceMAC) // Store as child device's DNI
-            
+
             def deviceType = state.buffer[location + 10]  // GDK// Create different child device depending on this
-            
+
             def deviceFirmware = []
             for( i=11; i < 15; i++ ){
                 deviceFirmware += state.buffer[location + i] // GDK
             } // Not super important but maybe worth storing in child device
-            
+
             def deviceOnline = state.buffer[location + 15]  // GDK// Not sure what to do with this --- check Mike's drivers then ask Mike/Chuck
-            
+
             def deviceGroupID = [state.buffer[location + 16], state.buffer[location + 17]]  // GDK// Not quite sure what to do with this
-            
-            def deviceSwitchStatus = state.buffer[location + 18]  // GDK// 0 is off, 1 is on // Add to child device status 
-            
+
+            def deviceSwitchStatus = state.buffer[location + 18]  // GDK// 0 is off, 1 is on // Add to child device status
+
             def deviceLevel = state.buffer[location + 19]  // GDK // Add to child device level
-           
+
             def byte[] temperatureArray = [state.buffer[location + 21], state.buffer[location + 20]] // GDK
             def deviceTemperature = Integer.parseInt(HexUtils.byteArrayToHexString(temperatureArray), 16)
-            
+
             //log.trace "R: ${responseArray[location+22]} G: ${responseArray[location+23]} B: ${responseArray[location+24]}"
             def deviceHSV = ColorUtils.rgbToHSV([state.buffer[location + 22], state.buffer[location + 23], state.buffer[location + 24]]) // GDK
-            
+
             def deviceWhite = state.buffer[location + 25]  // GDK // Learn what this is
-            
+
             def deviceName = []
             for(i=26; i < 50; i++){
                 // if we read an end of line, break
                 if(state.buffer[location + i] == 0 && state.buffer[location + i + 1] == 0 && state.buffer[location + i + 2] == 0 ){ // GDK
                     break
-                } 
+                }
                 deviceName += state.buffer[location + i]
-                
+
             }
-            
+
             def deviceNameToBytes = HexUtils.intArrayToHexString(*deviceName)
             def String friendlyDeviceName = new String(HexUtils.hexStringToByteArray(deviceNameToBytes), "UTF-8")
             def String friendlyDeviceType
@@ -521,11 +521,11 @@ def parse( response ) {
             }
 
             state.discoveredDevices.put("${macString}", "${friendlyDeviceName} - ${friendlyDeviceType}")
-            
-            
+
+
             //test group creation
             //addChildDevice("Lightify", "Lightify Child - Group", "0400000000000000", null, [label: "${friendlyDeviceName}"])
-            
+
             //logDebug "Device name: ${friendlyDeviceName} has type ${deviceType}, its switch status is ${deviceSwitchStatus} and its online status ${deviceOnline}"
 
             /* --------------------------- Switch/Plug Devices --------------------------- */
@@ -540,7 +540,7 @@ def parse( response ) {
                     }
                     childDevice.sendEvent(name: "level", value: deviceLevel)
                     childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                    
+
                 } catch(e){ // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
 
@@ -558,7 +558,7 @@ def parse( response ) {
                     }
                     childDevice.sendEvent(name: "level", value: deviceLevel)
                     childDevice.sendEvent(name: "colorTemperature", value: deviceTemperature.toInteger())
-                    
+
                 } catch(e){ // Device does not exist
                     //logDebug "This device has not been created. Skipping it."
                 }
@@ -578,9 +578,9 @@ def parse( response ) {
                     //logDebug "This device has not been created. Skipping it."
 
                 }
-            } 
+            }
             /* --------------------------- RGB Devices --------------------------- */
-            else if(deviceType == 8){ 
+            else if(deviceType == 8){
                 try{
                     def childDevice = getChildDevice(macString)
                     if(deviceSwitchStatus == 0 || deviceOnline  == 0){
@@ -619,7 +619,7 @@ def parse( response ) {
             else{
                 try{
                     def childDevice = getChildDevice(macString)
-                    
+
                     if(deviceSwitchStatus == 0 || deviceOnline == 0){
                         childDevice.sendEvent(name: "switch", value: "off")
                     }
@@ -643,7 +643,7 @@ def parse( response ) {
     case null:
         //logDebug "Null response received from device" // Apparently these get sent a lot
         break;
-    
+
     default:
         logDebug "Received a response with a length of ${responseArray.length} containing ${response}"
         break;
@@ -653,21 +653,21 @@ def parse( response ) {
 
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
-    
-    if( settings.logDebug ) { 
+
+    if( settings.logDebug ) {
         log.debug "Lightify (${settings.deviceIP}): ${debugText}"
     }
 }
 
 private logDescriptionText( descriptionText ){
-    if( settings.logDescriptionText ) { 
+    if( settings.logDescriptionText ) {
         log.info "Lightify (${settings.deviceIP}): ${descriptionText}"
     }
 }
 
 def sendCommand( data ) {
     // Sends commands to the device
-    
+
     def childDevice = getChildDevice(settings.deviceMAC)
     //childDevice.sendEvent(name: "switch", value: "${deviceSwitchStatus == 0 ? 'off' : 'on'}")
     childDevice.sendCommand( data )
@@ -675,31 +675,31 @@ def sendCommand( data ) {
 }
 
 def refresh( ) {
-	
+
     def childDevice = getChildDevice(settings.deviceMAC)
     childDevice.refresh()
-}	
+}
 
 def updated(){
     // check if child device exists with MAC (if mac exists), and make one if it doesn't
-    
+
         initialize()
-    
+
 }
 
 def uninstalled(){
-	removeChildDevices(getChildDevices())
+    removeChildDevices(getChildDevices())
 }
 
 private removeChildDevices(delete) {
-	delete.each {deleteChildDevice(it.deviceNetworkId)}
+    delete.each {deleteChildDevice(it.deviceNetworkId)}
 }
 
 def initialize() {
     // Establish a connection to the device
-    
+
     logDebug "Initializing with MAC ${settings.deviceMAC}, IP ${settings.deviceIP}, Port ${settings.devicePort}, refreshTime ${settings.refreshTime}, and reconnect pings${settings.reconnectPings}"
-    
+
     if(settings.deviceMAC != null && settings.deviceMAC != "" && settings.deviceIP != null && settings.deviceIP != "" && settings.devicePort != null && settings.devicePort != ""){
         try{
             def childDevice = getChildDevice(settings.deviceMAC)
@@ -711,20 +711,20 @@ def initialize() {
             pauseExecution(1000)
 
             childDevice.initialize()
-        } catch(e){ 
+        } catch(e){
             // Device does not exist
 
             logDebug "Gateway child device probably doesn't exist. Error: ${e}"
-            
+
             logDebug "Creating child gateway"
             try{
                 addChildDevice("Lightify", "Lightify Bridge - Gateway", "${settings.deviceMAC}")
             } catch(gatewayCreationError){
                 logDebug "Something went wrong when creating a child gateway."
             }
-            
+
             pauseExecution(1000)
-            
+
             try{
                 def childDevice = getChildDevice(settings.deviceMAC)
                 childDevice.setIPState(settings.deviceIP)
@@ -739,22 +739,22 @@ def initialize() {
             catch(applyChildSettingsError){
                 logDebug "A new device was created successfully, but there was an issue attributing settings to it."
                 logDebug "Failed with error ${applyChildSettingsError}"
-            }    
+            }
         }
-        
+
         state.initialSetupComplete = true
-        
+
     }
-    else{ // do nothing 
+    else{ // do nothing
         log.info "App settings updated. Please update your device's IP and MAC addresses."
         log.warn "After you update your MAC address, <b>Do not change the value again!</b>"
     }
-    
+
     // Add child devices to hubitat
     for (device in checkedDevices) {
 
         def nomenclature = state.discoveredDevices.get(device).split(" - ") // Mac string is device | nomenclature[0] is name | nomenclature[1] is type
-        
+
         //if(renameDevices){
         //    try{
         //        addChildDevice("Lightify", "Lightify Child - ${nomenclature[1]}", "${device}", null, [label: "${nomenclature[0]}"])
@@ -763,7 +763,7 @@ def initialize() {
         //        logDebug "Device exists already. Renaming"
         //        logDebug "(renaming coming in a future version?)"
         //        //def childDevice = getChildDevice(device)
-	    //        //childDevice.updateSetting("settingName",[type:"text", value:value])
+        //        //childDevice.updateSetting("settingName",[type:"text", value:value])
         //    }
         //} else{
             try{
@@ -776,7 +776,7 @@ def initialize() {
     }
     for (group in checkedGroups) {
 //                state.discoveredGroups.put("${groupID}", "${friendlyGroupName}")
-        
+
         //if(renameGroups){
         //    try{
         //        addChildDevice("Lightify", "Lightify Child - Group", "${settings.deviceMAC} - ${group}", null, [label: "${state.discoveredGroups.get(group)}"])
@@ -785,7 +785,7 @@ def initialize() {
         //        logDebug "Device exists already. Renaming"
         //        logDebug "(renaming coming in a future version?)"
         //        //def childDevice = getChildDevice(device)
-	    //        //childDevice.updateSetting("settingName",[type:"text", value:value])
+        //        //childDevice.updateSetting("settingName",[type:"text", value:value])
         //    }
         //} else{
             try{
@@ -796,9 +796,9 @@ def initialize() {
             }
         //}
     }
-    
-    
-    
+
+
+
     // Remove old devices from discovery map
     state.discoveredDevices = [:]
 
@@ -807,5 +807,5 @@ def initialize() {
 }
 
 def installed(){
-    initialize()    
+    initialize()
 }

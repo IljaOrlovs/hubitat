@@ -1,8 +1,8 @@
 /**
 *  Enerwave ZWN-SC7 7-Button Scene Controller 0.70
 *
-*    Author: 
-*    Adam Kempenich 
+*    Author:
+*    Adam Kempenich
 *
 *    Documentation: https://community.hubitat.com/t/release-enerwave-zwn-sc7-scene-controller-0-70/25661
 *
@@ -33,17 +33,17 @@
  metadata {
   // Automatically generated. Make future change here.
     definition (
-        name: "ZWN-SC7 Enerwave 7 Button Scene Controller", 
-        namespace: "enerwave", 
+        name: "ZWN-SC7 Enerwave 7 Button Scene Controller",
+        namespace: "enerwave",
         author: "Adam Kempenich",
         importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Drivers/Enerwave/ZWN-SC7%207%20Button%20Scene%20Controller.groovy") {
-        
+
         capability "Actuator"
         capability "PushableButton"
         capability "Configuration"
         capability "Indicator"
         capability "Sensor"
-        
+
         attribute "currentButton", "STRING"
         attribute "numButtons", "STRING"
         attribute "numberOfButtons", "NUMBER"
@@ -78,7 +78,7 @@ def buttonEvent(button) {
     if (button > 0) {
         // update the device state, recording the button press
         //result << createEvent(name: "pushableButton", value: "pushed", data: [buttonNumber: button], descriptionText: "$device.displayName button $button was pushed", isStateChange: true)
-       
+
         result << createEvent(name: "pushed", value: button, isStateChange: true)
         // turn off the button LED
         result << response(zwave.sceneActuatorConfV1.sceneActuatorConfReport(dimmingDuration: 255, level: 255, sceneId: 0))
@@ -207,7 +207,7 @@ def configure(var=null) {
     log.debug("Sending configuration: ${cmd}")
     sendEvent(name:"numberOfButtons", value: 7)
     return cmd
-   
+
 }
 
 

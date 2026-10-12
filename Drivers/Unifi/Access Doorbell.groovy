@@ -94,7 +94,7 @@ def initialize(){
 
 def requestNotifications(){
     try {
-        interfaces.webSocket.connect("wss://${host}:${port}/api/v1/developer/devices/notifications", pingInterval: 0, ignoreSSLIssues: true, headers: ["Authorization": "Bearer ${token}", "Upgrade": "websocket", "Connection": "Upgrade"]) 
+        interfaces.webSocket.connect("wss://${host}:${port}/api/v1/developer/devices/notifications", pingInterval: 0, ignoreSSLIssues: true, headers: ["Authorization": "Bearer ${token}", "Upgrade": "websocket", "Connection": "Upgrade"])
 
     } catch (e) {
         log.error "Error retrieving door info: $e"
@@ -116,7 +116,7 @@ def parse(response){
     if(response.size() == 8){
         // connection alive and open
         // I'm not sure why checking this against its literal string doesn't work and I don't have energy to see what characters are really being sent
-        // ""Hello" " << This is the string. Notice the trailing space 
+        // ""Hello" " << This is the string. Notice the trailing space
         sendEvent(name: "healthStatus", value: "online")
         log.trace "online"
     } else {

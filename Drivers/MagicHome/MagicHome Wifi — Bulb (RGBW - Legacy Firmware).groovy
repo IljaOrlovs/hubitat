@@ -1,8 +1,8 @@
 /**
  *  MagicHome Wifi - Bulb (RGBW - Legacy Firmware) 0.82
  *
- *  Author: 
- *    Adam Kempenich 
+ *  Author:
+ *    Adam Kempenich
  *
  *  Documentation:  https://community.hubitat.com/t/release-beta-0-7-magic-home-wifi-devices-initial-public-release/5197
  *
@@ -35,10 +35,10 @@ import hubitat.device.Protocol
 
 metadata {
     definition (
-        name: "MagicHome Wifi — Bulb (RGBW - Legacy Firmware)", 
-        namespace: "MagicHome", 
+        name: "MagicHome Wifi — Bulb (RGBW - Legacy Firmware)",
+        namespace: "MagicHome",
         author: "Adam Kempenich") {
-        
+
         capability "Switch Level"
         capability "Actuator"
         capability "Switch"
@@ -48,7 +48,7 @@ metadata {
         capability "Color Temperature"
         capability "Color Control"
         capability "Initialize"
-        
+
         command "sendPreset",               ["number", "number"]       // 0 (off), 1-20 (other presets)
         command "presetSevenColorDissolve", [ "number" ] // 0 - 100 (speed)
         command "presetRedFade",            [ "number" ] // 0 - 100 (speed)
@@ -70,19 +70,19 @@ metadata {
         command "presetPurpleStrobe",       [ "number" ] // 0 - 100 (speed)
         command "presetWhiteStrobe",        [ "number" ] // 0 - 100 (speed)
         command "presetSevenColorJump",     [ "number" ] // 0 - 100 (speed)
-        
+
         attribute "currentPreset", "number" // 0 (off), 1-20 (other presets)
         attribute "presetSpeed", "number" // 0 - 100
     }
-    
-    preferences {  
+
+    preferences {
         input "deviceIP", "text", title: "Server", description: "Device IP (e.g. 192.168.1.X)", required: true, defaultValue: "192.168.1.X"
         input "devicePort", "number", title: "Port", description: "Device Port (Default: 5577)", required: true, defaultValue: 5577
 
         input(name:"logDebug", type:"bool", title: "Log debug information?",
               description: "Logs raw data for debugging. (Default: Off)", defaultValue: false,
               required: false, displayDuringSetup: true)
-        
+
         input(name:"powerOnWithChanges", type:"bool", title: "Turn on this light when values change?",
               defaultValue: true, required: true, displayDuringSetup: true)
 
@@ -102,7 +102,7 @@ metadata {
         input(name:"wwSaturationLowPoint", type:"number", title: "Warm White Saturation closest 4000k (or the neutral white point).",
             description: "Saturation: (0-100) Default: 0", defaultValue: 0)
         input(name:"wwSaturationHighPoint", type:"number", title: "Warm White Saturation at ~2700k.",
-            description: "Saturation: (0-100) Default: 80 <style>#tileContainter-presetBlueFade-4:hover{ animation: presetBlue-fade 3s infinite } @keyframes presetBlue-fade { 0% { color: blue } 50% { color: black } 100% { color: blue } } #tileContainter-presetBlueStrobe-5:hover{ animation: presetBlue-strobe 3s infinite } @keyframes presetBlue-strobe { 0% { color: blue } 49% { color: blue } 50% { color: black } 100% { color: black } } #tileContainter-presetCyanFade-6:hover{ animation: presetCyan-fade 3s infinite } @keyframes presetCyan-fade { 0% { color: cyan } 50% { color: black } 100% { color: cyan } } #tileContainter-presetCyanStrobe-7:hover{ animation: presetCyan-strobe 3s infinite } @keyframes presetCyan-strobe { 0% { color: cyan } 25% { color: cyan } 26% { color: black } 100% { color: black } } #tileContainter-presetGreenBlueDissolve-8:hover{ animation: presetGreenBlue-dissolve 3s infinite } @keyframes presetGreenBlue-dissolve { 0% { color: green } 50% { color: blue } 100% { color: green } } #tileContainter-presetGreenFade-9:hover{ animation: presetGreen-fade 3s infinite } @keyframes presetGreen-fade { 0% { color: green } 50% { color: black } 100% { color: green } } #tileContainter-presetGreenStrobe-10:hover{ animation: presetGreen-strobe 3s infinite } @keyframes presetGreen-strobe { 0% { color: green } 25% { color: green } 26% { color: black } 100% { color: black } } #tileContainter-presetPurpleFade-11:hover{ animation: presetPurple-fade 3s infinite } @keyframes presetPurple-fade { 0% { color: purple } 50% { color: black } 100% { color: purple } } #tileContainter-presetPurpleStrobe-12:hover{ animation: presetPurple-strobe 3s infinite } @keyframes presetPurple-strobe { 0% { color: purple } 25% { color: purple } 26% { color: black } 100% { color: black } } #tileContainter-presetRedBlueDissolve-13:hover{ animation: presetRedBlue-dissolve 3s infinite } @keyframes presetRedBlue-dissolve { 0% { color: red } 50% { color: blue } 100% { color: red } } #tileContainter-presetRedFade-14:hover{ animation: presetRed-fade 3s infinite } @keyframes presetRed-fade { 0% { color: red } 50% { color: black } 100% { color: red } } #tileContainter-presetRedGreenDissolve-15:hover{ animation: presetRedGreen-dissolve 3s infinite } @keyframes presetRedGreen-dissolve { 0% { color: red } 50% { color: green } 100% { color: red } } #tileContainter-presetRedStrobe-16:hover{ animation: presetRed-strobe 3s infinite } @keyframes presetRed-strobe { 0% { color: red } 25% { color: red } 26% { color: black } 100% { color: black } } #tileContainter-presetSevenColorDissolve-17:hover{ animation: presetSevenColor-dissolve 3s infinite } @keyframes presetSevenColor-dissolve { 0% { color: red } 12.5% { color: orange } 25% { color: yellow } 37.5% { color: green } 50% { color: blue } 62.5% { color: indigo } 75% { color: violet } 87.5% { color: white } 100% { color: red } } #tileContainter-presetSevenColorJump-18:hover{ animation: presetSevenColor-jump 3s infinite } @keyframes presetSevenColor-jump { 0% { color: red } 12% { color: red } 12.5% { color: orange } 24% { color: orange } 25% { color: yellow } 37% { color: yellow } 37.5% { color: green } 49% { color: green } 50% { color: blue } 62% { color: blue } 62.5% { color: indigo } 74% { color: indigo } 75% { color: violet } 87% { color: violet } 87.5% { color: white } 99% { color: white } 100% { color: red } } #tileContainter-presetSevenColorStrobe-19:hover{ animation: presetSevenColor-strobe 3s infinite } @keyframes presetSevenColor-strobe {  0% { color: black } 11% { color: black }  12% { color: red } 16% { color: red }  17% { color: black } 30% { color: black }  31% { color: orange } 38% { color: orange }  39% { color: black } 49% { color: black }  50% { color: yellow } 62% { color: yellow }  63% { color: black } 70% { color: black }  71% { color: green } 79% { color: green }  80% { color: black } 88% { color: black }  89% { color: blue } 99% { color: blue }  99% { color: black } } #tileContainter-presetWhiteFade-20:hover{ animation: presetWhite-fade 3s infinite } @keyframes presetWhite-fade { 0% { color: White } 50% { color: black } 100% { color: White } } #tileContainter-presetWhiteStrobe-21:hover{ animation: presetWhite-strobe 3s infinite } @keyframes presetWhite-strobe { 0% { color: White } 49% { color: White } 50% { color: black } 100% { color: black } } #tileContainter-presetYellowFade-22:hover{ animation: presetYellow-fade 3s infinite } @keyframes presetYellow-fade { 0% { color: Yellow } 50% { color: black } 100% { color: Yellow } } #tileContainter-presetYellowStrobe-23:hover{ animation: presetYellow-strobe 3s infinite } @keyframes presetYellow-strobe { 0% { color: Yellow } 49% { color: Yellow } 50% { color: black } 100% { color: black } } </style>", 
+            description: "Saturation: (0-100) Default: 80 <style>#tileContainter-presetBlueFade-4:hover{ animation: presetBlue-fade 3s infinite } @keyframes presetBlue-fade { 0% { color: blue } 50% { color: black } 100% { color: blue } } #tileContainter-presetBlueStrobe-5:hover{ animation: presetBlue-strobe 3s infinite } @keyframes presetBlue-strobe { 0% { color: blue } 49% { color: blue } 50% { color: black } 100% { color: black } } #tileContainter-presetCyanFade-6:hover{ animation: presetCyan-fade 3s infinite } @keyframes presetCyan-fade { 0% { color: cyan } 50% { color: black } 100% { color: cyan } } #tileContainter-presetCyanStrobe-7:hover{ animation: presetCyan-strobe 3s infinite } @keyframes presetCyan-strobe { 0% { color: cyan } 25% { color: cyan } 26% { color: black } 100% { color: black } } #tileContainter-presetGreenBlueDissolve-8:hover{ animation: presetGreenBlue-dissolve 3s infinite } @keyframes presetGreenBlue-dissolve { 0% { color: green } 50% { color: blue } 100% { color: green } } #tileContainter-presetGreenFade-9:hover{ animation: presetGreen-fade 3s infinite } @keyframes presetGreen-fade { 0% { color: green } 50% { color: black } 100% { color: green } } #tileContainter-presetGreenStrobe-10:hover{ animation: presetGreen-strobe 3s infinite } @keyframes presetGreen-strobe { 0% { color: green } 25% { color: green } 26% { color: black } 100% { color: black } } #tileContainter-presetPurpleFade-11:hover{ animation: presetPurple-fade 3s infinite } @keyframes presetPurple-fade { 0% { color: purple } 50% { color: black } 100% { color: purple } } #tileContainter-presetPurpleStrobe-12:hover{ animation: presetPurple-strobe 3s infinite } @keyframes presetPurple-strobe { 0% { color: purple } 25% { color: purple } 26% { color: black } 100% { color: black } } #tileContainter-presetRedBlueDissolve-13:hover{ animation: presetRedBlue-dissolve 3s infinite } @keyframes presetRedBlue-dissolve { 0% { color: red } 50% { color: blue } 100% { color: red } } #tileContainter-presetRedFade-14:hover{ animation: presetRed-fade 3s infinite } @keyframes presetRed-fade { 0% { color: red } 50% { color: black } 100% { color: red } } #tileContainter-presetRedGreenDissolve-15:hover{ animation: presetRedGreen-dissolve 3s infinite } @keyframes presetRedGreen-dissolve { 0% { color: red } 50% { color: green } 100% { color: red } } #tileContainter-presetRedStrobe-16:hover{ animation: presetRed-strobe 3s infinite } @keyframes presetRed-strobe { 0% { color: red } 25% { color: red } 26% { color: black } 100% { color: black } } #tileContainter-presetSevenColorDissolve-17:hover{ animation: presetSevenColor-dissolve 3s infinite } @keyframes presetSevenColor-dissolve { 0% { color: red } 12.5% { color: orange } 25% { color: yellow } 37.5% { color: green } 50% { color: blue } 62.5% { color: indigo } 75% { color: violet } 87.5% { color: white } 100% { color: red } } #tileContainter-presetSevenColorJump-18:hover{ animation: presetSevenColor-jump 3s infinite } @keyframes presetSevenColor-jump { 0% { color: red } 12% { color: red } 12.5% { color: orange } 24% { color: orange } 25% { color: yellow } 37% { color: yellow } 37.5% { color: green } 49% { color: green } 50% { color: blue } 62% { color: blue } 62.5% { color: indigo } 74% { color: indigo } 75% { color: violet } 87% { color: violet } 87.5% { color: white } 99% { color: white } 100% { color: red } } #tileContainter-presetSevenColorStrobe-19:hover{ animation: presetSevenColor-strobe 3s infinite } @keyframes presetSevenColor-strobe {  0% { color: black } 11% { color: black }  12% { color: red } 16% { color: red }  17% { color: black } 30% { color: black }  31% { color: orange } 38% { color: orange }  39% { color: black } 49% { color: black }  50% { color: yellow } 62% { color: yellow }  63% { color: black } 70% { color: black }  71% { color: green } 79% { color: green }  80% { color: black } 88% { color: black }  89% { color: blue } 99% { color: blue }  99% { color: black } } #tileContainter-presetWhiteFade-20:hover{ animation: presetWhite-fade 3s infinite } @keyframes presetWhite-fade { 0% { color: White } 50% { color: black } 100% { color: White } } #tileContainter-presetWhiteStrobe-21:hover{ animation: presetWhite-strobe 3s infinite } @keyframes presetWhite-strobe { 0% { color: White } 49% { color: White } 50% { color: black } 100% { color: black } } #tileContainter-presetYellowFade-22:hover{ animation: presetYellow-fade 3s infinite } @keyframes presetYellow-fade { 0% { color: Yellow } 50% { color: black } 100% { color: Yellow } } #tileContainter-presetYellowStrobe-23:hover{ animation: presetYellow-strobe 3s infinite } @keyframes presetYellow-strobe { 0% { color: Yellow } 49% { color: Yellow } 50% { color: black } 100% { color: black } } </style>",
               defaultValue: 80)
     }
 }
@@ -127,12 +127,12 @@ def off() {
 
 
 def setHue(hue, transmit=true){
-    // Set the hue of a device ( 0-100) 
+    // Set the hue of a device ( 0-100)
 
     hue = normalizePercent( hue, 0, 100 )
     sendEvent(name: "hue", value: hue )
     logDebug( "Hue set to " + device.currentValue('hue'))
-        
+
     if( !transmit ) return hue
     setColor( hue: hue )
 
@@ -150,7 +150,7 @@ def setSaturation(saturation, transmit=true){
     saturation = normalizePercent( saturation )
     sendEvent(name: "saturation", value: saturation)
     logDebug( "Saturation set to ${saturation}")
-    
+
     if( !transmit ) return saturation
     setColor( saturation: saturation )
 }
@@ -166,7 +166,7 @@ def setLevel(level, transmit=true) {
     level = normalizePercent( level )
     sendEvent(name: "level", value: level)
     logDebug( "Level set to ${level}")
-    
+
     if( !transmit ) return level
     setColor( level: level )
 }
@@ -188,7 +188,7 @@ def setColor( parameters ){
     sendEvent( name: "currentPreset", value: 0 )
 
     powerOnWithChanges()
-    
+
     if( newParameters.hue == 100 ) {
         data = [ 0x56, 0x00, 0x00, 0x00, newParameters.level * 2.55, 0x0f, 0xaa ]
     }
@@ -196,27 +196,27 @@ def setColor( parameters ){
         rgbColors = hsvToRGB( newParameters.hue, newParameters.saturation, newParameters.level )
         data = [ 0x56, rgbColors.red, rgbColors.green, rgbColors.blue, 0, 0xf0, 0xaa ]
     }
-    sendCommand( data ) 
-    
+    sendCommand( data )
+
 }
 
 def setColorTemperature( setTemp = getColorTemperature(), transmit=true ){
-    // Using RGB, adjust the color temperature of a device  
-    
+    // Using RGB, adjust the color temperature of a device
+
     // Set the colorTemperature's value between the device's maximum range, if it's out of bounds
     setTemp = normalizePercent( setTemp, settings.deviceWWTemperature, settings.deviceCWTemperature )
     def newSaturation
     def newHue
-    
+
     if(setTemp >= neutralWhite){
         newSaturation = setSaturation( calculateCTSaturation( true, setTemp - settings.neutralWhite ), false ).toFloat()
-        newHue = setHue( settings.cwHue.toFloat(), false ) 
+        newHue = setHue( settings.cwHue.toFloat(), false )
     }
     else{
         newSaturation = setSaturation( calculateCTSaturation( false, settings.neutralWhite - setTemp ), false ).toFloat()
-        newHue = setHue( settings.wwHue.toFloat(), false ) 
+        newHue = setHue( settings.wwHue.toFloat(), false )
     }
-    
+
     sendEvent( name: "colorTemperature", value: setTemp )
     setColor( [ hue:newHue, saturation:newSaturation ]  )
 }
@@ -238,7 +238,7 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
     if(turnOn){
         normalizePercent( preset, 1, 20 )
         normalizePercent( speed )
-        
+
         // Hex range of presets is (int) 37 - (int) 57. Add the preset number to get that range.
         preset += 36
         speed = (100 - speed)
@@ -248,7 +248,7 @@ def sendPreset( turnOn, preset = 1, speed = 100, transmit = true ){
         sendEvent( name: "currentPreset", value: preset )
         sendEvent( name: "presetSpeed", value: speed )
 
-        sendCommand( appendChecksum(  [ 0x61, preset, speed, 0x0F ] ) ) 
+        sendCommand( appendChecksum(  [ 0x61, preset, speed, 0x0F ] ) )
     }
     else{
         // Return the color back to its normal state
@@ -332,24 +332,24 @@ def powerOnWithChanges( append=false ){
 }
 
 def calculateCTSaturation( coldWhite = true, offset ) {
-        
+
     def CURVE
     def lowPoint
     def highPoint
-    
+
     if( coldWhite ) {
         lowPoint = settings.cwSaturationLowPoint < settings.cwSaturationHighPoint ? settings.cwSaturationLowPoint : settings.cwSaturationHighPoint
         highPoint = settings.cwSaturationHighPoint > settings.cwSaturationLowPoint ? settings.cwSaturationHighPoint : settings.cwSaturationLowPoint
         CURVE = 1.8
     }
-    else{ 
+    else{
         lowPoint = settings.wwSaturationLowPoint < settings.wwSaturationHighPoint ? settings.wwSaturationLowPoint : settings.wwSaturationHighPoint
         highPoint = settings.wwSaturationHighPoint > settings.wwSaturationLowPoint ? settings.wwSaturationHighPoint : settings.wwSaturationLowPoint
         CURVE = 2.16666
     }
-    
+
     return (((( 100 - lowPoint  ) / 100 ) * ( CURVE * Math.sqrt( offset ))) + lowPoint  ) * highPoint / 100
-}      
+}
 
 def hslToCT(){
 
@@ -357,7 +357,7 @@ def hslToCT(){
 
 def normalizePercent(value, lowerBound=0, upperBound=100 ){
     // Takes a value and ensures it's between two defined thresholds
-    
+
     // If the value doesn't exist, create it
     value = value == null ? upperBound : value
 
@@ -369,14 +369,14 @@ def normalizePercent(value, lowerBound=0, upperBound=100 ){
         if(value < upperBound){ value = upperBound}
         if(value > lowerBound ){ value = lowerBound}
     }
-    
+
     return value
 }
 
 def checkIfInMap( parameterValue, valueName) {
     // Check if a value is in a map, and return (or set and return) a value
 
-    if( parameterValue == null ){ 
+    if( parameterValue == null ){
         if( device.currentValue( valueName ) == null ){
             sendEvent( name: valueName, value: maxValue )
             return device.currentValue( "${valueName}" )
@@ -395,26 +395,26 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
     // Accepts conversionHue (0-100 or 0-360), conversionSaturation (0-100), and converstionValue (0-100), resolution ("low", "high")
     // If resolution is low, conversionHue accepts 0-100. If resolution is high, conversionHue accepts 0-360
     // Returns RGB map ([ red: 0-255, green: 0-255, blue: 0-255 ])
-    
+
     // Check HSV limits
     hue = hue > 100 ? normalizePercent( hue, 0, 99 ) : normalizePercent( hue, 0, 359 )
-    resolution == "low" ? ( hueMax = 100 ) : ( hueMax = 360 ) 
+    resolution == "low" ? ( hueMax = 100 ) : ( hueMax = 360 )
     conversionHue = ( Math.min( Math.max( conversionHue, 0 ), hueMax ) / hueMax ) % 1 // hueMax wraps to 0 (red), not black
     conversionSaturation > 100 ? ( conversionSaturation = 1 ) : ( conversionSaturation < 0 ? ( conversionSaturation = 0 ) : ( conversionSaturation /= 100 ) )
-    conversionValue > 100 ? ( conversionValue = 1 ) : ( conversionValue < 0 ? ( conversionValue = 0 ) : ( conversionValue /= 100 ) ) 
-        
+    conversionValue > 100 ? ( conversionValue = 1 ) : ( conversionValue < 0 ? ( conversionValue = 0 ) : ( conversionValue /= 100 ) )
+
     int h = (int)(conversionHue * 6);
     float f = conversionHue * 6 - h;
     float p = conversionValue * (1 - conversionSaturation);
     float q = conversionValue * (1 - f * conversionSaturation);
     float t = conversionValue * (1 - (1 - f) * conversionSaturation);
-    
+
     conversionValue *= 255
     f *= 255
     p *= 255
     q *= 255
     t *= 255
-            
+
     if      (h==0) { rgbMap = [red: conversionValue, green: t, blue: p] }
     else if (h==1) { rgbMap = [red: q, green: conversionValue, blue: p] }
     else if (h==2) { rgbMap = [red: p, green: conversionValue, blue: t] }
@@ -429,14 +429,14 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
 def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
     // Takes RGB (0-255) and returns HSV in 0-360, 0-100, 0-100
     // resolution ("low", "high") will return a hue between 0-100, or 0-360, respectively.
-  
+
     r = (float)( r / 255 )
     g = (float)( g / 255 )
     b = (float)( b / 255 )
 
     float h
     float s
-    
+
     float max =   Math.max( Math.max( r, g ), b )
     float min = Math.min( Math.min( r, g ), b )
     float delta = ( max - min )
@@ -461,14 +461,14 @@ def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
 
     h *= 60.0
         h < 0 ? ( h += 360 ) : null
-  
+
     resolution == "low" ? h /= 3.6 : null
     return [ hue: h, saturation: s, value: v ]
 }
 
 def calculateChecksum( data ){
     // Totals an array of bytes
-    
+
     int sum = 0;
     for(int d : data)
         sum += d;
@@ -477,9 +477,9 @@ def calculateChecksum( data ){
 
 def appendChecksum( data ){
     // Adds a checksum to an array
-    
+
     data += calculateChecksum(data)
-    return data 
+    return data
 }
 
 def parse( response ) {
@@ -488,23 +488,23 @@ def parse( response ) {
 //    logDebug "Device responded with ${response}"
 //    logDebug "And if you're reading this, please send me a copy of the response you received, and the HSV you set."
 //    logDebug "Because I haven't had time to add it to my current network."
-//    
+//
 //    def responseArray = HexUtils.hexStringToIntArray(response)
 //    if( responseArray.length == 4 ) {
 //        // Device has responded with a power status packet
-//        
+//
 //        responseArray[ 2 ] == 35 ? sendEvent(name: "switch", value: "on") : sendEvent(name: "switch", value: "off")
 //    }
 //    else if( responseArray.length == 14 ) {
 //        // Device responded with full color info set
-//        
+//
 //        double white = responseArray[ 9 ] / 2.55
 //        hsvMap = rgbToHSV( responseArray[ 6 ], responseArray[ 7 ], responseArray[ 8 ] )
-//        
+//
 //        // Assign Returned Power, Hue, Saturation, Level
 //        responseArray[ 2 ] == 35 ? ( sendEvent(name: "switch", value: "on") ) : ( sendEvent(name: "switch", value: "off") )
-//        
-//        if( white > 0 ) { 
+//
+//        if( white > 0 ) {
 //            setHue( 100, false )
 //            setLevel( white, false )
 //        }
@@ -527,33 +527,33 @@ def parse( response ) {
 
 private logDebug( debugText ){
     // If debugging is enabled in settings, pass text to the logs
-    
-    if( settings.logDebug ) { 
+
+    if( settings.logDebug ) {
         log.info "MagicHome (${settings.deviceIP}): ${debugText}"
     }
 }
 
 def sendCommand( data ) {
     // Sends commands to the device
-    
+
     String stringBytes = HexUtils.byteArrayToHexString(data)
     logDebug "${data} was converted. Transmitting: ${stringBytes}"
     InterfaceUtils.sendSocketMessage(device, stringBytes)
 }
 def refresh( ) {
-    
+
     byte[] data =  [ 0x81, 0x8A, 0x8B, 0x96 ]
     sendCommand( data )
 }
 
 def telnetStatus( status ) { logDebug "telnetStatus: ${status}" }
-def socketStatus( status ) { 
+def socketStatus( status ) {
     logDebug "socketStatus: ${status}"
     if(status == "send error: Broken pipe (Write failed)") {
         // Cannot reach device
         logDebug "Cannot reach device. Attempting to reconnect."
         runIn(10, initialize)
-    }   
+    }
 }
 
 def poll() {
@@ -565,7 +565,7 @@ def updated(){
 }
 def initialize() {
     // Establish a connection to the device
-    
+
   logDebug "Initializing device."
     InterfaceUtils.socketConnect(device, settings.deviceIP, settings.devicePort.toInteger(), byteInterface: true)
     unschedule()
@@ -575,7 +575,7 @@ def initialize() {
 
 def keepAlive(){
     // Poll the device every 250 seconds, or it will lose connection.
-    
+
     refresh()
     runIn(150, keepAlive)
 }

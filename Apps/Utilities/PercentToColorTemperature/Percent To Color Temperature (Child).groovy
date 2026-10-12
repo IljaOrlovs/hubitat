@@ -4,7 +4,7 @@
 *    Author:
 *        Adam Kempenich
 *
-*    Documentation:  
+*    Documentation:
 *        [TBA]
 *
 *    Changelog:
@@ -19,9 +19,9 @@ definition(
     author: "Adam Kempenich",
     description: "Takes a value (0-100) from a dimmer and sets a color temperature. Useful for dashboards.",
     category: "Convenience",
-	
+
     parent: "AdamKempenich:Percent to Color Temperature",
-    
+
     iconUrl: "",
     iconX2Url: "",
     iconX3Url: "",
@@ -34,22 +34,22 @@ preferences {
 
 def childSetup() {
     dynamicPage(name: "pageConfig", title: "Percent to Color Temperature - Child", nextPage: null, install: true, uninstall: true, refreshInterval:0) {
-		section("Settings") {
-		        label title: "<h2>Enter a name for this setup (optional)</h2>", required: false
-			
-			paragraph "When this dimmer changes..."
+        section("Settings") {
+                label title: "<h2>Enter a name for this setup (optional)</h2>", required: false
+
+            paragraph "When this dimmer changes..."
             input "dimmingDevice", "capability.switchLevel", title: "Which dimmable device?", multiple:false, required: true
-			paragraph "Proportionally change the Color Temperature of these devices..."
+            paragraph "Proportionally change the Color Temperature of these devices..."
             input "colorTemperatureDevices", "capability.colorTemperature", title: "Which Color Temperature device?", multiple:true, required: true
 
-			paragraph "When the dimmer is at 0%, the color temperature will be set to ..."
+            paragraph "When the dimmer is at 0%, the color temperature will be set to ..."
             input "warmWhiteValue", "number", title: "Warm White Temperature", required: true, defaultValue: 2700
 
-			paragraph "When the dimmer is at 100%, the color temperature will be set to..."
+            paragraph "When the dimmer is at 100%, the color temperature will be set to..."
             input "coldWhiteValue", "number", title: "Cold White Temperature", required: true, defaultValue: 6000
-		}
-		
-	}
+        }
+
+    }
 }
 
 def initialize(){
@@ -72,7 +72,7 @@ def updated() {
 def modeHandler(evt){
     // Converts the level of the dimmer to the range of CT
     def colorTemp = (warmWhiteValue + ( (( coldWhiteValue - warmWhiteValue ) / 100 ) * dimmingDevice.currentValue("level").toInteger())).toInteger()
-	for(device in colorTemperatureDevices){
-		device.setColorTemperature( colorTemp )
-	}
+    for(device in colorTemperatureDevices){
+        device.setColorTemperature( colorTemp )
+    }
 }
