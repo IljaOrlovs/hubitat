@@ -156,4 +156,16 @@ class SunriseAlarmSpec extends Specification {
         7 * fakeApp.updateSetting({ it ==~ /on\d/ }, [type: 'bool', value: true])
         7 * fakeApp.updateSetting({ it ==~ /time\d/ }, [type: 'time', value: '2026-10-12T07:00:00.000-0400'])
     }
+
+    def "test button starts the ramp immediately"() {
+        given:
+        def bulb = Mock(Bulb)
+
+        when:
+        app([bulbs: [bulb], rampMinutes: 1]).appButtonHandler('testNow')
+
+        then:
+        state.running
+        1 * bulb.setLevel(1, 15)
+    }
 }

@@ -31,6 +31,7 @@ preferences {
         input "rampMinutes", "number", title: "Ramp length (minutes)", defaultValue: 20, range: "1..120"
         input "maxCt", "number", title: "Final color temperature (K)", defaultValue: 4000, range: "2000..6500"
         input "logEnable", "bool", title: "Debug logging", defaultValue: false
+        input "testNow", "button", title: "Test ramp now (uses the ramp length above)"
     }
     section("<b>Wake time per day</b> (the light reaches 100% at this time)") {
         DAYS.eachWithIndex { name, i ->
@@ -45,6 +46,10 @@ preferences {
 }
 
 def appButtonHandler(String btn) {
+    if (btn == "testNow") {
+        startRamp()
+        return
+    }
     if (btn != "applyAll" || !settings.allTime) return
     DAYS.eachWithIndex { n, i ->
         app.updateSetting("on${i}", [type: "bool", value: true])
