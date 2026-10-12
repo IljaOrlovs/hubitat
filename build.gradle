@@ -26,6 +26,7 @@ def scriptNames = ['Apps', 'Drivers', 'Methods'].collectMany { d ->
 }
 
 test {
+    doFirst { delete "$buildDir/jacoco-classes" }  // stale dumps of an older script version make the report fail
     testLogging { events 'failed'; exceptionFormat 'short'; showStandardStreams = false }
     jacoco {
         // Hubitat scripts are compiled at runtime, so dump the classes the agent sees for the report
@@ -37,5 +38,5 @@ test {
 
 jacocoTestReport {
     classDirectories.setFrom(files("$buildDir/jacoco-classes"))
-    reports { csv.required = true; xml.required = false; html.required = true }
+    reports { csv.required = true; xml.required = true; html.required = true }
 }

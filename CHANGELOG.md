@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions are p
 ## Unreleased
 
 ### Added
-- Tests: Spock + hubitat_ci specs validating all 45 scripts, behaviour specs for Access Doorbell and the color helpers, JaCoCo coverage ratchet.
+- Tests: ~2,400 Spock cases for the MagicHome family (all 11 files, 36-97% line coverage) that also document 20+ confirmed bugs as pending specs; Spock + hubitat_ci specs validating all 45 scripts, behaviour specs for Access Doorbell and the color helpers, JaCoCo coverage ratchet.
 - Tooling: `make test|coverage|lint|format|manifests`, CI, editorconfig, CodeNarc and npm-groovy-lint config.
 - Hubitat Package Manager manifests (`repository.json`, `Packages/`), Apache-2.0 `LICENSE`.
 
@@ -16,6 +16,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions are p
 - Access Doorbell: uses the ping-interval setting, cancels stale reconnects, sets `numberOfButtons`, hides the API token.
 
 ### Fixed
+- MagicHome RGBW Legacy: removed a dead line in the embedded `hsvToRGB` that assigned an undeclared variable.
 - `rgbToHSV` returned hue 0 for most colors (float/BigDecimal comparison); the same bug was in MagicHome RGBW Legacy.
 - `hsvToRGB` returned black at maximum hue instead of wrapping to red.
 - Circadian Daylight: saturation was scaled by 100/360 when converting RGB to HSV.

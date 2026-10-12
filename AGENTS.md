@@ -8,7 +8,7 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 - `Examples/` — primers. `tests/` — `spec/` (Spock specs), `support/` (stubs for newer Hubitat classes), `lint.groovy` (CodeNarc).
 
 ## Commands (Docker only, no local JVM)
-- `make test` — Gradle + Spock + [hubitat_ci](https://github.com/biocomp/hubitat_ci) (docs: docs/how_to_test.md in that repo): `tests/spec/AllScriptsSpec` compiles and validates every script; other specs test behaviour with `Mock(DeviceExecutor)` / `Mock(AppExecutor)`. Helpers newer than hubitat_ci 0.17 (`ColorUtils`, `HexUtils`, `InterfaceUtils`) are stubbed in `tests/support`.
+- `make test` — Gradle + Spock + [hubitat_ci](https://github.com/biocomp/hubitat_ci) (docs: docs/how_to_test.md in that repo): `tests/spec/AllScriptsSpec` compiles and validates every script; other specs test behaviour with `Mock(DeviceExecutor)` / `Mock(AppExecutor)`. Helpers newer than hubitat_ci 0.17 (`ColorUtils`, `HexUtils`, `InterfaceUtils`) are stubbed in `tests/support/me/biocomp/hubitat_ci/api/helper` (hubitat_ci maps `hubitat.X` to `me.biocomp.hubitat_ci.api.X`).
 - `make coverage` — `make test` plus a JaCoCo line-coverage ratchet (`tests/coverage-baseline.json`, per file; may only go up). `make coverage-update` after adding tests. Run it and commit the new baseline.
 - `make lint` — CodeNarc with `codenarc.groovy`. Fails on any P1 or P2 violation (baseline is clean).
 - `make format` — npm-groovy-lint auto-format (config: `.groovylintrc.json`),  Brace-adding, quote and unused-code fixers are deliberately off: they changed structure (dropped a `}` in Simple Sprinklers) or churned quotes.
@@ -32,7 +32,12 @@ Hubitat Elevation drivers and apps (Groovy 2.4 on the hub). Code is pasted/impor
 - `Apps/Utilities/RootinTootinSelfRebootin.groovy`: credentials are `@Field` constants edited in source; move to preferences.
 - Unguarded `.toInteger()` on external input (~170 sites), mostly Lightify/MagicHome.
 
+## Known bugs (each has a `@PendingFeature` spec stating the correct behaviour)
+`grep -rn PendingFeature tests/spec` lists them. When you fix one the spec turns red: delete the annotation. Highlights: `logdebug()` typo breaks connect on two MagicHome bulbs; `limit()`/`normalizePercent()` results are discarded so input is never clamped; WS28xx partial colour updates, `setColorTemperature`, `setEffectSpeed`, next/previous effect and custom effects are broken; the RGB+WW/CW bulb throws parsing any frame with white LEDs lit; `MagicHomeManager.initialize` calls undefined `logInformationText`; `Heatit` off-mode sends mode 11.
+
 ## Testing notes
 - `AllScriptsSpec.KNOWN` lists scripts exempt from hubitat_ci's metadata/preferences validation (it lags the platform, or the script breaks a rule). They are still compiled and instantiated; delete a line once the script passes.
 - To test a script: `new HubitatDeviceSandbox(new File('Drivers/...')).run(api: apiMock, userSettingValues: [...], validationFlags: [...])`; see `tests/spec/AccessDoorbellSpec.groovy` for a full example (mocking `getInterfaces()`, `sendEvent`, `runIn`).
 - Pull logic out of callbacks into plain methods so it is testable; hubitat_ci forwards every unknown call to the `api` mock, so unexpected API use shows up as an unmatched interaction.
+- `DriverSpec` (tests/support) is the base for driver specs: `load(path, settings)`, `state`/`attrs`/`events` maps, `raw`/`ws` socket mocks, `ifaceCalls('sendSocketMessage')`. `settings` reaches device scripts via a user setting named `settings` (hubitat_ci has no `settings` object for devices).
+- Specs are data-driven across the MagicHome family (`MagicHome.having(method)` lists the drivers that define a method); the `*Quiet*` subclasses rerun them with different preferences to cover the other branches.

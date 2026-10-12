@@ -1,4 +1,4 @@
-package hubitat.helper
+package me.biocomp.hubitat_ci.api.helper
 
 class HexUtils {
     static String byteArrayToHexString(b) { b.collect { it as int }.collect { String.format('%02X', it & 0xFF) }.join() }

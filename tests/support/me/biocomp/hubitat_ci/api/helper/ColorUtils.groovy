@@ -1,4 +1,4 @@
-package hubitat.helper
+package me.biocomp.hubitat_ci.api.helper
 
 import java.awt.Color
 
