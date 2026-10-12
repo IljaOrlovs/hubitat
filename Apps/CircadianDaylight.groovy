@@ -792,5 +792,5 @@ def rgbToHSV(rgb) {
     def degreesRange = (360 - 0)
     def percentRange = (100 - 0)
 
-    return [h: ((h * percentRange) / degreesRange) as Integer, s: ((s * percentRange) / degreesRange) as Integer, v: v as Integer]
+    return [h: ((h * percentRange) / degreesRange) as Integer, s: s as Integer, v: v as Integer]
 }

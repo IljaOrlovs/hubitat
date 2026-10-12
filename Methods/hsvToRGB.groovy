@@ -9,7 +9,7 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
     
     // Check HSV limits
     resolution == "low" ? ( hueMax = 100 ) : ( hueMax = 360 ) 
-    conversionHue > hueMax ? ( conversionHue = 1 ) : ( conversionHue < 0 ? ( conversionHue = 0 ) : ( conversionHue /= hueMax ) )
+    conversionHue = ( Math.min( Math.max( conversionHue, 0 ), hueMax ) / hueMax ) % 1 // hueMax wraps to 0 (red), not black
     conversionSaturation > 100 ? ( conversionSaturation = 1 ) : ( conversionSaturation < 0 ? ( conversionSaturation = 0 ) : ( conversionSaturation /= 100 ) )
     conversionValue > 100 ? ( conversionValue = 1 ) : ( conversionValue < 0 ? ( conversionValue = 0 ) : ( conversionValue /= 100 ) ) 
         

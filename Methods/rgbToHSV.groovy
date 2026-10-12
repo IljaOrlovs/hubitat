@@ -6,9 +6,10 @@ def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
 	// Takes RGB (0-255) and returns HSV in 0-360, 0-100, 0-100
 	// resolution ("low", "high") will return a hue between 0-100, or 0-360, respectively.
   
-	r /= 255
-	g /= 255
-	b /= 255
+	// cast to float: max is float, and BigDecimal == float is false, which left hue at 0
+	r = (float)( r / 255 )
+	g = (float)( g / 255 )
+	b = (float)( b / 255 )
 
 	float h
 	float s

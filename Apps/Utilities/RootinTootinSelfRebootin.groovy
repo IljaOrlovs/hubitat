@@ -53,7 +53,7 @@ definition(
   name: "Rootin' Tootin' Self-Rebootin'",
   namespace: "adamkempenich",
   author: "Adam Kempenich",
-  importURL: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Apps/Utilities/RootinTootinSelfRebootin.groovy",
+  importUrl: "https://raw.githubusercontent.com/adamkempenich/hubitat/master/Apps/Utilities/RootinTootinSelfRebootin.groovy",
   description: "Reboots your Hub if the slowdown is detected or the db is unreadable.",
   category: "Wild West",
   iconUrl: "",

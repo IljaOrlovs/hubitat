@@ -399,7 +399,7 @@ def hsvToRGB(float conversionHue = 0, float conversionSaturation = 100, float co
     // Check HSV limits
     hue = hue > 100 ? normalizePercent( hue, 0, 99 ) : normalizePercent( hue, 0, 359 )
     resolution == "low" ? ( hueMax = 100 ) : ( hueMax = 360 ) 
-    conversionHue > hueMax ? ( conversionHue = 1 ) : ( conversionHue < 0 ? ( conversionHue = 0 ) : ( conversionHue /= hueMax ) )
+    conversionHue = ( Math.min( Math.max( conversionHue, 0 ), hueMax ) / hueMax ) % 1 // hueMax wraps to 0 (red), not black
     conversionSaturation > 100 ? ( conversionSaturation = 1 ) : ( conversionSaturation < 0 ? ( conversionSaturation = 0 ) : ( conversionSaturation /= 100 ) )
     conversionValue > 100 ? ( conversionValue = 1 ) : ( conversionValue < 0 ? ( conversionValue = 0 ) : ( conversionValue /= 100 ) ) 
         
@@ -430,9 +430,9 @@ def rgbToHSV( r = 255, g = 255, b = 255, resolution = "low" ) {
     // Takes RGB (0-255) and returns HSV in 0-360, 0-100, 0-100
     // resolution ("low", "high") will return a hue between 0-100, or 0-360, respectively.
   
-    r /= 255
-    g /= 255
-    b /= 255
+    r = (float)( r / 255 )
+    g = (float)( g / 255 )
+    b = (float)( b / 255 )
 
     float h
     float s
