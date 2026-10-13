@@ -105,7 +105,7 @@ static String cronFor(int dayIdx, int wakeMinuteOfDay, int ramp) {
 /** Pure curve: t in [0,1] -> level, and either hue/sat (red phase) or ct (white phase). */
 static Map rampAt(double t, int maxCt) {
     t = Math.max(0d, Math.min(1d, t))
-    int level = Math.max(1, Math.round(100 * t * t) as int)
+    int level = Math.max(1, Math.round(100 * t * t * t) as int)   // cubic: the eye reads brightness ~ cube root of output, so this ramps evenly
     if (t < 0.4) {
         double p = t / 0.4
         return [level: level, hue: Math.round(2 + 8 * p) as int, sat: Math.round(100 - 20 * p) as int]

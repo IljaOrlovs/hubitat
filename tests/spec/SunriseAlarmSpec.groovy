@@ -32,6 +32,7 @@ class SunriseAlarmSpec extends Specification {
         expect:
         s.rampAt(0d, 4000) == [level: 1, hue: 2, sat: 100]
         s.rampAt(1d, 4000) == [level: 100, ct: 4000]
+        s.rampAt(0.5d, 4000).level == 13   // cubic: 100 * 0.125, not 25
         (0..40).collect { s.rampAt(it / 40d, 4000).level } == (0..40).collect { s.rampAt(it / 40d, 4000).level }.sort()
     }
 
